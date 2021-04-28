@@ -1,4 +1,2 @@
 # hex-rts
-Simple open hex-rts game.
-
-Ok 
+Simple open hex-rts game for free.
