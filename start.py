@@ -88,6 +88,9 @@ class Game:
         self.x_img = pg.image.load(path.join(gui_folder, X_IMG))
         self.window_img = pg.image.load(path.join(gui_folder, WINDOW_IMG))
         self.o_window_img = pg.image.load(path.join(gui_folder, O_WINDOW_IMG))
+        self.o_window_img.blit(pg.font.Font(FONT_NAME, 24).render("Open", False, LIGHTGREY), (2,4))
+
+
         self.yes_img = pg.image.load(path.join(gui_folder, YES_IMG))
         self.no_img = pg.image.load(path.join(gui_folder, NO_IMG))
 

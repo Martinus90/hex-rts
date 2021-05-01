@@ -195,7 +195,7 @@ class Button(pg.sprite.Sprite): #regular button
         self.rect.y = self.pos[1] + self.window.pos[1]
 
 class CW_Button(Button): #CW -> Close window
-    def __init__(self, game, window, pos=[6,6], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK):
+    def __init__(self, game, window, pos=[6,6], size=(30, 30), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK):
         self.groups = game.buttons
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -279,7 +279,7 @@ class Switch_Button(Button):
         self.rect.y = self.pos[1] + self.window.pos[1]
 
 class Mobilized_Button(Button):
-    def __init__(self, game, window, pos=[200,40], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK):
+    def __init__(self, game, window, pos=[300,40], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK):
         self.groups = game.buttons
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -322,7 +322,7 @@ class Mobilized_Button(Button):
         self.rect.y = self.pos[1] + self.window.pos[1]
 
 class Training_Button(Button):
-    def __init__(self, game, window, pos=[200,60], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK):
+    def __init__(self, game, window, pos=[300,60], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK):
         self.groups = game.buttons
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -384,9 +384,9 @@ class Window(pg.sprite.Sprite):
         self.game.window_display = self.visible
         self.buttons = []
 
-        self.buttons.append(CW_Button(self.game, self))
-        self.buttons.append(Switch_Button(self.game, self, pos=[200,60], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="training"))
-        self.buttons.append(Switch_Button(self.game, self, pos=[200,40], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="mobilized"))
+        self.buttons.append(CW_Button(self.game, self, pos=[10,10]))
+        self.buttons.append(Switch_Button(self.game, self, pos=[440,60], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="training"))
+        self.buttons.append(Switch_Button(self.game, self, pos=[440,40], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="mobilized"))
         #self.buttons.append(Mobilized_Button(self.game, self))
         #self.buttons.append(Training_Button(self.game, self))
 

@@ -25,6 +25,8 @@ class TiledMap:
         self.height = tm.height * tm.tileheight * 48 / 64 + tm.tileheight / 2
         self.listtiles = [z for z in tm.gidmap]
         self.tmxdata = tm
+        print(self.tmxdata.width)
+        print(self.tmxdata.height)
         self.id = 0
         #print(self.tmxdata.width)
 

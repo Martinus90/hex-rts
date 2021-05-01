@@ -95,6 +95,9 @@ class Resource(pg.sprite.Sprite):
         self.x = x
         self.y = y
         self.value = value
+        self.off_road_value = 0
+        self.grid_id = self.x + self.y * self.game.map.tmxdata.width
+        print(self.grid_id)
 
         self.col = x
         self.row = y
@@ -128,6 +131,8 @@ class Tree(Resource):
         self.x = x
         self.y = y
         self.value = value
+        self.off_road_value = 23
+        self.grid_id = self.x + self.y * self.game.map.tmxdata.width
 
         self.col = x
         self.row = y
@@ -152,6 +157,8 @@ class Grain(Resource):
         self.x = x
         self.y = y
         self.value = value
+        self.off_road_value = 0
+        self.grid_id = self.x + self.y * self.game.map.tmxdata.width
 
         self.col = x
         self.row = y
@@ -173,6 +180,8 @@ class Oil(Resource):
         self.x = x
         self.y = y
         self.value = value
+        self.off_road_value = 0
+        self.grid_id = self.x + self.y * self.game.map.tmxdata.width
 
         self.col = x
         self.row = y
@@ -194,6 +203,8 @@ class Iron(Resource):
         self.x = x
         self.y = y
         self.value = value
+        self.off_road_value = 1
+        self.grid_id = self.x + self.y * self.game.map.tmxdata.width
 
         self.col = x
         self.row = y
@@ -215,6 +226,8 @@ class Coal(Resource):
         self.x = x
         self.y = y
         self.value = value
+        self.off_road_value = 1
+        self.grid_id = self.x + self.y * self.game.map.tmxdata.width
 
         self.col = x
         self.row = y
@@ -236,6 +249,8 @@ class Calcium(Resource):
         self.x = x
         self.y = y
         self.value = value
+        self.off_road_value = 1
+        self.grid_id = self.x + self.y * self.game.map.tmxdata.width
 
         self.col = x
         self.row = y
@@ -257,6 +272,8 @@ class Silicon(Resource):
         self.x = x
         self.y = y
         self.value = value
+        self.off_road_value = 1
+        self.grid_id = self.x + self.y * self.game.map.tmxdata.width
 
         self.col = x
         self.row = y
@@ -278,6 +295,8 @@ class Cotton(Resource):
         self.x = x
         self.y = y
         self.value = value
+        self.off_road_value = 0
+        self.grid_id = self.x + self.y * self.game.map.tmxdata.width
 
         self.col = x
         self.row = y
@@ -299,6 +318,8 @@ class Rubber(Resource):
         self.x = x
         self.y = y
         self.value = value
+        self.off_road_value = 3
+        self.grid_id = self.x + self.y * self.game.map.tmxdata.width
 
         self.col = x
         self.row = y
@@ -320,6 +341,8 @@ class Bauxite(Resource):
         self.x = x
         self.y = y
         self.value = value
+        self.off_road_value = 1
+        self.grid_id = self.x + self.y * self.game.map.tmxdata.width
 
         self.col = x
         self.row = y
@@ -341,6 +364,8 @@ class Uranium(Resource):
         self.x = x
         self.y = y
         self.value = value
+        self.off_road_value = 1
+        self.grid_id = self.x + self.y * self.game.map.tmxdata.width
 
         self.col = x
         self.row = y
@@ -362,6 +387,8 @@ class Water(Resource):
         self.x = x
         self.y = y
         self.value = value
+        self.off_road_value = 0
+        self.grid_id = self.x + self.y * self.game.map.tmxdata.width
 
         self.col = x
         self.row = y
@@ -375,21 +402,22 @@ class Construction(pg.sprite.Sprite):
         self.groups = game.all_sprites, game.buildings#, game.grids[]
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
+        self.x = x
+        self.y = y
+        self.what = what
+        self.owner = self.game.players[owner]
+
         self.name = game.language.BUILDINGS1[0]
         self.image = self.game.construction_img.copy()
         self.image.set_colorkey(VIOLET)
+        self.image.blit(self.owner.image, (44, 10))
         self.rect = self.image.get_rect()
-        self.x = x
-        self.y = y
         self.col = x
         self.row = y
         self.hex = roffset_to_cube(-1, self)
         self.rect.x = self.x * TILESIZE[0] + self.y % 2 * (TILESIZE[0] / 2)
         self.rect.y = self.y * TILESIZE[1]
-
         
-        self.what = what
-        self.owner = self.game.players[owner]
         self.side = self.owner.side
         self.grid = self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height]
         self.grid.building = self
@@ -400,6 +428,8 @@ class Construction(pg.sprite.Sprite):
         self.fullmaterials = sum(self.materials.values())
         self.progress = 0
         self.discription = [self.owner.name, self.name, self.what, self.print_progress(), "", "", ""]
+
+        #self.screen.blit(self.building.owner.image, (WIDTH - MENU_RIGHT[0]+10, 412))
 
         #self.discription[4] = ""
         #for m in self.materials.items():
@@ -529,7 +559,7 @@ class Unit(pg.sprite.Sprite):
         self.men = men
         self.visible = True
         self.pos = [50, 50]
-        self.window = ld.Window(self, self.game, [100, 100], (500, 300), DARKGREY, "Random text to see that it work.", 16, LIGHTGREY, (50, 20), 2)
+        self.window = ld.Window(self, self.game, [100, 100], (500, 300), DARKGREY, "Random text to see that it work.", 16, LIGHTGREY, (35, 10), 2)
         self.button = ld.OU_Button(self.game, self, pos=[WIDTH - MENU_RIGHT[0]+130, 230], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
         
         
@@ -609,6 +639,8 @@ class Unit(pg.sprite.Sprite):
         else:
             c = 3
 
+        
+
         #return int(c)
         return self.unit_typ.move_cost(t)
 
@@ -650,7 +682,14 @@ class Unit(pg.sprite.Sprite):
         while not self.frontier.empty():
             self.current = self.frontier.get()
             for next in self.game.map.grids[self.current[1]].neighbors:
-                self.new_cost = self.cost_so_far[self.current[1]] + ((self.terrain_cost(self.current[1]) + self.terrain_cost(next.id))) / 2
+                for a in self.game.resources:
+                    if a.grid_id == next.id:
+                        additional = a.off_road_value
+                        break
+                    else:
+                        additional = 0
+
+                self.new_cost = self.cost_so_far[self.current[1]] + ((self.terrain_cost(self.current[1]) + self.terrain_cost(next.id))) / 2 + additional
                 #self.terrain_cost(next.id)
                 if next.id not in self.cost_so_far or self.new_cost < self.cost_so_far[next.id]:
                     self.cost_so_far[next.id] = self.new_cost
