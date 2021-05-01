@@ -1,5 +1,7 @@
+import sys
+import math
+
 import pygame as pg
-import sys, math
 from os import path
 from hexo import *
 from settings import *
@@ -10,7 +12,7 @@ from languages import *
 
 class Game:
     def __init__(self):
-        pg.init()
+        #pg.init()
         pg.font.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)

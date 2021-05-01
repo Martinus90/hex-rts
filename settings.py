@@ -20,20 +20,20 @@ def mergeDict(dict1, dict2):    # adding two dictionary
 
 # define some colors in tuples(R, G, B) and as hexadecimal string
 WHITE = (255, 255, 255)
-LIGHTGREY = (160,160,160)
-GREY = (100,100,100)
+LIGHTGREY = (160, 160, 160)
+GREY = (100, 100, 100)
 DARKGREY = (40, 40, 40)
 BLACK = (0, 0, 0)
 
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
-BLUE = (0,0,250)
+BLUE = (0, 0, 250)
 
 YELLOW = (255, 255, 0)
-CYAN = (0,255,255)
-VIOLET = (255,0,255)
+CYAN = (0, 255, 255)
+VIOLET = (255, 0, 255)
 
-MAROON = (128,0,0)
+MAROON = (128, 0, 0)
 
 
 

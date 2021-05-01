@@ -1,17 +1,16 @@
-import pydoc as pdw
 import matplotlib.pyplot as plt
 from settings import * 
 from random import random
 import math
+import pydoc as pdw
 
 class doc_generator(object):
     """
     Generating documentation based on single dictionary
     """
-
     def __init__(self, dictionary):
         """
-        Construct of new documantation
+        Construct of new documentation
 
         :param dictionary["Args"]: Args
         :param dictionary["Returns"]: Returns
@@ -34,8 +33,8 @@ class doc_generator(object):
         """
         pdw.writedoc('testy')
 
-#d = doc_generator({"Args" : None, "Returns" : None, "Raises" : None, "Attributes" : None, "Summary": None, "Description": None})
-#d.do_html()
+d = doc_generator({"Args" : None, "Returns" : None, "Raises" : None, "Attributes" : None, "Summary": None, "Description": None})
+d.do_html()
 
 
 print(ctts(RED))
