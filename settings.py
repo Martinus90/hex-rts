@@ -58,7 +58,7 @@ UNIT_OFFSET = (11, 4)
 
 SCROLL_SPEED = 10
 GAME_SPEED = 1
-LANGUAGE = "ENG" # "ENG" / "PL"
+LANGUAGE = "EN" # "EN" / "PL"
 
 PLAYER_IMG = "player.bmp"
 FLAGS_IMG = "flags.bmp"

@@ -89,7 +89,32 @@ class TiledMap:
 
 
                 if obj.name == "unit":
-                    self.units.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['owner'],obj.properties['typ'],obj.properties['men']])
+                    self.units.append([math.floor(obj.x/64),#0
+                    math.floor(obj.y/48),
+                    obj.properties['1_1_owner'],
+                    obj.properties['1_1_typ'],
+                    obj.properties['1_1_unit_name'],
+                    obj.properties['1_2_1_brigade'],
+                    obj.properties['1_2_2_regiment'],
+                    obj.properties['1_2_3_battalion'],
+                    obj.properties['1_2_4_company'],#8
+                    obj.properties['2_men'],
+                    obj.properties['3_aircraft'],#10
+                    obj.properties['3_apc'],
+                    obj.properties['3_art'],
+                    obj.properties['3_heavy_ammo'],
+                    obj.properties['3_heli'],
+                    obj.properties['3_light_ammo'],#15
+                    obj.properties['3_rifle'],
+                    obj.properties['3_rockets'],
+                    obj.properties['3_supply'],
+                    obj.properties['3_tank'],
+                    obj.properties['3_truck']#20
+                    
+                    
+                    
+                    
+                    ])
 
                 if obj.name == "building":
                     self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['what'],obj.properties['owner']])

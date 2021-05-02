@@ -76,8 +76,9 @@ der = ["HAHAHA","Dumb text","Hitler did everything wrong"]
 import pyttsx3
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[1].id)
-engine.say("Do I exist? What is purpose of my life?")
-for a in der:
-    engine.say(a)
+engine.setProperty('voice', voices[0].id) #0 == PL, 1 == EN
 engine.runAndWait()
+engine.say("Jakiś tekst do testów.")
+#for a in der:
+#    engine.say(a)
+

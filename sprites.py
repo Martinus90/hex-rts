@@ -131,7 +131,7 @@ class Tree(Resource):
         self.x = x
         self.y = y
         self.value = value
-        self.off_road_value = 23
+        self.off_road_value = 3
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
 
         self.col = x
@@ -427,24 +427,24 @@ class Construction(pg.sprite.Sprite):
         self.fullcost = sum(self.cost.values())
         self.fullmaterials = sum(self.materials.values())
         self.progress = 0
-        self.discription = [self.owner.name, self.name, self.what, self.print_progress(), "", "", ""]
+        self.description = [self.owner.name, self.name, self.what, self.print_progress(), "", "", ""]
 
         #self.screen.blit(self.building.owner.image, (WIDTH - MENU_RIGHT[0]+10, 412))
 
-        #self.discription[4] = ""
+        #self.description[4] = ""
         #for m in self.materials.items():
-        #    self.discription[4] += str(m[0]) + ": " + str(m[1]) + ", "
+        #    self.description[4] += str(m[0]) + ": " + str(m[1]) + ", "
 
-        #self.discription[4] = 
+        #self.description[4] = 
         #print(self.materials['wood'])
 
-        self.discription[4] = self.game.language.RES1[0] + ": " + str(self.materials['wood']) + "/" + str(self.cost['wood'])
-        self.discription[5] = self.game.language.RES1[2] + ": " + str(self.materials['cement']) + "/" + str(self.cost['cement'])
-        self.discription[6] = self.game.language.RES1[5] + ": " + str(self.materials['steel']) + "/" + str(self.cost['steel'])
+        self.description[4] = self.game.language.RES1[0] + ": " + str(self.materials['wood']) + "/" + str(self.cost['wood'])
+        self.description[5] = self.game.language.RES1[2] + ": " + str(self.materials['cement']) + "/" + str(self.cost['cement'])
+        self.description[6] = self.game.language.RES1[5] + ": " + str(self.materials['steel']) + "/" + str(self.cost['steel'])
 
-        self.discription[5] = ""
+        self.description[5] = ""
         for c in self.cost.items():
-            self.discription[5] += str(c[0]) + ": " + str(c[1]) + ", "
+            self.description[5] += str(c[0]) + ": " + str(c[1]) + ", "
         
     def print_progress(self):
         return "Progress: " + str(self.progress) + " / " + str(self.fullcost)
@@ -459,20 +459,20 @@ class Construction(pg.sprite.Sprite):
     def update(self):
         self.fullmaterials = sum(self.materials.values())
 
-        self.discription[3] = self.print_progress()#str(self.progress)
-        self.discription[4] = ""
-        self.discription[5] = ""
-        self.discription[6] = ""
+        self.description[3] = self.print_progress()#str(self.progress)
+        self.description[4] = ""
+        self.description[5] = ""
+        self.description[6] = ""
         for m in self.materials.items():
-            self.discription[4] += m[0].title() + ": " + str(m[1]) + ", "
+            self.description[4] += m[0].title() + ": " + str(m[1]) + ", "
         if not self.materials:
-            self.discription[4] = "None"
+            self.description[4] = "None"
         #for c in self.cost.items():
-        #    self.discription[5] += c[0].title() + ": " + str(c[1]) + ", "
+        #    self.description[5] += c[0].title() + ": " + str(c[1]) + ", "
 
-        self.discription[4] = self.game.language.RES1[0] + ": " + str(self.materials['wood']) + "/" + str(self.cost['wood'])
-        self.discription[5] = self.game.language.RES1[2] + ": " + str(self.materials['cement']) + "/" + str(self.cost['cement'])
-        self.discription[6] = self.game.language.RES1[5] + ": " + str(self.materials['steel']) + "/" + str(self.cost['steel'])
+        self.description[4] = self.game.language.RES1[0] + ": " + str(self.materials['wood']) + "/" + str(self.cost['wood'])
+        self.description[5] = self.game.language.RES1[2] + ": " + str(self.materials['cement']) + "/" + str(self.cost['cement'])
+        self.description[6] = self.game.language.RES1[5] + ": " + str(self.materials['steel']) + "/" + str(self.cost['steel'])
         
 
 class Settlement(pg.sprite.Sprite):
@@ -538,7 +538,7 @@ class Oil_Well(Building):
         self.rect.y = self.y * TILESIZE[1]
 
 class Unit(pg.sprite.Sprite):
-    def __init__(self, game, x, y, owner, typ, men):
+    def __init__(self, game, x, y, owner, typ, unit_name, brigade, regiment, battalion, company, men, aircraft, apc, art, heavy_ammo, heli, light_ammo, rifle, rockets, supply, tank, truck):
         self.groups = game.all_sprites, game.units
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -549,17 +549,40 @@ class Unit(pg.sprite.Sprite):
         self.side = self.owner.side
         self.unit_typ = self.game.types[typ]
         self.typ = self.unit_typ.typ
-        self.state = {"mobilized": True, "training": True}
+        self.unit_name = unit_name
+        self.brigade = brigade
+        self.regiment = regiment
+        self.battalion = battalion
+        self.company = company
+        self.state = {"mobilized": True, "training": True, "refill_equipment": False, "refill_crew": False} # 1 and 4 
+
         self.mobilized = True
+        self.training = True
+        self.refill_equipment = False
+        self.refill_crew = False
+
         self.combat_ability = 25
         self.combat_ability_max = 25
         self.experience = 0
         self.task = self.game.language.COMMANDS[0]
-        self.training = True
+        
         self.men = men
+        self.aircraft = aircraft
+        self.apc = apc
+        self.art = art
+        self.heavy_ammo = heavy_ammo
+        self.heli = heli
+        self.light_ammo = light_ammo
+        self.rifle = rifle
+        self.rockets = rockets
+        self.supply = supply
+        self.tank = tank
+        self.truck = truck
+
         self.visible = True
         self.pos = [50, 50]
-        self.window = ld.Window(self, self.game, [100, 100], (500, 300), DARKGREY, "Random text to see that it work.", 16, LIGHTGREY, (35, 10), 2)
+        self.window = ld.Window(self, self.game, [100, 100], (500, 300), DARKGREY, self.unit_name + self.game.language.UNIT_STRU_SHORT[0] + str(self.brigade) + self.game.language.UNIT_STRU_SHORT[1] + str(self.regiment) + self.game.language.UNIT_STRU_SHORT[2] + str(self.battalion) + self.game.language.UNIT_STRU_SHORT[3] + str(self.company), 16, LIGHTGREY, (35, 10), 2)
+
         self.button = ld.OU_Button(self.game, self, pos=[WIDTH - MENU_RIGHT[0]+130, 230], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
         
         
@@ -590,22 +613,22 @@ class Unit(pg.sprite.Sprite):
         self.rect.x = self.x * TILESIZE[0] - self.y % 2 * TILESIZE[0] / 2 #+ FLAG_OFFSET[0]
         self.rect.y = self.y * TILESIZE[1] #+ FLAG_OFFSET[1]
 
-        #self.discription = [self.owner.name, self.unit_typ.name, self.task, str(self.men), self.game.language.DISCRIPTION[0] + ": " + str(self.experience), "Sixth"]
-        self.discription = [self.owner.name, 
+        #self.description = [self.owner.name, self.unit_typ.name, self.task, str(self.men), self.game.language.DESCRIPTION[0] + ": " + str(self.experience), "Sixth"]
+        self.description = [self.owner.name, 
                             self.unit_typ.name, 
                             self.print_mobilized(), 
-                            self.game.language.DISCRIPTION[2] + ": " + str(self.combat_ability), 
-                            self.game.language.DISCRIPTION[0] + ": " + str(self.experience), 
+                            self.game.language.DESCRIPTION[2] + ": " + str(self.combat_ability), 
+                            self.game.language.DESCRIPTION[0] + ": " + str(self.experience), 
                             self.task, 
-                            self.game.language.DISCRIPTION[3] + ": " + str(self.men)]
+                            self.game.language.DESCRIPTION[3] + ": " + str(self.men)]
 
     #def print_side(self):
     #    return self.owner.name
     def print_mobilized(self):
         if self.state["mobilized"] == True:
-            return self.game.language.DISCRIPTION[1] + ": True"
+            return self.game.language.DESCRIPTION[1] + ": " + self.game.language.BASIC[2]
         else:
-            return self.game.language.DISCRIPTION[1] + ": False"
+            return self.game.language.DESCRIPTION[1] + ": " + self.game.language.BASIC[3]
     #def print_typ(self):
     #    return self.unit_typ.name
         #if self.typ == 0:
@@ -766,12 +789,12 @@ class Unit(pg.sprite.Sprite):
         self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2 #+ FLAG_OFFSET[0]
         self.rect.y = self.y * TILESIZE[1] #+ FLAG_OFFSET[1]
 
-        self.discription = [self.owner.name, 
+        self.description = [self.owner.name, 
                             self.unit_typ.name, 
                             self.print_mobilized(), 
-                            self.game.language.DISCRIPTION[2] + ": " + str(self.combat_ability) + "/" + str(self.combat_ability_max), 
-                            self.game.language.DISCRIPTION[0] + ": " + str(self.experience), 
+                            self.game.language.DESCRIPTION[2] + ": " + str(self.combat_ability) + "/" + str(self.combat_ability_max), 
+                            self.game.language.DESCRIPTION[0] + ": " + str(self.experience), 
                             self.task, 
-                            self.game.language.DISCRIPTION[3] + ": " + str(self.men)]
+                            self.game.language.DESCRIPTION[3] + ": " + str(self.men)]
 
         
