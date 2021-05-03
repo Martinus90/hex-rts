@@ -37,14 +37,16 @@ class Contender(pg.sprite.Sprite):
         pass
 
 class Unit_Type(pg.sprite.Sprite):
-    def __init__(self, game, name="Name", typ=0, s_normal=1, s_water=1, s_mountain=1, s_river=1, fuel_usage=0, food_usage=1, money_usage=1):
+    def __init__(self, game, name="Name", typ=0, s_normal=1, s_water=1, s_mountain=1, s_coast=1, s_river=1, s_no_fuel=20, fuel_usage=0, food_usage=1, money_usage=1):
         self.game = game
         self.name = name
         self.typ = typ
         self.s_normal = s_normal
         self.s_water = s_water
         self.s_mountain = s_mountain
+        self.s_coast = s_coast
         self.s_river = s_river
+        self.s_no_fuel = s_no_fuel
 
         self.fuel_usage = fuel_usage
         self.food_usage = food_usage
@@ -95,7 +97,6 @@ class Menu(pg.sprite.Sprite):
         self.c_m_b = (0, HEIGHT - MENU_BOTTOM[0])
         self.list.append([self.m_b, self.c_m_b])
 
-        print(self.game.language.DISPLAY_GUI[0]) #test
         self.position = [self.game.language.DISPLAY_GUI[0], 20, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 15)]
         self.speed = [self.game.language.DISPLAY_GUI[5], 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 35)]
         self.time = [self.game.language.DISPLAY_GUI[1], 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 55)]
@@ -367,7 +368,7 @@ class Training_Button(Button):
         self.rect.y = self.pos[1] + self.window.pos[1]
 
 class Window(pg.sprite.Sprite):
-    def __init__(self, unit, game, pos=[100,100], size=(300, 300), color=DARKGREY, text="Text", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3):
+    def __init__(self, unit, game, pos=[100,100], size=(300, 400), color=DARKGREY, text="Text", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3):
         self.groups = game.windows
         pg.sprite.Sprite.__init__(self, self.groups)
         self.unit = unit
@@ -385,6 +386,8 @@ class Window(pg.sprite.Sprite):
         self.buttons = []
         self.variables = []
 
+        #self.variables.append(self.unit.men, self.unit.uniforms, self.unit.supply, self.unit.light_ammo, self.unit.heavy_ammo, self.unit.rockets)
+
         self.buttons.append(CW_Button(self.game, self, pos=[10,10]))
         self.buttons.append(Switch_Button(self.game, self, pos=[330,40], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="mobilized"))
         self.buttons.append(Switch_Button(self.game, self, pos=[330,60], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="training"))
@@ -398,12 +401,25 @@ class Window(pg.sprite.Sprite):
         #pg.draw.rect
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.text, False, self.textcolor), self.textpos)
 
-        #here variables
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[3], False, self.textcolor), (30, 30))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[11], False, self.textcolor), (30, 50))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[3], False, self.textcolor), (30, 70))
+        #here eq names
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[3], False, self.textcolor), (50, 40))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[0], False, self.textcolor), (50, 60))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[1], False, self.textcolor), (50, 80))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[2], False, self.textcolor), (50, 100))
 
-        
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[3], False, self.textcolor), (50, 140))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[4], False, self.textcolor), (50, 160))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[5], False, self.textcolor), (50, 180))
+
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[6], False, self.textcolor), (50, 220))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[7], False, self.textcolor), (50, 240))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[8], False, self.textcolor), (50, 260))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[9], False, self.textcolor), (50, 280))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[10], False, self.textcolor), (50, 300))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[11], False, self.textcolor), (50, 320))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[12], False, self.textcolor), (50, 340))
+
+
         #here gui text
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[1], False, self.textcolor), (350,42))
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[4], False, self.textcolor), (350,60))
@@ -434,6 +450,10 @@ class Window(pg.sprite.Sprite):
     def update(self):
         self.rect.x = self.pos[0]
         self.rect.y = self.pos[1]
+
+        #self.variables = []
+        #self.variables.append(self.unit.men, self.unit.uniforms, self.unit.supply, self.unit.light_ammo, self.unit.heavy_ammo, self.unit.rockets)
+
 
         #here updating variables
 

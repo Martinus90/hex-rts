@@ -12,7 +12,7 @@ class Language:
             self.RESOURCES = ["Resource","Tree","Grain","Oil","Iron","Coal","Calcium","Silicon","Cotton","Rubber","Bauxite","Uranium","Water"]
             self.RES1 = ["Wood", "Food", "Cement", "Iron Ore", "Coal", "Steel", "Water", "Tools", "Parts", "Aluminum", "Oil", "Fuel", "Plastic", "Chemical Compounds", "Fertilizer",
             "Silicon", "Calcium", "Electronics", "Cotton", "Textiles", "Rubber", "Bauxite", "Furniture", "Civilian Machines"]
-            self.RES2 = ["Light Ammo", "Heavy Ammo", "Rockets", "Supply", "Rifle", "Truck", "APC", "Tank", "Artilleries", "Helicopters", "Aircrafts", "Uniforms"] 
+            self.RES2 = ["Supply", "Uniforms", "Fuel", "Light Ammo", "Heavy Ammo", "Rockets", "Rifle", "Artilleries", "Truck", "APC", "Tank", "Helicopters", "Aircrafts"] 
 
             self.UNIT_TYPE = ["Infantry","Armored","Artillery","Mechanized","Reconnaissance","Motorized","Other","Logistic","Headquarters","Helicopters","Aircraft","Anti-Aircraft","Anti-Tank","Missile","Engineering"]
             self.UNIT_STRU = ["Brigade", "Regiment", "Battalion", "Company"]
@@ -35,7 +35,7 @@ class Language:
             self.RESOURCES = ["Zasob","Drewno","Zboze","Ropa","Zelazo","Wegiel","Wapn","Krzem","Bawelna","Guma","Boksyt","Uran","Woda"]
             self.RES1 = ["Drewno", "Jedzenie", "Cement", "Ruda żelaza", "Koks", "Stal", "Woda", "Narzędzie", "Części", "Aluminium", "Ropa", "Paliwo", "Plastik", "Produkty Chemiczne", "Nawozy",
             "Krzem", "Wapń", "Elektronika", "Bawełna", "Tkaniny", "Guma", "Boksyt", "Meble", "Urządzenia Cywilne"]
-            self.RES2 = ["Lekka Amunicja", "Ciężka Amunicja", "Rakiety", "Zaopatrzenie", "Karabiny", "Ciężarówki", "BWPy", "Czołgi", "Artyleria", "Helikoptery", "Samoloty", "Mudury"] 
+            self.RES2 = ["Zaopatrzenie", "Mudury", "Paliwo", "Lekka Amunicja", "Ciężka Amunicja", "Rakiety", "Karabiny", "Artyleria", "Ciężarówki", "BWPy", "Czołgi", "Helikoptery", "Samoloty"] 
             
             self.UNIT_TYPE = ["Piechota","Pancerna","Artyleria","Zmechanizowana","Zwiad","Zmotoryzowana","Inne","Logistyka","Sztab","Helikoptery","Samoloty","PLOT","Przeciwpancerna","Rakietowa","Inżynieryjna"]
             self.UNIT_STRU = ["Brygada", "Pułk", "Batalion", "Kompania"]

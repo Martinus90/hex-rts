@@ -538,7 +538,7 @@ class Oil_Well(Building):
         self.rect.y = self.y * TILESIZE[1]
 
 class Unit(pg.sprite.Sprite):
-    def __init__(self, game, x, y, owner, typ, unit_name, brigade, regiment, battalion, company, men, aircraft, apc, art, heavy_ammo, heli, light_ammo, rifle, rockets, supply, tank, truck):
+    def __init__(self, game, x, y, owner, typ, unit_name, brigade, regiment, battalion, company, men, supply, uniforms, fuel, light_ammo, heavy_ammo, rockets, rifle, art, truck, apc, tank, heli, aircraft):
         self.groups = game.all_sprites, game.units
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -554,10 +554,10 @@ class Unit(pg.sprite.Sprite):
         self.regiment = regiment
         self.battalion = battalion
         self.company = company
-        self.state = {"mobilized": True, "training": True, "refill_equipment": False, "refill_crew": False} # 1 and 4 
+        self.state = {"mobilized": True, "training": False, "refill_equipment": False, "refill_crew": False} # 1 and 4 
 
         self.mobilized = True
-        self.training = True
+        self.training = False
         self.refill_equipment = False
         self.refill_crew = False
 
@@ -567,21 +567,25 @@ class Unit(pg.sprite.Sprite):
         self.task = self.game.language.COMMANDS[0]
         
         self.men = men
-        self.aircraft = aircraft
-        self.apc = apc
-        self.art = art
-        self.heavy_ammo = heavy_ammo
-        self.heli = heli
-        self.light_ammo = light_ammo
-        self.rifle = rifle
-        self.rockets = rockets
         self.supply = supply
-        self.tank = tank
+        self.uniforms = uniforms
+        self.fuel = fuel
+
+        self.light_ammo = light_ammo
+        self.heavy_ammo = heavy_ammo
+        self.rockets = rockets
+        
+        self.rifle = rifle
+        self.art = art
         self.truck = truck
+        self.apc = apc
+        self.tank = tank
+        self.heli = heli
+        self.aircraft = aircraft
 
         self.visible = True
         self.pos = [50, 50]
-        self.window = ld.Window(self, self.game, [100, 100], (500, 300), DARKGREY, self.unit_name + self.game.language.UNIT_STRU_SHORT[0] + str(self.brigade) + self.game.language.UNIT_STRU_SHORT[1] + str(self.regiment) + self.game.language.UNIT_STRU_SHORT[2] + str(self.battalion) + self.game.language.UNIT_STRU_SHORT[3] + str(self.company), 16, LIGHTGREY, (35, 10), 2)
+        self.window = ld.Window(self, self.game, [100, 100], (500, 400), DARKGREY, self.unit_name + self.game.language.UNIT_STRU_SHORT[0] + str(self.brigade) + self.game.language.UNIT_STRU_SHORT[1] + str(self.regiment) + self.game.language.UNIT_STRU_SHORT[2] + str(self.battalion) + self.game.language.UNIT_STRU_SHORT[3] + str(self.company), 16, LIGHTGREY, (35, 10), 2)
 
         self.button = ld.OU_Button(self.game, self, pos=[WIDTH - MENU_RIGHT[0]+130, 230], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
         
@@ -642,25 +646,30 @@ class Unit(pg.sprite.Sprite):
 
         t = self.game.map.grids[grid_id].terrain
 
-        if self.typ == 0 or self.typ == 1:
+        #if self.typ == 0 and self.fuel >= self.unit_typ.fuel_usage:
+        if self.fuel >= self.unit_typ.fuel_usage:
             t = self.game.map.grids[grid_id].terrain
             if t == self.game.language.TERRAIN[0]:
-                c = 3
+                c = self.unit_typ.s_normal
             elif t == self.game.language.TERRAIN[1]:
-                c = 3
+                c = self.unit_typ.s_normal
             elif t == self.game.language.TERRAIN[2]:
-                c = 100
+                c = self.unit_typ.s_water
             elif t == self.game.language.TERRAIN[3]:
-                c = 15
+                c = self.unit_typ.s_mountain
             elif t == self.game.language.TERRAIN[4]:
-                c = 6
+                c = self.unit_typ.s_coast
             elif t == self.game.language.TERRAIN[5]:
-                c = 15
+                c = self.unit_typ.s_river
             elif t == self.game.language.TERRAIN[6]:
-                c = 3
+                c = self.unit_typ.s_normal
         
+
+
+
+
         else:
-            c = 3
+            c = 20
 
         
 
@@ -736,6 +745,7 @@ class Unit(pg.sprite.Sprite):
         print("Full move cost:")
         for p in self.path:
             print(self.cost_so_far[p])
+            break
         print(" ")
 
     def do(self):
@@ -757,22 +767,37 @@ class Unit(pg.sprite.Sprite):
                         self.stop()
 
                 if self.step_to != None:
-                    if self.doing >= self.step_cost:
-                        self.doing = self.doing - self.step_cost
-                        self.hex = self.game.map.grids[self.step_to].hex
-                        print("Kroczek w stronę:")
-                        self.task = self.game.language.COMMANDS[1] + str(roffset_from_cube(-1, self.go_to)[0]) + ", " + str(roffset_from_cube(-1, self.go_to)[1])
-                        print(self.step_to)
-                        print("Koszt:")
-                        print(self.step_cost)
-                        print(" ")
-                        self.last_step_cost = self.cost_so_far[self.step_to]
-                        self.step_to = None
-            self.doing += 1   
+                    if self.fuel < self.step_cost:
+                        if self.doing >= self.step_cost:
+                            self.doing = self.doing - self.step_cost
+                            self.hex = self.game.map.grids[self.step_to].hex
+                            print("Kroczek w stronę:")
+                            self.task = self.game.language.COMMANDS[1] + str(roffset_from_cube(-1, self.go_to)[0]) + ", " + str(roffset_from_cube(-1, self.go_to)[1])
+                            print(self.step_to)
+                            print("Koszt:")
+                            print(self.step_cost)
+                            print(" ")
+                            self.last_step_cost = self.cost_so_far[self.step_to]
+                            self.step_to = None
+                    else:
+                        if self.doing >= self.step_cost:
+                            self.doing = self.doing - self.step_cost
+                            self.hex = self.game.map.grids[self.step_to].hex
+                            print("Kroczek w stronę:")
+                            self.task = self.game.language.COMMANDS[1] + str(roffset_from_cube(-1, self.go_to)[0]) + ", " + str(roffset_from_cube(-1, self.go_to)[1])
+                            print(self.step_to)
+                            print("Koszt:")
+                            print(self.step_cost)
+                            print(" ")
+                            self.last_step_cost = self.cost_so_far[self.step_to]
+                            self.step_to = None
+            self.doing += 1
+            self.fuel = self.fuel - self.unit_typ.fuel_usage
         elif self.state["training"] == True:
             self.combat_ability = 5
             self.task = self.game.language.COMMANDS[2]
-            self.experience += 1
+            if self.experience < 100:
+                self.experience += 1
         else:
             self.doing = 0
             self.task = self.game.language.COMMANDS[0]

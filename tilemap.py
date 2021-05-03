@@ -98,20 +98,25 @@ class TiledMap:
                     obj.properties['1_2_2_regiment'],
                     obj.properties['1_2_3_battalion'],
                     obj.properties['1_2_4_company'],#8
-                    obj.properties['2_men'],
-                    obj.properties['3_aircraft'],#10
-                    obj.properties['3_apc'],
-                    obj.properties['3_art'],
-                    obj.properties['3_heavy_ammo'],
-                    obj.properties['3_heli'],
-                    obj.properties['3_light_ammo'],#15
-                    obj.properties['3_rifle'],
-                    obj.properties['3_rockets'],
-                    obj.properties['3_supply'],
-                    obj.properties['3_tank'],
-                    obj.properties['3_truck']#20
+
+                    obj.properties['2_1_men'],
+                    obj.properties['2_2_supply'],
+                    obj.properties['2_3_uniforms'],
+                    obj.properties['2_4_fuel'],
+
+                    obj.properties['3_1_light_ammo'],
+                    obj.properties['3_2_heavy_ammo'],
+                    obj.properties['3_3_rockets'],
+
+                    obj.properties['4_1_rifle'],
+                    obj.properties['4_2_art'],
+                    obj.properties['4_3_truck'],
+                    obj.properties['4_4_apc'],
+                    obj.properties['4_5_tank'],
+                    obj.properties['4_6_heli'],
+                    obj.properties['4_7_aircraft'],
                     
-                    
+                    #22
                     
                     
                     ])

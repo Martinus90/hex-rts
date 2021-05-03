@@ -129,9 +129,9 @@ class Game:
 
         #self.UNIT_TYPE = ["Artillery","Mechanized","Reconnaissance","Motorized","Other","Logistic","Headquarters","Helicopters","Aircraft","Anti-Aircraft","Anti-Tank","Missile","Engineering"]
 
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[0], typ=0, s_normal=4, s_water=100, s_mountain=6, s_river=12, fuel_usage=0, food_usage=1, money_usage=1))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[1], typ=1, s_normal=2, s_water=100, s_mountain=12, s_river=12, fuel_usage=1, food_usage=1, money_usage=5))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[2], typ=2, s_normal=2, s_water=100, s_mountain=12, s_river=12, fuel_usage=1, food_usage=1, money_usage=5))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[0], typ=0, s_normal=4, s_water=100, s_mountain=6, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=0, food_usage=1, money_usage=2))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[1], typ=1, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=1, food_usage=1, money_usage=2))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[2], typ=2, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=1, food_usage=1, money_usage=2))
 
 
         self.map_img = self.map.make_map()
@@ -178,7 +178,7 @@ class Game:
             #    Village(self, b[0], b[1], b[3], b[4])
 
         for u in self.map.units:
-            Unit(self, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15], u[16], u[17], u[18], u[19], u[20])
+            Unit(self, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15], u[16], u[17], u[18], u[19], u[20], u[21], u[22])
 
 
 
@@ -315,6 +315,7 @@ class Game:
         self.selecting = None
         self.resourcing = None
         self.uniting = None
+        self.building = None
         self.menu.terrain1[0] = ""
         self.menu.terrain2[0] = ""
         self.menu.terrain3[0] = ""
@@ -338,6 +339,29 @@ class Game:
         # update mouse pos & time
         self.mouse()
         self.time()
+        if self.resourcing != None:
+            self.menu.terrain3[0] = self.resourcing.name + " " + str(self.resourcing.value)
+
+        if self.building != None:
+            self.menu.building1[0] = self.building.description[0]
+            self.menu.building2[0] = self.building.description[1]
+            self.menu.building3[0] = self.building.description[2]
+            self.menu.building4[0] = self.building.description[3]
+            self.menu.building5[0] = self.building.description[4]
+            self.menu.building6[0] = self.building.description[5]
+            self.menu.building7[0] = self.building.description[6]
+
+        if self.uniting != None:
+            self.menu.unit1[0] = self.uniting.description[0]
+            self.menu.unit2[0] = self.uniting.description[1]
+            self.menu.unit3[0] = self.uniting.description[2]
+            self.menu.unit4[0] = self.uniting.description[3]
+            self.menu.unit5[0] = self.uniting.description[4]
+            self.menu.unit6[0] = self.uniting.description[5]
+            self.menu.unit7[0] = self.uniting.description[6]
+
+
+                
 
     def draw(self):
         self.screen.fill(BGCOLOR)
@@ -373,6 +397,8 @@ class Game:
             self.screen.blit(self.uniting.button.image, self.uniting.button.pos)
             if self.uniting.window.visible == True:
                 self.screen.blit(self.uniting.window.image, self.uniting.window.pos)
+                #for var in self.uniting.window.variables:
+                
         
             
         for window in self.windows:
@@ -380,6 +406,29 @@ class Game:
                 self.screen.blit(window.image, window.pos)
                 for button in window.buttons:
                     window.image.blit(button.image, button.pos)
+                if 1 == 1: #rolling display unit variables
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.men), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 38))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.supply), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 58))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.uniforms), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 78))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.fuel), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 98))
+                    
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.light_ammo), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 138))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.heavy_ammo), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 158))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.rockets), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 178))
+                    
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.rifle), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 218))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.art), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 238))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.truck), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 258))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.apc), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 278))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.tank), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 298))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.heli), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 318))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.aircraft), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 338))
+
+                    self.screen.blit(self.uniting.owner.image, (window.pos[0] + 170, window.pos[1] + 30))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.owner.name, False, LIGHTGREY), (window.pos[0] + 200, window.pos[1] + 38))
+                    self.screen.blit(self.uniting.unit_typ.image, (window.pos[0] + 160, window.pos[1] + 56))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.unit_typ.name, False, LIGHTGREY), (window.pos[0] + 200, window.pos[1] + 58))
+
 
         pg.display.flip()
 

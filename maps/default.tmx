@@ -60,18 +60,20 @@
     <property name="1_2_2_regiment" type="int" value="1"/>
     <property name="1_2_3_battalion" type="int" value="1"/>
     <property name="1_2_4_company" type="int" value="1"/>
-    <property name="2_men" type="int" value="20"/>
-    <property name="3_aircraft" type="int" value="0"/>
-    <property name="3_apc" type="int" value="0"/>
-    <property name="3_art" type="int" value="0"/>
-    <property name="3_heavy_ammo" type="int" value="0"/>
-    <property name="3_heli" type="int" value="0"/>
-    <property name="3_light_ammo" type="int" value="10"/>
-    <property name="3_rifle" type="int" value="5"/>
-    <property name="3_rockets" type="int" value="0"/>
-    <property name="3_supply" type="int" value="0"/>
-    <property name="3_tank" type="int" value="0"/>
-    <property name="3_truck" type="int" value="0"/>
+    <property name="2_1_men" type="int" value="20"/>
+    <property name="2_2_supply" type="int" value="50"/>
+    <property name="2_3_uniforms" type="int" value="20"/>
+    <property name="2_4_fuel" type="int" value="50"/>
+    <property name="3_1_light_ammo" type="int" value="50"/>
+    <property name="3_2_heavy_ammo" type="int" value="0"/>
+    <property name="3_3_rockets" type="int" value="0"/>
+    <property name="4_1_rifle" type="int" value="20"/>
+    <property name="4_2_art" type="int" value="0"/>
+    <property name="4_3_truck" type="int" value="2"/>
+    <property name="4_4_apc" type="int" value="0"/>
+    <property name="4_5_tank" type="int" value="0"/>
+    <property name="4_6_heli" type="int" value="0"/>
+    <property name="4_7_aircraft" type="int" value="0"/>
    </properties>
   </object>
   <object id="10" name="oil" x="723.931" y="404.584" width="23.8659" height="23.8659">
@@ -99,52 +101,6 @@
   <object id="16" name="calcium" x="851.216" y="404.584" width="23.8659" height="23.8659">
    <properties>
     <property name="value" type="int" value="40"/>
-   </properties>
-  </object>
-  <object id="19" name="unit" x="594.595" y="592.974" width="23.8659" height="23.8659">
-   <properties>
-    <property name="1_1_owner" type="int" value="1"/>
-    <property name="1_1_typ" type="int" value="0"/>
-    <property name="1_1_unit_name" value="Island Groundhogs"/>
-    <property name="1_2_1_brigade" type="int" value="1"/>
-    <property name="1_2_2_regiment" type="int" value="1"/>
-    <property name="1_2_3_battalion" type="int" value="2"/>
-    <property name="1_2_4_company" type="int" value="1"/>
-    <property name="2_men" type="int" value="20"/>
-    <property name="3_aircraft" type="int" value="0"/>
-    <property name="3_apc" type="int" value="0"/>
-    <property name="3_art" type="int" value="0"/>
-    <property name="3_heavy_ammo" type="int" value="0"/>
-    <property name="3_heli" type="int" value="0"/>
-    <property name="3_light_ammo" type="int" value="10"/>
-    <property name="3_rifle" type="int" value="5"/>
-    <property name="3_rockets" type="int" value="0"/>
-    <property name="3_supply" type="int" value="0"/>
-    <property name="3_tank" type="int" value="0"/>
-    <property name="3_truck" type="int" value="0"/>
-   </properties>
-  </object>
-  <object id="20" name="unit" x="690.595" y="644.974" width="23.8659" height="23.8659">
-   <properties>
-    <property name="1_1_owner" type="int" value="1"/>
-    <property name="1_1_typ" type="int" value="0"/>
-    <property name="1_1_unit_name" value="Island Moles"/>
-    <property name="1_2_1_brigade" type="int" value="1"/>
-    <property name="1_2_2_regiment" type="int" value="1"/>
-    <property name="1_2_3_battalion" type="int" value="2"/>
-    <property name="1_2_4_company" type="int" value="2"/>
-    <property name="2_men" type="int" value="20"/>
-    <property name="3_aircraft" type="int" value="0"/>
-    <property name="3_apc" type="int" value="0"/>
-    <property name="3_art" type="int" value="0"/>
-    <property name="3_heavy_ammo" type="int" value="0"/>
-    <property name="3_heli" type="int" value="0"/>
-    <property name="3_light_ammo" type="int" value="10"/>
-    <property name="3_rifle" type="int" value="5"/>
-    <property name="3_rockets" type="int" value="0"/>
-    <property name="3_supply" type="int" value="0"/>
-    <property name="3_tank" type="int" value="0"/>
-    <property name="3_truck" type="int" value="0"/>
    </properties>
   </object>
  </objectgroup>
