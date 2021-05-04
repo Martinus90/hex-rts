@@ -97,59 +97,70 @@ class Menu(pg.sprite.Sprite):
         self.c_m_b = (0, HEIGHT - MENU_BOTTOM[0])
         self.list.append([self.m_b, self.c_m_b])
 
-        self.position = [self.game.language.DISPLAY_GUI[0], 20, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 15)]
-        self.speed = [self.game.language.DISPLAY_GUI[5], 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 35)]
-        self.time = [self.game.language.DISPLAY_GUI[1], 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 55)]
-        self.data1 = ['Data', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 75)]
-        self.data2 = ['Year', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 95)]
-        self.terrain = [self.game.language.DISPLAY_GUI[6], 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+60, 120)]
-        self.terrain1 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+85, 140)]
-        self.terrain2 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+85, 160)]
-        self.terrain3 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+85, 180)]
+        if 1 == 1: # right menu
+            self.position = [self.game.language.DISPLAY_GUI[0], 20, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 15)]
+            self.speed = [self.game.language.DISPLAY_GUI[5], 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 35)]
+            self.time = [self.game.language.DISPLAY_GUI[1], 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 55)]
+            self.data1 = ['Data', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 75)]
+            self.data2 = ['Year', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 95)]
+            self.terrain = [self.game.language.DISPLAY_GUI[6], 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+60, 120)]
+            self.terrain1 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+85, 140)]
+            self.terrain2 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+85, 160)]
+            self.terrain3 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+85, 180)]
 
-        self.unit = [self.game.language.DISPLAY_GUI[7], 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+60, 210)]
-        self.unit1 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+30, 230)]
-        self.unit2 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+30, 250)]
-        self.unit3 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 270)]
-        self.unit4 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 287)]
-        self.unit5 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 310)]
-        self.unit6 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 330)]
-        self.unit7 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 350)]
+            self.unit = [self.game.language.DISPLAY_GUI[7], 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+60, 210)]
+            self.unit1 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+30, 230)]
+            self.unit2 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+30, 250)]
+            self.unit3 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 270)]
+            self.unit4 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 286)]
+            self.unit5 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 310)]
+            self.unit6 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 326)]
+            self.unit7 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 350)]
 
-        self.building = [self.game.language.DISPLAY_GUI[8], 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+60, 400)]
-        self.building1 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+40, 420)]
-        self.building2 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+70, 445)]
-        self.building3 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+70, 465)]
-        self.building4 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 490)]
-        self.building5 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 510)]
-        self.building6 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 530)]
-        self.building7 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 550)]
+            self.building = [self.game.language.DISPLAY_GUI[8], 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+60, 400)]
+            self.building1 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+40, 420)]
+            self.building2 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+70, 445)]
+            self.building3 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+70, 465)]
+            self.building4 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 490)]
+            self.building5 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 510)]
+            self.building6 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 530)]
+            self.building7 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 550)]
 
-        self.game.texts.append(self.position)
-        self.game.texts.append(self.speed)
-        self.game.texts.append(self.time)
-        self.game.texts.append(self.data1)
-        self.game.texts.append(self.data2)
-        self.game.texts.append(self.terrain)
-        self.game.texts.append(self.terrain1)
-        self.game.texts.append(self.terrain2)
-        self.game.texts.append(self.terrain3)
-        self.game.texts.append(self.unit)
-        self.game.texts.append(self.unit1)
-        self.game.texts.append(self.unit2)
-        self.game.texts.append(self.unit3)
-        self.game.texts.append(self.unit4)
-        self.game.texts.append(self.unit5)
-        self.game.texts.append(self.unit6)
-        self.game.texts.append(self.unit7)
-        self.game.texts.append(self.building)
-        self.game.texts.append(self.building1)
-        self.game.texts.append(self.building2)
-        self.game.texts.append(self.building3)
-        self.game.texts.append(self.building4)
-        self.game.texts.append(self.building5)
-        self.game.texts.append(self.building6)
-        self.game.texts.append(self.building7)
+            self.game.texts.append(self.position)
+            self.game.texts.append(self.speed)
+            self.game.texts.append(self.time)
+            self.game.texts.append(self.data1)
+            self.game.texts.append(self.data2)
+            self.game.texts.append(self.terrain)
+            self.game.texts.append(self.terrain1)
+            self.game.texts.append(self.terrain2)
+            self.game.texts.append(self.terrain3)
+            self.game.texts.append(self.unit)
+            self.game.texts.append(self.unit1)
+            self.game.texts.append(self.unit2)
+            self.game.texts.append(self.unit3)
+            self.game.texts.append(self.unit4)
+            self.game.texts.append(self.unit5)
+            self.game.texts.append(self.unit6)
+            self.game.texts.append(self.unit7)
+            self.game.texts.append(self.building)
+            self.game.texts.append(self.building1)
+            self.game.texts.append(self.building2)
+            self.game.texts.append(self.building3)
+            self.game.texts.append(self.building4)
+            self.game.texts.append(self.building5)
+            self.game.texts.append(self.building6)
+            self.game.texts.append(self.building7)
+
+        if 1 == 1:  #top bar -> tb
+            self.tb_player_money  = ['$ 4000000', 16, DARKGREEN, (40, 17)]
+            self.tb_player_global_money  = ['$ 400', 16, DARKGREEN, (190, 17)]
+            self.tb_player_ex_rate  = ['0.3', 16, GREY, (340, 20)]
+
+            self.game.texts.append(self.tb_player_money)
+            self.game.texts.append(self.tb_player_global_money)
+            self.game.texts.append(self.tb_player_ex_rate)
+
 
 
     def render(self, surface):
@@ -219,7 +230,6 @@ class CW_Button(Button): #CW -> Close window
         self.rect = self.image.get_rect()
 
     def click(self):
-        print("Kliknięto w przycisk")
         self.window.hide()
 
     def check_col(self, mouse):
@@ -248,9 +258,6 @@ class Switch_Button(Button):
         self.textsize = textsize
         self.textcolor = textcolor
         self.variable = variable
-        print("Here")
-        print(self.variable)
-        print(self.window.unit.state[self.variable])
 
         self.visible = self.window.visible
         if self.window.unit.state[self.variable] == True:
@@ -262,7 +269,7 @@ class Switch_Button(Button):
 
     def click(self):
         self.window.unit.state[self.variable] = not self.window.unit.state[self.variable]
-        print(self.window.unit.state[self.variable])
+        #print(self.window.unit.state[self.variable])
 
         if self.window.unit.state[self.variable] == True:
             self.image = self.game.yes_img.copy()
@@ -281,12 +288,13 @@ class Switch_Button(Button):
         self.rect.x = self.pos[0] + self.window.pos[0]
         self.rect.y = self.pos[1] + self.window.pos[1]
 
-class Mobilized_Button(Button):
+class Mobilized_Button(Button): #old button
     def __init__(self, game, window, pos=[300,40], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK):
         self.groups = game.buttons
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.window = window
+        self.unit = self.window.unit
         self.pos = pos
         self.abs_pos = [0,0]
         self.abs_pos[0] = self.pos[0] + self.window.pos[0]
@@ -324,7 +332,7 @@ class Mobilized_Button(Button):
         self.rect.x = self.pos[0] + self.window.pos[0]
         self.rect.y = self.pos[1] + self.window.pos[1]
 
-class Training_Button(Button):
+class Training_Button(Button): #old button
     def __init__(self, game, window, pos=[300,60], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK):
         self.groups = game.buttons
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -386,22 +394,20 @@ class Window(pg.sprite.Sprite):
         self.buttons = []
         self.variables = []
 
-        #self.variables.append(self.unit.men, self.unit.uniforms, self.unit.supply, self.unit.light_ammo, self.unit.heavy_ammo, self.unit.rockets)
-
-        self.buttons.append(CW_Button(self.game, self, pos=[10,10]))
-        self.buttons.append(Switch_Button(self.game, self, pos=[330,40], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="mobilized"))
-        self.buttons.append(Switch_Button(self.game, self, pos=[330,60], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="training"))
-        self.buttons.append(Switch_Button(self.game, self, pos=[330,80], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="refill_equipment"))
-        self.buttons.append(Switch_Button(self.game, self, pos=[330,100], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="refill_crew"))
-
+        #draw window
         self.image = pg.Surface(self.size)
-        
         pg.draw.rect(self.image, self.textcolor, (0, 0, size[0], size[1]))
         pg.draw.rect(self.image, self.color, (0+self.border_size, 0+self.border_size, size[0]-self.border_size*2-1, size[1]-self.border_size*2-1))
-        #pg.draw.rect
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.text, False, self.textcolor), self.textpos)
 
-        #here eq names
+        #draw buttons
+        self.buttons.append(CW_Button(self.game, self, pos=[10,10]))
+        self.buttons.append(Switch_Button(self.game, self, pos=[360,40], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="mobilized"))
+        self.buttons.append(Switch_Button(self.game, self, pos=[360,60], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="training"))
+        self.buttons.append(Switch_Button(self.game, self, pos=[360,80], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="refill_equipment"))
+        self.buttons.append(Switch_Button(self.game, self, pos=[360,100], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="refill_crew"))
+
+        #draw eq names
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[3], False, self.textcolor), (50, 40))
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[0], False, self.textcolor), (50, 60))
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[1], False, self.textcolor), (50, 80))
@@ -419,23 +425,16 @@ class Window(pg.sprite.Sprite):
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[11], False, self.textcolor), (50, 320))
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[12], False, self.textcolor), (50, 340))
 
-
-        #here gui text
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[1], False, self.textcolor), (350,42))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[4], False, self.textcolor), (350,60))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[5], False, self.textcolor), (350,80))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[6], False, self.textcolor), (350,100))
-
-
+        #draw gui text
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[1], False, self.textcolor), (380,42))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[4], False, self.textcolor), (380,60))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[5], False, self.textcolor), (380,80))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[6], False, self.textcolor), (380,100))
 
 
 
         self.rect = self.image.get_rect()
-        print("TU")
-        print(self.image)
         self.rectangle = pg.Surface(self.size)
-        print("A tu następne")
-        print(self.rectangle)
         #self.rect.x = 600
         #self.rect.y = 600
     
@@ -450,13 +449,6 @@ class Window(pg.sprite.Sprite):
     def update(self):
         self.rect.x = self.pos[0]
         self.rect.y = self.pos[1]
-
-        #self.variables = []
-        #self.variables.append(self.unit.men, self.unit.uniforms, self.unit.supply, self.unit.light_ammo, self.unit.heavy_ammo, self.unit.rockets)
-
-
-        #here updating variables
-
 
 class OU_Button(Button):
     def __init__(self, game, unit, pos=[6,6], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK):

@@ -561,9 +561,11 @@ class Unit(pg.sprite.Sprite):
         self.refill_equipment = False
         self.refill_crew = False
 
-        self.combat_ability = 25
-        self.combat_ability_max = 25
+        self.combat_ability = 20
+        self.combat_ability_max = 20
         self.experience = 0
+        self.tiredness = 0
+        self.tiredness_max = 20
         self.task = self.game.language.COMMANDS[0]
         
         self.men = men
@@ -623,8 +625,8 @@ class Unit(pg.sprite.Sprite):
                             self.print_mobilized(), 
                             self.game.language.DESCRIPTION[2] + ": " + str(self.combat_ability), 
                             self.game.language.DESCRIPTION[0] + ": " + str(self.experience), 
-                            self.task, 
-                            self.game.language.DESCRIPTION[3] + ": " + str(self.men)]
+                            self.game.language.DESCRIPTION[7] + ": " + str(self.tiredness) + "/" + str(self.tiredness_max),
+                            self.task]
 
     #def print_side(self):
     #    return self.owner.name
@@ -663,15 +665,8 @@ class Unit(pg.sprite.Sprite):
                 c = self.unit_typ.s_river
             elif t == self.game.language.TERRAIN[6]:
                 c = self.unit_typ.s_normal
-        
-
-
-
-
         else:
             c = 20
-
-        
 
         #return int(c)
         return self.unit_typ.move_cost(t)
@@ -803,7 +798,16 @@ class Unit(pg.sprite.Sprite):
             self.task = self.game.language.COMMANDS[0]
             if self.combat_ability < self.combat_ability_max:
                 self.combat_ability += 1
+            elif self.combat_ability > self.combat_ability_max:
+                self.combat_ability = self.combat_ability_max
+
             #here script that add some progress to constructing near building
+        
+        if self.state['mobilized'] == True:
+            self.combat_ability_max = 20
+        else:
+            self.combat_ability_max = 5
+
 
     def update(self): 
         self.hexid = hex_id(OFFSET, self.hex, self.game.map.tmxdata.width)
@@ -814,12 +818,14 @@ class Unit(pg.sprite.Sprite):
         self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2 #+ FLAG_OFFSET[0]
         self.rect.y = self.y * TILESIZE[1] #+ FLAG_OFFSET[1]
 
+        
+
         self.description = [self.owner.name, 
                             self.unit_typ.name, 
                             self.print_mobilized(), 
                             self.game.language.DESCRIPTION[2] + ": " + str(self.combat_ability) + "/" + str(self.combat_ability_max), 
                             self.game.language.DESCRIPTION[0] + ": " + str(self.experience), 
-                            self.task, 
-                            self.game.language.DESCRIPTION[3] + ": " + str(self.men)]
+                            self.game.language.DESCRIPTION[7] + ": " + str(self.tiredness) + "/" + str(self.tiredness_max),
+                            self.task,]
 
         

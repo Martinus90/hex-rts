@@ -13,8 +13,6 @@ from languages import *
 class Game:
     def __init__(self):
         pg.init()
-        print("Tu Tu")
-        print(pg.get_init())
         pg.font.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
@@ -70,6 +68,12 @@ class Game:
             self.uranium_img = pg.image.load(path.join(img_folder, URANIUM_IMG))
             self.water_img = pg.image.load(path.join(img_folder, WATER_IMG))
 
+            self.money_img = pg.image.load(path.join(img_folder, MONEY_IMG))
+            self.global_img = pg.image.load(path.join(img_folder, GLOBAL_IMG))
+            self.global_img.set_colorkey(VIOLET)
+            self.exchange_img = pg.image.load(path.join(img_folder, EXCHANGE_IMG))
+            self.exchange_img.set_colorkey(VIOLET)
+
             self.construction_img = pg.image.load(path.join(img_folder, CONSTRUCTION_IMG))
             self.village_img = pg.image.load(path.join(img_folder, VILLAGE_IMG))
             self.city_img = pg.image.load(path.join(img_folder, CITY_IMG))
@@ -100,14 +104,10 @@ class Game:
 
         self.map = TiledMap(self, path.join(map_folder, 'default.tmx'))#test / test2 / default
         
-        self.side_0 = "Neutral"
-        self.side_1 = "Player"
-        self.side_2 = "Enemy"
-        self.typ_0 = "Infantry"
-        self.typ_1 = "Armored"
-
-        #self.textsurface = self.myfont.render('Jakiś text', False, (0, 0, 0))
-
+        #side 0 is always neutral / side 1 is always player / other side are variable
+        #self.side_0 = "Neutral" 
+        #self.side_1 = "Player"
+        #self.side_2 = "Enemy"
 
     def new(self):
         # initialize all variables and do all the setup for a new game
@@ -123,9 +123,10 @@ class Game:
         self.units = pg.sprite.Group()
         self.texts = []
 
+        #first on the list is always neutral, second is player, 3+ are others / to change color just change side
         self.players.append(Contender(self, name="Neutral", player=False, side=0, exc_rt=1, money=0, global_money=0, stability=0, reputation=0))
-        self.players.append(Contender(self, name="Sovenya", player=True, side=1, exc_rt=1, money=100, global_money=100, stability=0, reputation=0))
-        self.players.append(Contender(self, name="Nebohray", player=False, side=2, exc_rt=1, money=100, global_money=100, stability=0, reputation=0))
+        self.players.append(Contender(self, name="Sovenya", player=True, side=1, exc_rt=1, money=1000, global_money=100, stability=0, reputation=0))
+        self.players.append(Contender(self, name="Nebohray", player=False, side=2, exc_rt=1, money=1000, global_money=100, stability=0, reputation=0))
 
         #self.UNIT_TYPE = ["Artillery","Mechanized","Reconnaissance","Motorized","Other","Logistic","Headquarters","Helicopters","Aircraft","Anti-Aircraft","Anti-Tank","Missile","Engineering"]
 
@@ -182,8 +183,8 @@ class Game:
 
 
 
-        print(self.map.trees)
-        print(self.map.units)
+        #print(self.map.trees)
+        #print(self.map.units)
 
         #print([x.hex for x in self.walls])
         #for h in self.walls:
@@ -253,10 +254,6 @@ class Game:
                 self.selecting = grid
                 self.menu.terrain1[0] = "X: " + str(self.selecting.col) + ", Y: " + str(self.selecting.row)
                 self.menu.terrain2[0] = str(self.selecting.terrain)
-                print(self.selecting.id)
-                print(self.selecting.owner)
-                print(self.selecting.building)
-
 
         for r in self.resources:
             if (r.col == self.mouse_pos.col) and (r.row == self.mouse_pos.row):
@@ -341,7 +338,6 @@ class Game:
         self.time()
         if self.resourcing != None:
             self.menu.terrain3[0] = self.resourcing.name + " " + str(self.resourcing.value)
-
         if self.building != None:
             self.menu.building1[0] = self.building.description[0]
             self.menu.building2[0] = self.building.description[1]
@@ -350,7 +346,6 @@ class Game:
             self.menu.building5[0] = self.building.description[4]
             self.menu.building6[0] = self.building.description[5]
             self.menu.building7[0] = self.building.description[6]
-
         if self.uniting != None:
             self.menu.unit1[0] = self.uniting.description[0]
             self.menu.unit2[0] = self.uniting.description[1]
@@ -371,18 +366,20 @@ class Game:
                 #print(sprite.x, sprite.y, sprite.z)
             self.screen.blit(sprite.image, self.camera.apply(sprite))
             #self.screen.blit(sprite.image, self.camera.apply(sprite))
-
         self.screen.blit(self.menu2, (0, 0))
+        self.screen.blit(self.players[1].image, (12, 0))
+        self.screen.blit(self.money_img, (10, 30))
+        self.screen.blit(self.global_img, (163, 8))
+        self.screen.blit(self.money_img, (160, 30))
+        self.screen.blit(self.exchange_img, (312, 6))
+        self.screen.blit(self.money_img, (310, 30))
+        
+
+        
+
         for text in self.texts:
             self.screen.blit(pg.font.Font(FONT_NAME, text[1]).render(text[0], False, text[2]), text[3])
 
-        
-        #for menu in self.menus:
-        #    self.screen.blit(menu.image, menu.coord)
-
-        #print(self.camera.x / TILESIZE[0], self.camera.y / TILESIZE[1])
-        #print("DUMB TEXT TO EASY FINDING")
-        #print(self.walls)
         
         if self.selecting != None:
             self.screen.blit(self.map.tmxdata.images[self.selecting.gid], (WIDTH - MENU_RIGHT[0]+10, 140))
@@ -398,8 +395,6 @@ class Game:
             if self.uniting.window.visible == True:
                 self.screen.blit(self.uniting.window.image, self.uniting.window.pos)
                 #for var in self.uniting.window.variables:
-                
-        
             
         for window in self.windows:
             if window.visible == True:
@@ -429,6 +424,12 @@ class Game:
                     self.screen.blit(self.uniting.unit_typ.image, (window.pos[0] + 160, window.pos[1] + 56))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.unit_typ.name, False, LIGHTGREY), (window.pos[0] + 200, window.pos[1] + 58))
 
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.print_mobilized(), False, LIGHTGREY), (window.pos[0] + 170, window.pos[1] + 80))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[2] + ": " + str(window.unit.combat_ability) + "/" + str(window.unit.combat_ability_max), False, LIGHTGREY), (window.pos[0] + 170, window.pos[1] + 96))
+                    
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[0] + ": " + str(window.unit.experience), False, LIGHTGREY), (window.pos[0] + 170, window.pos[1] + 117))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[7] + ": " + str(window.unit.tiredness) + "/" + str(window.unit.tiredness_max), False, LIGHTGREY), (window.pos[0] + 170, window.pos[1] + 133))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.task, False, LIGHTGREY), (window.pos[0] + 170, window.pos[1] + 153))
 
         pg.display.flip()
 

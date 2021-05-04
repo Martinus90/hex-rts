@@ -23,7 +23,7 @@ class Language:
             self.RANKS2 = ["Fugleman","Leader","Commander","Chieftain","Warlord"]
 
             self.COMMANDS = ["Waiting", "Going to: ", "Training", "Constructing"]
-            self.DESCRIPTION = ["Experience", "Mobilized", "Combat Ability", "Men", "Training", "Refill eq.", "Refill crew"]
+            self.DESCRIPTION = ["Experience", "Mobilized", "Combat Ability", "Men", "Training", "Refill eq.", "Refill crew", "Tiredness"]
             #self.UNIT_D
 
         elif LANGUAGE == "PL":
@@ -48,7 +48,7 @@ class Language:
             self.RANKS2 = ["Przywodca","Lider","Dowodca","Wodz","Watazka"]
 
             self.COMMANDS = ["Czeka", "Idzie do: ", "Trenuje", "Buduje"]
-            self.DESCRIPTION = ["Doswiadczenie", "Zmobilizowana", "Zdolosc bojowa", "Ludzie", "Trening", "Uzup. ekw.", "Uzup. załoge"]
+            self.DESCRIPTION = ["Doswiadczenie", "Zmobilizowana", "Zdolosc bojowa", "Ludzie", "Trening", "Uzup. ekw.", "Uzup. załoge", "Zmęczenie"]
 
         self.PERSON_NAME1 = ["Alexi Jastremsky","Stoycho Jellinek","Krastan Lhotzky","Ognyan Wolenska","Kalin Levitsky","Techoslav Sacharov","Blagovest Soloukhin","Razvigor Novak","Vojta Gindin","Borik Malenkov"]
         self.PERSON_NAME2 = ["Darko Brodsky","Tomislav Kruskal","Ljupco Jelinek","Vojkan Winogradsky","Drago Tomasek","Mecek Kudelin","Milo Mirkovic","Savo Sedlacek","Mutimir Volinin","Milutin Wolansky"]
