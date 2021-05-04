@@ -34,7 +34,7 @@ class doc_generator(object):
         pdw.writedoc('testy')
 
 d = doc_generator({"Args" : None, "Returns" : None, "Raises" : None, "Attributes" : None, "Summary": None, "Description": None})
-d.do_html()
+#d.do_html()
 
 
 print(ctts(RED))
