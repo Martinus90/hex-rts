@@ -7,7 +7,7 @@ class Diplomacy(pg.sprite.Sprite):
         self.game = game
 
 class Contender(pg.sprite.Sprite):
-    def __init__(self, game, name="Player", player=False, side=0, exc_rt=1, money=0, global_money=0, stability=0, reputation=0):
+    def __init__(self, game, name="Player", player=False, side=0, exc_rt=1, money=0, global_money=0, reputation=0, stability=0):
         self.game = game
         self.name = name
         self.player = player
@@ -15,8 +15,8 @@ class Contender(pg.sprite.Sprite):
         self.exc_rt = exc_rt
         self.money = money
         self.global_money = global_money
-        self.stability = stability
         self.reputation = reputation
+        self.stability = stability
 
         self.image = pg.Surface((64, 64))
         self.image.fill(VIOLET)
@@ -34,6 +34,9 @@ class Contender(pg.sprite.Sprite):
             self.money = self.money + (quantity * self.exc_rt)
 
     def do(self):
+        pass
+
+    def update(self):
         pass
 
 class Unit_Type(pg.sprite.Sprite):
@@ -81,6 +84,7 @@ class Menu(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.list = []
+        self.buttons = []
 
         self.m_r = pg.Surface((MENU_RIGHT[0], HEIGHT))
         self.m_r.fill(DARKGREY)
@@ -96,6 +100,9 @@ class Menu(pg.sprite.Sprite):
         self.m_b.fill(DARKGREY)
         self.c_m_b = (0, HEIGHT - MENU_BOTTOM[0])
         self.list.append([self.m_b, self.c_m_b])
+
+        self.new_building_window = Window(self.game, pos=[100,100], size=(300, 400), color=DARKGREY, text="Text", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3)
+        self.new_building_button = Button(self.game, self.new_building_window, pos=[160,160], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK)
 
         if 1 == 1: # right menu
             self.position = [self.game.language.DISPLAY_GUI[0], 20, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 15)]
@@ -153,15 +160,15 @@ class Menu(pg.sprite.Sprite):
             self.game.texts.append(self.building7)
 
         if 1 == 1:  #top bar -> tb
-            self.tb_player_money  = ['$ 4000000', 16, DARKGREEN, (40, 17)]
-            self.tb_player_global_money  = ['$ 400', 16, DARKGREEN, (190, 17)]
-            self.tb_player_ex_rate  = ['0.3', 16, GREY, (340, 20)]
-
+            self.tb_player_money  = ['$ 4000000', 16, DARKGREEN, (340, 17)]
+            self.tb_player_global_money  = ['$ 400', 16, DARKGREEN, (490, 17)]
+        
             self.game.texts.append(self.tb_player_money)
             self.game.texts.append(self.tb_player_global_money)
-            self.game.texts.append(self.tb_player_ex_rate)
 
-
+            #for a in range(len(self.game.players)-1):
+                #self.tb_ex_rate  = ['1', 16, GREY, (340, 20)]
+                #self.game.texts.append(self.tb_player_ex_rate)
 
     def render(self, surface):
         for im in self.list:
@@ -174,16 +181,20 @@ class Menu(pg.sprite.Sprite):
         self.render(menu)
         return menu
 
+    def update(self):
+        self.tb_player_money[0] = "$ " + str(self.game.players[1].money)
+        self.tb_player_global_money[0] = "$ " + str(self.game.players[1].global_money)
+
 class Button(pg.sprite.Sprite): #regular button
-    def __init__(self, game, window, pos=[6,6], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK):
+    def __init__(self, game, window, pos=[6,6], size=(20, 20), color=LIGHTGREY, text="X", textsize=24, textcolor=BLACK):
         self.groups = game.buttons
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.window = window
         self.pos = pos
-        self.abs_pos = [0,0]
-        self.abs_pos[0] = self.pos[0] + self.window.pos[0]
-        self.abs_pos[1] = self.pos[1] + self.window.pos[1]
+        #self.abs_pos = [0,0]
+        #self.abs_pos[0] = self.pos[0] + self.window.pos[0]
+        #self.abs_pos[1] = self.pos[1] + self.window.pos[1]
         self.size = size
         self.color = color
         self.text = text
@@ -191,20 +202,23 @@ class Button(pg.sprite.Sprite): #regular button
         self.textcolor = textcolor
 
         self.visible = self.window.visible
-        self.image = self.game.x_img.copy()
+        #self.image = self.game.new_b_button.copy()
+
+        self.image = self.game.button_1_img.copy()
+        self.image.blit(pg.font.Font(FONT_NAME, 24).render("New", False, LIGHTGREY), (8,4))
         self.image.set_colorkey(VIOLET)
         self.rect = self.image.get_rect()
 
     def click(self):
-        self.window.visible = False
-        self.game.window_display = False
+        self.window.visible = True
+        self.game.window_display = True
 
     def check_col(self, mouse):
         if self.rect.collidepoint(mouse):
             self.click()
 
     def update(self):
-        self.abs_pos = self.pos + self.window.pos
+        #self.abs_pos = self.pos + self.window.pos
         self.rect.x = self.pos[0] + self.window.pos[0]
         self.rect.y = self.pos[1] + self.window.pos[1]
 
@@ -215,9 +229,9 @@ class CW_Button(Button): #CW -> Close window
         self.game = game
         self.window = window
         self.pos = pos
-        self.abs_pos = [0,0]
-        self.abs_pos[0] = self.pos[0] + self.window.pos[0]
-        self.abs_pos[1] = self.pos[1] + self.window.pos[1]
+        #self.abs_pos = [0,0]
+        #self.abs_pos[0] = self.pos[0] + self.window.pos[0]
+        #self.abs_pos[1] = self.pos[1] + self.window.pos[1]
         self.size = size
         self.color = color
         self.text = text
@@ -238,7 +252,7 @@ class CW_Button(Button): #CW -> Close window
 
     def update(self):
         self.visible = self.window.visible
-        self.abs_pos = self.pos + self.window.pos
+        #self.abs_pos = self.pos + self.window.pos
         self.rect.x = self.pos[0] + self.window.pos[0]
         self.rect.y = self.pos[1] + self.window.pos[1]
 
@@ -249,9 +263,9 @@ class Switch_Button(Button):
         self.game = game
         self.window = window
         self.pos = pos
-        self.abs_pos = [0,0]
-        self.abs_pos[0] = self.pos[0] + self.window.pos[0]
-        self.abs_pos[1] = self.pos[1] + self.window.pos[1]
+        #self.abs_pos = [0,0]
+        #self.abs_pos[0] = self.pos[0] + self.window.pos[0]
+        #self.abs_pos[1] = self.pos[1] + self.window.pos[1]
         self.size = size
         self.color = color
         self.text = text
@@ -284,7 +298,7 @@ class Switch_Button(Button):
 
     def update(self):
         self.visible = self.window.visible
-        self.abs_pos = self.pos + self.window.pos
+        #self.abs_pos = self.pos + self.window.pos
         self.rect.x = self.pos[0] + self.window.pos[0]
         self.rect.y = self.pos[1] + self.window.pos[1]
 
@@ -375,7 +389,84 @@ class Training_Button(Button): #old button
         self.rect.x = self.pos[0] + self.window.pos[0]
         self.rect.y = self.pos[1] + self.window.pos[1]
 
+class OW_Button(Button): #open window
+    def __init__(self, game, window, pos=[6,6], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK):
+        self.groups = game.buttons
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.window = self.window
+        self.pos = tuple(pos)
+        self.abs_pos = [0,0]
+        self.abs_pos[0] = self.pos[0] + self.window.pos[0]
+        self.abs_pos[1] = self.pos[1] + self.window.pos[1]
+        self.size = size
+        self.color = color
+        self.text = text
+        self.textsize = textsize
+        self.textcolor = textcolor
+        self.visible = True
+        self.image = self.game.o_window_img.copy()
+        self.image.set_colorkey(VIOLET)
+
+        self.rect = self.image.get_rect()
+        #self.rect.x = 
+
+    def check_col(self, mouse):
+        if self.rect.collidepoint(mouse):
+            self.click()
+
+    def click(self):
+        self.window.show()
+
+    def update(self):
+        self.rect.x = self.pos[0]
+        self.rect.y = self.pos[1]
+
 class Window(pg.sprite.Sprite):
+    def __init__(self, game, pos=[100,100], size=(300, 400), color=DARKGREY, text="Text", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3):
+        self.groups = game.windows
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.pos = pos
+        self.size = size
+        self.color = color
+        self.text = text
+        self.textsize = textsize
+        self.textcolor = textcolor
+        self.textpos = textpos
+        self.border_size = border_size
+        self.visible = False
+        self.game.window_display = self.visible
+        self.buttons = []
+        self.variables = []
+
+        #draw window
+        self.image = pg.Surface(self.size)
+        pg.draw.rect(self.image, self.textcolor, (0, 0, size[0], size[1]))
+        pg.draw.rect(self.image, self.color, (0+self.border_size, 0+self.border_size, size[0]-self.border_size*2-1, size[1]-self.border_size*2-1))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.text, False, self.textcolor), self.textpos)
+
+        #draw buttons
+        self.buttons.append(CW_Button(self.game, self, pos=[10,10]))
+
+        self.rect = self.image.get_rect()
+        self.rectangle = pg.Surface(self.size)
+        #self.rect.x = 600
+        #self.rect.y = 600
+    
+    def show(self):
+        self.visible = True
+        self.game.window_display = True
+
+    def hide(self):
+        self.visible = False
+        self.game.window_display = False
+
+    def update(self):
+        self.rect.x = self.pos[0]
+        self.rect.y = self.pos[1]
+
+class Unit_Window(pg.sprite.Sprite):
     def __init__(self, unit, game, pos=[100,100], size=(300, 400), color=DARKGREY, text="Text", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3):
         self.groups = game.windows
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -483,3 +574,5 @@ class OU_Button(Button):
     def update(self):
         self.rect.x = self.pos[0]
         self.rect.y = self.pos[1]
+
+

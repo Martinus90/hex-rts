@@ -57,6 +57,10 @@ FLAG_SIZE = (17, 11)
 FLAG_OFFSET = (1, 9)
 UNIT_SIZE = (18, 10)
 UNIT_OFFSET = (11, 4)
+TOP_BAR_DISTANS = 600
+TOP_BAR_STEP = 100
+STABILITY_SIZE = (21, 21)
+STABILITY_OFFSET = (0, 0)
 
 SCROLL_SPEED = 10
 GAME_SPEED = 1
@@ -83,6 +87,8 @@ WATER_IMG = "water.bmp"
 MONEY_IMG = "money.bmp"
 GLOBAL_IMG = "global.bmp"
 EXCHANGE_IMG = "exchange.bmp"
+REPUTATION_IMG = "reputation.bmp"
+STABILITY_IMG = "stability.bmp"
 
 CONSTRUCTION_IMG = "construction.bmp"
 VILLAGE_IMG = "village.bmp"

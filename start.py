@@ -73,6 +73,20 @@ class Game:
             self.global_img.set_colorkey(VIOLET)
             self.exchange_img = pg.image.load(path.join(img_folder, EXCHANGE_IMG))
             self.exchange_img.set_colorkey(VIOLET)
+            self.reputation_img = pg.image.load(path.join(img_folder, REPUTATION_IMG))
+            self.reputation_img.set_colorkey(VIOLET)
+            self.stability_img = pg.image.load(path.join(img_folder, STABILITY_IMG))
+            self.stability_img.set_colorkey(VIOLET)
+            self.stability = []
+            for a in range(5):
+                self.image = pg.Surface(STABILITY_SIZE)
+                self.image.fill(VIOLET)
+                self.image.set_colorkey(VIOLET)
+                self.image.blit(self.stability_img.copy(),(0, 0), (0, a*STABILITY_SIZE[1], STABILITY_SIZE[0], STABILITY_SIZE[1]))
+                self.stability.append(self.image)
+
+            print(self.stability)
+
 
             self.construction_img = pg.image.load(path.join(img_folder, CONSTRUCTION_IMG))
             self.village_img = pg.image.load(path.join(img_folder, VILLAGE_IMG))
@@ -97,6 +111,7 @@ class Game:
             self.window_img = pg.image.load(path.join(gui_folder, WINDOW_IMG))
             self.o_window_img = pg.image.load(path.join(gui_folder, O_WINDOW_IMG))
             self.o_window_img.blit(pg.font.Font(FONT_NAME, 24).render("Open", False, LIGHTGREY), (2,4))
+            self.button_1_img = pg.image.load(path.join(gui_folder, O_WINDOW_IMG))
 
 
             self.yes_img = pg.image.load(path.join(gui_folder, YES_IMG))
@@ -124,9 +139,13 @@ class Game:
         self.texts = []
 
         #first on the list is always neutral, second is player, 3+ are others / to change color just change side
-        self.players.append(Contender(self, name="Neutral", player=False, side=0, exc_rt=1, money=0, global_money=0, stability=0, reputation=0))
-        self.players.append(Contender(self, name="Sovenya", player=True, side=1, exc_rt=1, money=1000, global_money=100, stability=0, reputation=0))
-        self.players.append(Contender(self, name="Nebohray", player=False, side=2, exc_rt=1, money=1000, global_money=100, stability=0, reputation=0))
+        self.players.append(Contender(self, name="Neutral", player=False, side=0, exc_rt=1, money=0, global_money=0, reputation=0, stability=0))
+        self.players.append(Contender(self, name="Sovenya", player=True, side=1, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
+        self.players.append(Contender(self, name="Nebohray", player=False, side=2, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
+        self.players.append(Contender(self, name="t943", player=False, side=3, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
+        self.players.append(Contender(self, name="hj6u654", player=False, side=4, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
+
+
 
         #self.UNIT_TYPE = ["Artillery","Mechanized","Reconnaissance","Motorized","Other","Logistic","Headquarters","Helicopters","Aircraft","Anti-Aircraft","Anti-Tank","Missile","Engineering"]
 
@@ -331,6 +350,7 @@ class Game:
         # update portion of the game loop
         self.all_sprites.update()
         self.camera.update(self.player)
+        self.menu.update()
         self.windows.update()
         self.buttons.update()
         # update mouse pos & time
@@ -367,14 +387,28 @@ class Game:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
             #self.screen.blit(sprite.image, self.camera.apply(sprite))
         self.screen.blit(self.menu2, (0, 0))
-        self.screen.blit(self.players[1].image, (12, 0))
-        self.screen.blit(self.money_img, (10, 30))
-        self.screen.blit(self.global_img, (163, 8))
-        self.screen.blit(self.money_img, (160, 30))
-        self.screen.blit(self.exchange_img, (312, 6))
-        self.screen.blit(self.money_img, (310, 30))
-        
+        self.screen.blit(self.menu.new_building_button.image, (0, 0))
 
+        #draw top bar
+        self.screen.blit(self.players[1].image, (5, -2))
+        self.screen.blit(self.stability[self.players[1].stability], (4, 23))
+
+        self.screen.blit(self.players[1].image, (312, 0))
+        self.screen.blit(self.money_img, (310, 30))
+        self.screen.blit(self.global_img, (463, 8))
+        self.screen.blit(self.money_img, (460, 30))
+
+        
+        for a in range(5):
+            #self.screen.blit(self.stability[a], (STABILITY_OFFSET[0] + (a * 30), STABILITY_OFFSET[1]))
+            pass
+
+        for a in range(len(self.players)-1):
+            self.screen.blit(self.players[a+1].image, (TOP_BAR_DISTANS + (a * TOP_BAR_STEP), -6))
+            self.screen.blit(self.exchange_img, (TOP_BAR_DISTANS + (a * TOP_BAR_STEP), 14))
+            self.screen.blit(self.global_img, (TOP_BAR_DISTANS+3 + (a * TOP_BAR_STEP), 34))
+
+            self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(self.players[a+1].exc_rt), False, LIGHTGREY), (TOP_BAR_DISTANS+20 + (a * TOP_BAR_STEP), 17))
         
 
         for text in self.texts:
@@ -383,6 +417,13 @@ class Game:
         
         if self.selecting != None:
             self.screen.blit(self.map.tmxdata.images[self.selecting.gid], (WIDTH - MENU_RIGHT[0]+10, 140))
+            
+            if self.selecting.building == None:
+                #self.screen.blit(self.building.image, (WIDTH - MENU_RIGHT[0]+0, 435))
+                print("Empty place to build something")
+            else:
+                print("There is a building")
+
         if self.resourcing != None:
             self.screen.blit(self.resourcing.image, (WIDTH - MENU_RIGHT[0]+10, 140))
         if self.building != None:
@@ -463,6 +504,8 @@ class Game:
                 if event.key == pg.K_e:
                     self.player.x = 12
                     self.player.y = 12
+                if event.key == pg.K_r:
+                    self.players[1].stability += 1 
                 if event.key == pg.K_m:
                     self.territory_visible = not self.territory_visible
                 if (event.key == 61) or (event.key == 270): #plus key
