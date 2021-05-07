@@ -132,6 +132,8 @@ class Game:
         self.resources = pg.sprite.Group()
         self.menus = pg.sprite.Group()
         self.windows = pg.sprite.Group()
+        self.unit_windows = pg.sprite.Group()
+        self.menu_windows = pg.sprite.Group()
         self.buttons = pg.sprite.Group()
         self.settlements = pg.sprite.Group()
         self.buildings = pg.sprite.Group()
@@ -387,7 +389,6 @@ class Game:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
             #self.screen.blit(sprite.image, self.camera.apply(sprite))
         self.screen.blit(self.menu2, (0, 0))
-        self.screen.blit(self.menu.new_building_button.image, (0, 0))
 
         #draw top bar
         self.screen.blit(self.players[1].image, (5, -2))
@@ -420,9 +421,11 @@ class Game:
             
             if self.selecting.building == None:
                 #self.screen.blit(self.building.image, (WIDTH - MENU_RIGHT[0]+0, 435))
-                print("Empty place to build something")
+                #print("Empty place to build something")
+                self.screen.blit(self.menu.new_building_button.image, self.menu.new_building_button.pos)
             else:
-                print("There is a building")
+                #print("There is a building")
+                pass
 
         if self.resourcing != None:
             self.screen.blit(self.resourcing.image, (WIDTH - MENU_RIGHT[0]+10, 140))
@@ -437,7 +440,7 @@ class Game:
                 self.screen.blit(self.uniting.window.image, self.uniting.window.pos)
                 #for var in self.uniting.window.variables:
             
-        for window in self.windows:
+        for window in self.unit_windows:
             if window.visible == True:
                 self.screen.blit(window.image, window.pos)
                 for button in window.buttons:
@@ -471,6 +474,16 @@ class Game:
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[0] + ": " + str(window.unit.experience), False, LIGHTGREY), (window.pos[0] + 170, window.pos[1] + 117))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[7] + ": " + str(window.unit.tiredness) + "/" + str(window.unit.tiredness_max), False, LIGHTGREY), (window.pos[0] + 170, window.pos[1] + 133))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.task, False, LIGHTGREY), (window.pos[0] + 170, window.pos[1] + 153))
+
+        for window in self.menu_windows:
+            if window.visible == True:
+                self.screen.blit(window.image, window.pos)
+                for button in window.buttons:
+                    window.image.blit(button.image, button.pos)
+                for variable in window.variables:
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(variable[0], False, LIGHTGREY), (window.pos[0] + variable[3][0], window.pos[1] + variable[3][1]))
+
+ 
 
         pg.display.flip()
 
@@ -558,8 +571,15 @@ class Game:
 
                 if pg.mouse.get_pos()[0] > (WIDTH - MENU_RIGHT[0]):
                     if event.button == 1:
+                        #print(self.selecting.building)
                         if self.uniting: 
                             self.uniting.button.check_col(pg.mouse.get_pos())
+
+                        if self.selecting.building == None:
+                            for a in self.menu.buttons:
+                                print(self.menu.buttons)
+                                a.check_col(pg.mouse.get_pos())
+                        
 
 
     def show_start_screen(self):
