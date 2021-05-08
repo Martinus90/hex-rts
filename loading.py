@@ -1,6 +1,7 @@
 import pygame as pg
 from settings import *
 from languages import *
+from sprites import *
 
 class Diplomacy(pg.sprite.Sprite):
     def __init__(self, game):
@@ -102,9 +103,7 @@ class Menu(pg.sprite.Sprite):
         self.list.append([self.m_b, self.c_m_b])
 
         self.new_building_window = New_Building_Window(self.game, pos=[100,100], size=(300, 400), color=DARKGREY, text="New Building", textsize=18, textcolor=LIGHTGREY, textpos=(40,10), border_size=3)
-        self.new_building_window.buttons.append(Function_Button(self.game, self.new_building_window, pos=(20, 350), size=(20, 20), color=DARKGREY, text="Prev", textsize=20, textcolor=LIGHTGREY, function="func_1"))
-        self.new_building_window.buttons.append(Function_Button(self.game, self.new_building_window, pos=(220, 350), size=(20, 20), color=DARKGREY, text="Next", textsize=20, textcolor=LIGHTGREY, function="func_2"))
-
+        
         self.new_building_button = OW_Button(self.game, self.new_building_window, pos=[WIDTH - MENU_RIGHT[0]+70, 425], size=(20, 20), color=DARKGREY, text="New", textsize=24, textcolor=LIGHTGREY)
         self.buttons.append(self.new_building_button)
 
@@ -523,14 +522,21 @@ class New_Building_Window(Window):
         self.game.window_display = self.visible
         self.buttons = []
         self.variables = []
+        self.resources = []
         self.building_typ = 1
-        print(len(self.game.language.BUILDINGS1))
+
+        self.buttons.append(Function_Button(self.game, self, pos=(20, 350), size=(20, 20), color=DARKGREY, text="Prev", textsize=20, textcolor=LIGHTGREY, function="func_1"))
+        self.buttons.append(Function_Button(self.game, self, pos=(220, 350), size=(20, 20), color=DARKGREY, text="Next", textsize=20, textcolor=LIGHTGREY, function="func_2"))
+        self.buttons.append(Function_Button(self.game, self, pos=(120, 350), size=(20, 20), color=DARKGREY, text="Done", textsize=20, textcolor=LIGHTGREY, function="func_3"))
+
 
         self.var1 = ['', 16, LIGHTGREY, (10, 45)]
         self.var2 = ['Resouce cost:', 16, LIGHTGREY, (10, 65)]
         self.var3 = ['', 16, LIGHTGREY, (10, 85)]
         self.var4 = ['', 16, LIGHTGREY, (10, 105)]
         self.var5 = ['', 16, LIGHTGREY, (10, 125)]
+        self.var6 = ['Near resources:', 16, LIGHTGREY, (140, 65)]
+
 
 
         self.variables.append(self.var1)
@@ -538,6 +544,7 @@ class New_Building_Window(Window):
         self.variables.append(self.var3)
         self.variables.append(self.var4)
         self.variables.append(self.var5)
+        self.variables.append(self.var6)
 
         if 1 == 1:
             #draw window
@@ -555,6 +562,8 @@ class New_Building_Window(Window):
             self.func_1()
         elif function == "func_2":
             self.func_2()
+        elif function == "func_3":
+            self.func_3()
         else:
             pass
 
@@ -565,6 +574,7 @@ class New_Building_Window(Window):
         else:
             self.building_typ = 17
         print(self.building_typ)
+        print(self.buttons)
 
     def func_2(self):
         print("Function 2")
@@ -574,21 +584,34 @@ class New_Building_Window(Window):
             self.building_typ = 1
         print(self.building_typ)
 
+    def func_3(self):
+        print("Function 3")
+        print("Adding new construction.")
+        self.game.adding_building(self.building_typ)
 
     def show(self):
         self.visible = True
         self.game.window_display = True
+        self.resources = []
+        if len(self.game.selecting.near_resources) > 0:
+            a = 0
+            for r in self.game.selecting.near_resources:
+                self.resources.append([r.name, 16, LIGHTGREY, (140, 85 + (a * 20))])
+                self.resources.append([str(r.value), 16, LIGHTGREY, (200, 85 + (a * 20))])
+                a += 1
 
     def hide(self):
         self.visible = False
         self.game.window_display = False
+        self.game.selecting.near_resources = []
 
     def update(self):
         self.rect.x = self.pos[0]
         self.rect.y = self.pos[1]
         self.var1[0] = self.game.language.BUILDINGS1[self.building_typ]
         self.var3[0] = self.game.language.RES1[0] + ": " + str(BUILDING_COST[self.building_typ]['wood'])
-        #print(BUILDING_COST[self.building_typ]['wood'])
+        self.var4[0] = self.game.language.RES1[2] + ": " + str(BUILDING_COST[self.building_typ]['cement'])
+        self.var5[0] = self.game.language.RES1[5] + ": " + str(BUILDING_COST[self.building_typ]['steel'])
 
 class Unit_Window(pg.sprite.Sprite):
     def __init__(self, unit, game, pos=[100,100], size=(300, 400), color=DARKGREY, text="Text", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3):
@@ -621,6 +644,7 @@ class Unit_Window(pg.sprite.Sprite):
         self.buttons.append(Switch_Button(self.game, self, pos=[360,60], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="training"))
         self.buttons.append(Switch_Button(self.game, self, pos=[360,80], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="refill_equipment"))
         self.buttons.append(Switch_Button(self.game, self, pos=[360,100], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="refill_crew"))
+        self.buttons.append(Switch_Button(self.game, self, pos=[360,120], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="building"))
 
         #draw eq names
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[3], False, self.textcolor), (50, 40))
@@ -645,7 +669,7 @@ class Unit_Window(pg.sprite.Sprite):
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[4], False, self.textcolor), (380,60))
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[5], False, self.textcolor), (380,80))
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[6], False, self.textcolor), (380,100))
-
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[8], False, self.textcolor), (380,120))
 
 
         self.rect = self.image.get_rect()

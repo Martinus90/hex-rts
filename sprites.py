@@ -5,7 +5,7 @@ from settings import *
 from queue import PriorityQueue
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, game, x, y):
+    def __init__(self, game, x, y, side):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -14,6 +14,7 @@ class Player(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
+        self.side = side
 
     def move(self, dx=0, dy=0):
         self.x += dx# * TILESIZE[0]
@@ -38,11 +39,14 @@ class Grid(pg.sprite.Sprite):
         self.y = y
         self.id = idnr
         self.neighbors = []
+        self.resource = None
+        self.near_resources = []
         self.building = None
+        
 
         self.col = x
         self.row = y
-        self.hex = roffset_to_cube(-1, self)
+        self.hex = roffset_to_cube(-1, self) #self.hex = Hex(?,?,?)
 
         self.q, self.r, self.s = self.hex
 
@@ -55,26 +59,15 @@ class Grid(pg.sprite.Sprite):
             if hex_neighbor(self.hex, i) in map.grid_list:
                 new_neighbor = hex_neighbor(self.hex, i)
                 n = hex_id(-1, hex_neighbor(self.hex, i), map.tmxdata.width)
-                #for e in self.game.map.grids:
-                #    if e.id == n:
-                #        print(e.id)
-
-                #print(self.game.map.grids[n].terrain)
-                #    print(e)
-                #if h.id == 20 in map.grids:
-            #        self.neighbors.add(grid)
-            #        #print(grid.id)
-            #        break
-                #print(hex_neighbor(self.hex, i))
-                #print(hex_id(-1, hex_neighbor(self.hex, i), map.tmxdata.width))
-                #print(map.grids[hex_id(-1, hex_neighbor(self.hex, i), map.tmxdata.width)])
                 self.neighbors.append(self.game.map.grids[n])
             else:
-                #self.neighbors.append("None")
-                pass
-            #else:
-            #    print("None")
-            #    self.neighbors.append("None")     
+                pass 
+
+    def get_near_resources(self):
+        self.near_resources = []
+        for n in self.neighbors:
+            if n.resource != None:
+                self.near_resources.append(n.resource)
 
     def get_hex(self):
         return self.hex
@@ -97,7 +90,8 @@ class Resource(pg.sprite.Sprite):
         self.value = value
         self.off_road_value = 0
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
-        print(self.grid_id)
+        #print(self.grid_id)
+        self.game.grids[self.grid_id].resource = self
 
         self.col = x
         self.row = y
@@ -133,6 +127,7 @@ class Tree(Resource):
         self.value = value
         self.off_road_value = 3
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
+        self.game.map.grids[self.grid_id].resource = self
 
         self.col = x
         self.row = y
@@ -159,6 +154,7 @@ class Grain(Resource):
         self.value = value
         self.off_road_value = 0
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
+        self.game.map.grids[self.grid_id].resource = self
 
         self.col = x
         self.row = y
@@ -182,6 +178,7 @@ class Oil(Resource):
         self.value = value
         self.off_road_value = 0
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
+        self.game.map.grids[self.grid_id].resource = self
 
         self.col = x
         self.row = y
@@ -205,6 +202,7 @@ class Iron(Resource):
         self.value = value
         self.off_road_value = 1
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
+        self.game.map.grids[self.grid_id].resource = self
 
         self.col = x
         self.row = y
@@ -228,6 +226,7 @@ class Coal(Resource):
         self.value = value
         self.off_road_value = 1
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
+        self.game.map.grids[self.grid_id].resource = self
 
         self.col = x
         self.row = y
@@ -251,6 +250,7 @@ class Calcium(Resource):
         self.value = value
         self.off_road_value = 1
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
+        self.game.map.grids[self.grid_id].resource = self
 
         self.col = x
         self.row = y
@@ -274,6 +274,7 @@ class Silicon(Resource):
         self.value = value
         self.off_road_value = 1
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
+        self.game.map.grids[self.grid_id].resource = self
 
         self.col = x
         self.row = y
@@ -297,6 +298,7 @@ class Cotton(Resource):
         self.value = value
         self.off_road_value = 0
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
+        self.game.map.grids[self.grid_id].resource = self
 
         self.col = x
         self.row = y
@@ -320,6 +322,7 @@ class Rubber(Resource):
         self.value = value
         self.off_road_value = 3
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
+        self.game.map.grids[self.grid_id].resource = self
 
         self.col = x
         self.row = y
@@ -343,6 +346,7 @@ class Bauxite(Resource):
         self.value = value
         self.off_road_value = 1
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
+        self.game.map.grids[self.grid_id].resource = self
 
         self.col = x
         self.row = y
@@ -366,6 +370,7 @@ class Uranium(Resource):
         self.value = value
         self.off_road_value = 1
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
+        self.game.map.grids[self.grid_id].resource = self
 
         self.col = x
         self.row = y
@@ -389,6 +394,7 @@ class Water(Resource):
         self.value = value
         self.off_road_value = 0
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
+        self.game.map.grids[self.grid_id].resource = self
 
         self.col = x
         self.row = y
@@ -397,7 +403,7 @@ class Water(Resource):
         self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
         self.rect.y = self.y * TILESIZE[1]
 
-class Construction(pg.sprite.Sprite):
+class CONSTRUCTION(pg.sprite.Sprite):
     def __init__(self, game, x, y, what, owner):
         self.groups = game.all_sprites, game.buildings#, game.grids[]
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -449,12 +455,14 @@ class Construction(pg.sprite.Sprite):
     def print_progress(self):
         return "Progress: " + str(self.progress) + " / " + str(self.fullcost)
         
-
     def construction(self, value):
         if (self.fullmaterials - self.progress) >= value:
             self.progress += value
         else:
             self.progress += (self.fullmaterials - self.progress)
+
+    def daily(self):
+        pass
 
     def update(self):
         self.fullmaterials = sum(self.materials.values())
@@ -473,9 +481,8 @@ class Construction(pg.sprite.Sprite):
         self.description[4] = self.game.language.RES1[0] + ": " + str(self.materials['wood']) + "/" + str(self.cost['wood'])
         self.description[5] = self.game.language.RES1[2] + ": " + str(self.materials['cement']) + "/" + str(self.cost['cement'])
         self.description[6] = self.game.language.RES1[5] + ": " + str(self.materials['steel']) + "/" + str(self.cost['steel'])
-        
 
-class Settlement(pg.sprite.Sprite):
+class SETTLEMENT(pg.sprite.Sprite):
     def __init__(self, game, x, y, owner, name, population):
         self.groups = game.all_sprites, game.buildings
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -495,7 +502,10 @@ class Settlement(pg.sprite.Sprite):
         self.name = name
         self.population = name
 
-class Building(pg.sprite.Sprite):
+    def daily(self):
+        pass
+
+class BUILDING(pg.sprite.Sprite):
     def __init__(self, game, x, y, owner):
         self.groups = game.all_sprites, game.buildings
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -516,7 +526,10 @@ class Building(pg.sprite.Sprite):
         self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
         self.rect.y = self.y * TILESIZE[1]
 
-class Oil_Well(Building):
+    def daily(self):
+        pass
+
+class OIL_WELL(BUILDING):
     def __init__(self, game, x, y, owner):
         self.groups = game.all_sprites, game.buildings
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -536,6 +549,9 @@ class Oil_Well(Building):
 
         self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
         self.rect.y = self.y * TILESIZE[1]
+
+    def daily(self):
+        pass
 
 class Unit(pg.sprite.Sprite):
     def __init__(self, game, x, y, owner, typ, unit_name, brigade, regiment, battalion, company, men, supply, uniforms, fuel, light_ammo, heavy_ammo, rockets, rifle, art, truck, apc, tank, heli, aircraft):
@@ -554,12 +570,13 @@ class Unit(pg.sprite.Sprite):
         self.regiment = regiment
         self.battalion = battalion
         self.company = company
-        self.state = {"mobilized": True, "training": False, "refill_equipment": False, "refill_crew": False} # 1 and 4 
+        self.state = {"mobilized": True, "training": False, "refill_equipment": False, "refill_crew": False, "building": False} # 1 and 4 
 
         self.mobilized = True
         self.training = False
         self.refill_equipment = False
         self.refill_crew = False
+        self.building = False
 
         self.combat_ability = 20
         self.combat_ability_max = 20
@@ -667,9 +684,8 @@ class Unit(pg.sprite.Sprite):
                 c = self.unit_typ.s_normal
         else:
             c = 20
-
         #return int(c)
-        return self.unit_typ.move_cost(t)
+        return c #self.unit_typ.move_cost(t)
 
     def add_materials(self):
         pass
@@ -762,12 +778,16 @@ class Unit(pg.sprite.Sprite):
                         self.stop()
 
                 if self.step_to != None:
-                    if self.fuel < self.step_cost:
+                    self.task = self.game.language.COMMANDS[1] + str(roffset_from_cube(-1, self.go_to)[0]) + ", " + str(roffset_from_cube(-1, self.go_to)[1])       
+                    if self.fuel < self.unit_typ.fuel_usage:
+                        #print("TU")
+                        #print(self.terrain_cost(self.current[1]))
+                        #self.unit_typ.move_cost(self.terrain_cost(self.current[1]):#
                         if self.doing >= self.step_cost:
                             self.doing = self.doing - self.step_cost
                             self.hex = self.game.map.grids[self.step_to].hex
-                            print("Kroczek w stronę:")
-                            self.task = self.game.language.COMMANDS[1] + str(roffset_from_cube(-1, self.go_to)[0]) + ", " + str(roffset_from_cube(-1, self.go_to)[1])
+                            print("Brak paliwa, wolny ruch:")
+                            #self.task = self.game.language.COMMANDS[1] + str(roffset_from_cube(-1, self.go_to)[0]) + ", " + str(roffset_from_cube(-1, self.go_to)[1])
                             print(self.step_to)
                             print("Koszt:")
                             print(self.step_cost)
@@ -779,7 +799,7 @@ class Unit(pg.sprite.Sprite):
                             self.doing = self.doing - self.step_cost
                             self.hex = self.game.map.grids[self.step_to].hex
                             print("Kroczek w stronę:")
-                            self.task = self.game.language.COMMANDS[1] + str(roffset_from_cube(-1, self.go_to)[0]) + ", " + str(roffset_from_cube(-1, self.go_to)[1])
+                            #self.task = self.game.language.COMMANDS[1] + str(roffset_from_cube(-1, self.go_to)[0]) + ", " + str(roffset_from_cube(-1, self.go_to)[1])
                             print(self.step_to)
                             print("Koszt:")
                             print(self.step_cost)
@@ -787,26 +807,48 @@ class Unit(pg.sprite.Sprite):
                             self.last_step_cost = self.cost_so_far[self.step_to]
                             self.step_to = None
             self.doing += 1
-            self.fuel = self.fuel - self.unit_typ.fuel_usage
-        elif self.state["training"] == True:
-            self.combat_ability = 5
-            self.task = self.game.language.COMMANDS[2]
-            if self.experience < 100:
-                self.experience += 1
+            if self.fuel > 0:
+                self.fuel = self.fuel - self.unit_typ.fuel_usage
+                if self.fuel < self.unit_typ.fuel_usage:
+                    self.stop()
+                    self.fuel = 0
+            else:
+                self.fuel = 0
         else:
             self.doing = 0
             self.task = self.game.language.COMMANDS[0]
+
+        if self.state["training"] == True:
+                self.combat_ability = 5
+                self.task = self.game.language.COMMANDS[2]
+
+            #here script that add some progress to constructing near building
+        
+        if self.state['mobilized'] == True:
+            if self.state['building'] == True:
+                self.combat_ability_max = 15
+            else:
+                self.combat_ability_max = 25
+        else:
+            self.combat_ability_max = 5
+
+    def hourly(self):
+        if self.state['mobilized'] == True and self.state["training"] == False:
             if self.combat_ability < self.combat_ability_max:
                 self.combat_ability += 1
             elif self.combat_ability > self.combat_ability_max:
                 self.combat_ability = self.combat_ability_max
 
-            #here script that add some progress to constructing near building
-        
-        if self.state['mobilized'] == True:
-            self.combat_ability_max = 20
-        else:
-            self.combat_ability_max = 5
+    def daily(self):
+        if self.state["mobilized"] == True and self.state["training"] == True:
+            if self.experience < 100:
+                self.experience += 1
+        elif self.state["mobilized"] == True and self.state["training"] == False and self.state["building"] == True:
+            if self.unit_typ == 14:
+                self.game.map.grids[self.hexid].building.progress += self.men * 3
+            else:
+                self.game.map.grids[self.hexid].building.progress += self.men
+            
 
 
     def update(self): 

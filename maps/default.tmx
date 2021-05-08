@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="hexagonal" renderorder="left-up" width="20" height="20" tilewidth="64" tileheight="64" infinite="0" hexsidelength="32" staggeraxis="y" staggerindex="odd" nextlayerid="3" nextobjectid="21">
+<map version="1.4" tiledversion="1.4.2" orientation="hexagonal" renderorder="left-up" width="20" height="20" tilewidth="64" tileheight="64" infinite="0" hexsidelength="32" staggeraxis="y" staggerindex="odd" nextlayerid="3" nextobjectid="24">
  <tileset firstgid="1" source="tiles.tsx"/>
  <layer id="1" name="layer1" width="20" height="20">
   <data encoding="csv">
@@ -94,13 +94,88 @@
   <object id="15" name="building" x="753.48" y="356.852" width="23.8659" height="23.8659">
    <properties>
     <property name="owner" type="int" value="1"/>
-    <property name="typ" value="Construction"/>
-    <property name="what" value="Oil_Well"/>
+    <property name="typ" value="CONSTRUCTION"/>
+    <property name="what" value="OIL_WELL"/>
    </properties>
   </object>
   <object id="16" name="calcium" x="851.216" y="404.584" width="23.8659" height="23.8659">
    <properties>
     <property name="value" type="int" value="40"/>
+   </properties>
+  </object>
+  <object id="21" name="unit" x="690.595" y="546.974" width="23.8659" height="23.8659">
+   <properties>
+    <property name="1_1_owner" type="int" value="1"/>
+    <property name="1_1_typ" type="int" value="10"/>
+    <property name="1_1_unit_name" value="Island Hawks"/>
+    <property name="1_2_1_brigade" type="int" value="1"/>
+    <property name="1_2_2_regiment" type="int" value="1"/>
+    <property name="1_2_3_battalion" type="int" value="1"/>
+    <property name="1_2_4_company" type="int" value="1"/>
+    <property name="2_1_men" type="int" value="20"/>
+    <property name="2_2_supply" type="int" value="50"/>
+    <property name="2_3_uniforms" type="int" value="20"/>
+    <property name="2_4_fuel" type="int" value="50"/>
+    <property name="3_1_light_ammo" type="int" value="50"/>
+    <property name="3_2_heavy_ammo" type="int" value="0"/>
+    <property name="3_3_rockets" type="int" value="0"/>
+    <property name="4_1_rifle" type="int" value="20"/>
+    <property name="4_2_art" type="int" value="0"/>
+    <property name="4_3_truck" type="int" value="2"/>
+    <property name="4_4_apc" type="int" value="0"/>
+    <property name="4_5_tank" type="int" value="0"/>
+    <property name="4_6_heli" type="int" value="0"/>
+    <property name="4_7_aircraft" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="22" name="unit" x="820.595" y="737.974" width="23.8659" height="23.8659">
+   <properties>
+    <property name="1_1_owner" type="int" value="2"/>
+    <property name="1_1_typ" type="int" value="1"/>
+    <property name="1_1_unit_name" value="Hobo"/>
+    <property name="1_2_1_brigade" type="int" value="1"/>
+    <property name="1_2_2_regiment" type="int" value="1"/>
+    <property name="1_2_3_battalion" type="int" value="1"/>
+    <property name="1_2_4_company" type="int" value="1"/>
+    <property name="2_1_men" type="int" value="20"/>
+    <property name="2_2_supply" type="int" value="50"/>
+    <property name="2_3_uniforms" type="int" value="20"/>
+    <property name="2_4_fuel" type="int" value="50"/>
+    <property name="3_1_light_ammo" type="int" value="50"/>
+    <property name="3_2_heavy_ammo" type="int" value="0"/>
+    <property name="3_3_rockets" type="int" value="0"/>
+    <property name="4_1_rifle" type="int" value="20"/>
+    <property name="4_2_art" type="int" value="0"/>
+    <property name="4_3_truck" type="int" value="2"/>
+    <property name="4_4_apc" type="int" value="0"/>
+    <property name="4_5_tank" type="int" value="0"/>
+    <property name="4_6_heli" type="int" value="0"/>
+    <property name="4_7_aircraft" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="23" name="unit" x="723.595" y="786.974" width="23.8659" height="23.8659">
+   <properties>
+    <property name="1_1_owner" type="int" value="2"/>
+    <property name="1_1_typ" type="int" value="1"/>
+    <property name="1_1_unit_name" value="Raiders"/>
+    <property name="1_2_1_brigade" type="int" value="1"/>
+    <property name="1_2_2_regiment" type="int" value="1"/>
+    <property name="1_2_3_battalion" type="int" value="1"/>
+    <property name="1_2_4_company" type="int" value="1"/>
+    <property name="2_1_men" type="int" value="20"/>
+    <property name="2_2_supply" type="int" value="50"/>
+    <property name="2_3_uniforms" type="int" value="20"/>
+    <property name="2_4_fuel" type="int" value="50"/>
+    <property name="3_1_light_ammo" type="int" value="50"/>
+    <property name="3_2_heavy_ammo" type="int" value="0"/>
+    <property name="3_3_rockets" type="int" value="0"/>
+    <property name="4_1_rifle" type="int" value="20"/>
+    <property name="4_2_art" type="int" value="0"/>
+    <property name="4_3_truck" type="int" value="2"/>
+    <property name="4_4_apc" type="int" value="0"/>
+    <property name="4_5_tank" type="int" value="0"/>
+    <property name="4_6_heli" type="int" value="0"/>
+    <property name="4_7_aircraft" type="int" value="0"/>
    </properties>
   </object>
  </objectgroup>

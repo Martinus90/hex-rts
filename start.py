@@ -152,15 +152,26 @@ class Game:
         #self.UNIT_TYPE = ["Artillery","Mechanized","Reconnaissance","Motorized","Other","Logistic","Headquarters","Helicopters","Aircraft","Anti-Aircraft","Anti-Tank","Missile","Engineering"]
 
         self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[0], typ=0, s_normal=4, s_water=100, s_mountain=6, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=0, food_usage=1, money_usage=2))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[1], typ=1, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=1, food_usage=1, money_usage=2))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[1], typ=1, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=40, fuel_usage=4, food_usage=1, money_usage=2))
         self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[2], typ=2, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=1, food_usage=1, money_usage=2))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[3], typ=3, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=40, fuel_usage=4, food_usage=1, money_usage=2))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[4], typ=4, s_normal=2, s_water=100, s_mountain=8, s_coast=3, s_river=8, s_no_fuel=20, fuel_usage=2, food_usage=1, money_usage=2))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[5], typ=5, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=2, food_usage=1, money_usage=2))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[6], typ=6, s_normal=4, s_water=100, s_mountain=6, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=0, food_usage=1, money_usage=1))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[7], typ=7, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=2, food_usage=1, money_usage=2))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[8], typ=8, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=2, food_usage=1, money_usage=2))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[9], typ=9, s_normal=2, s_water=2, s_mountain=2, s_coast=2, s_river=2, s_no_fuel=40, fuel_usage=3, food_usage=0, money_usage=10))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[10], typ=10, s_normal=1, s_water=1, s_mountain=1, s_coast=1, s_river=1, s_no_fuel=40, fuel_usage=5, food_usage=0, money_usage=20))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[11], typ=11, s_normal=3, s_water=100, s_mountain=12, s_coast=5, s_river=12, s_no_fuel=40, fuel_usage=2, food_usage=1, money_usage=2))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[12], typ=12, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=2, food_usage=1, money_usage=2))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[13], typ=13, s_normal=2, s_water=100, s_mountain=12, s_coast=5, s_river=12, s_no_fuel=40, fuel_usage=4, food_usage=1, money_usage=5))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[14], typ=14, s_normal=2, s_water=100, s_mountain=10, s_coast=4, s_river=12, s_no_fuel=40, fuel_usage=4, food_usage=1, money_usage=3))
 
 
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
         for grid in self.map.grids:
             grid.get_neighbors(self.map)
-            #print(roffset_from_cube(-1, grid.hex)[1])
 
         #print(self.map.grids)
         self.menu = Menu(self)#.make_menu()
@@ -194,36 +205,19 @@ class Game:
                 Water(self, r[0], r[1], r[3])
 
         for b in self.map.buildings:
-            if b[2] == "Construction":
-                Construction(self, b[0], b[1], b[3], b[4])
+            if b[2] == "CONSTRUCTION":
+                CONSTRUCTION(self, b[0], b[1], b[3], b[4])
             #elif b[2] == "Village":
             #    Village(self, b[0], b[1], b[3], b[4])
 
         for u in self.map.units:
             Unit(self, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15], u[16], u[17], u[18], u[19], u[20], u[21], u[22])
 
-
-
-        #print(self.map.trees)
-        #print(self.map.units)
-
-        #print([x.hex for x in self.walls])
-        #for h in self.walls:
-        #    print(h.col)
-        #    print(h.row)
-        #    print(h.hex)
-        #    print(h.hex.q)
-        #    self.od.append(h.hex)
-
-        #print(hex_distance(self.od[0], self.od[1]))
-
-        #result = [x for x in self.walls if x.hex.r > 4]
-        #print(result)
-
-        self.player = Player(self, 0, 0)
+        self.player = Player(self, 0, 0, 1)
         self.camera = Camera(self.map.width, self.map.height)
 
-        #self.windek = Window(self)
+    def adding_building(self, variable):
+        CONSTRUCTION(self, self.selecting.col, self.selecting.row, BUILDING_LIST[variable], self.player.side)
 
     def time(self):
         if self.timer > 1: #def 1
@@ -237,12 +231,17 @@ class Game:
         if self.quarter > 3: #def 3
             self.quarter -= 4
             self.hour += 1
+            for unit in self.units:
+                unit.hourly()
         if self.hour > 23: #def 23
             self.hour -= 24
             self.day += 1
             for res in self.resources:
                 res.daily()
-
+            for building in self.buildings:
+                building.daily()
+            for unit in self.units:
+                unit.daily()
         if self.day > 7: #def 7
             self.day -= 7
             self.week += 1
@@ -275,6 +274,7 @@ class Game:
                 self.selecting = grid
                 self.menu.terrain1[0] = "X: " + str(self.selecting.col) + ", Y: " + str(self.selecting.row)
                 self.menu.terrain2[0] = str(self.selecting.terrain)
+                self.selecting.get_near_resources()
 
         for r in self.resources:
             if (r.col == self.mouse_pos.col) and (r.row == self.mouse_pos.row):
@@ -482,6 +482,8 @@ class Game:
                     window.image.blit(button.image, button.pos)
                 for variable in window.variables:
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(variable[0], False, LIGHTGREY), (window.pos[0] + variable[3][0], window.pos[1] + variable[3][1]))
+                for res in window.resources:
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(res[0], False, LIGHTGREY), (window.pos[0] + res[3][0], window.pos[1] + res[3][1]))
 
  
 
@@ -519,8 +521,18 @@ class Game:
                     self.player.y = 12
                 if event.key == pg.K_r:
                     self.players[1].stability += 1 
+                if event.key == pg.K_t:
+                    print(self.building)
+                    print(self.building.materials)
+                    
+                    print(self.building.cost)
+                    print("Cheat")
+                    self.building.materials = self.building.cost
+                    print(self.building.materials)
+                    
                 if event.key == pg.K_m:
                     self.territory_visible = not self.territory_visible
+                    print(self.territory_visible)
                 if (event.key == 61) or (event.key == 270): #plus key
                     if self.speed < 50:
                         self.speed = self.speed + 1

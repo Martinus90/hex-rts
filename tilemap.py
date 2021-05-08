@@ -168,3 +168,4 @@ class Camera:
         self.x = -target.rect.x + int(WIDTH / 2)
         self.y = -target.rect.y + int(HEIGHT / 2)
         self.camera = pg.Rect(self.x, self.y, self.width, self.height)
+

@@ -148,32 +148,34 @@ TERRAIN_COAST =    (93, 94, 95, 96, 97, 98, 99, 100,
                     149, 150, 151, 152, 153, 154, 155, 156,
                     157, 158, 159, 160, 161, 162, 163, 164)
 
-#Building Cost
+#Buildings
 
-CONSTRUCTION_COST = {'wood': 100, 'cement': 25, 'steel': 0}
-VILLAGE_COST = {'wood': 100, 'cement': 25, 'steel': 0}
-CITY_COST = {'wood': 300, 'cement': 25, 'steel': 0}
-HARBOR_COST = {'wood': 500, 'cement': 25, 'steel': 0}
-AIRPORT_COST = {'wood': 0, 'cement': 25, 'steel': 0}
-WAREHOUSE_COST = {'wood': 700, 'cement': 25, 'steel': 0}
-BARRACKS_COST = {'wood': 400, 'cement': 25, 'steel': 0}
+BUILDING_LIST = ['CONSTRUCTION', 'VILLAGE', 'CITY', 'HARBOR', 'AIRPORT', 'WAREHOUSE', 'BARRACKS', 'MINE', 'SMELTER', 'OIL_WELL', 'POWER_PLANT', 'PRODUCTION_PLANT', 'CHEMICAL_PLANT', 'HIGH_TECH_PLANT', 'MECHANICAL_PLANT', 'ARMAMENT_PLANT', 'AVIATION_PLANT', 'SHIPYARD']
 
-MINE_COST = {'wood': 500, 'cement': 25, 'steel': 0}
-SMELTER_COST = {'wood': 300, 'cement': 25, 'steel': 0}
-OIL_WELL_COST = {'wood': 500, 'cement': 25, 'steel': 0}
-POWER_PLANT_COST = {'wood': 300, 'cement': 25, 'steel': 0}
-PRODUCTION_PLANT_COST = {'wood': 800, 'cement': 25, 'steel': 0}
-CHEMICAL_PLANT_COST = {'wood': 600, 'cement': 25, 'steel': 0}
-HIGH_TECH_PLANT_COST = {'wood': 700, 'cement': 25, 'steel': 0}
-MECHANICAL_PLANT_COST = {'wood': 900, 'cement': 25, 'steel': 0}
-ARMAMENT_PLANT_COST = {'wood': 800, 'cement': 25, 'steel': 0}
-AVIATION_PLANT_COST = {'wood': 500, 'cement': 25, 'steel': 0}
-SHIPYARD_COST = {'wood': 900, 'cement': 25, 'steel': 0}
+CONSTRUCTION_COST = {'wood': 0, 'cement': 0, 'steel': 0}
+VILLAGE_COST = {'wood': 500, 'cement': 200, 'steel': 100}
+CITY_COST = {'wood': 2000, 'cement': 5000, 'steel': 2000}
+HARBOR_COST = {'wood': 500, 'cement': 500, 'steel': 200}
+AIRPORT_COST = {'wood': 100, 'cement': 5000, 'steel': 500}
+WAREHOUSE_COST = {'wood': 500, 'cement': 500, 'steel': 100}
+BARRACKS_COST = {'wood': 200, 'cement': 100, 'steel': 50}
+
+MINE_COST = {'wood': 500, 'cement': 500, 'steel': 100}
+SMELTER_COST = {'wood': 100, 'cement': 500, 'steel': 500}
+OIL_WELL_COST = {'wood': 100, 'cement': 200, 'steel': 1000}
+POWER_PLANT_COST = {'wood': 100, 'cement': 5000, 'steel': 2000}
+PRODUCTION_PLANT_COST = {'wood': 400, 'cement': 1000, 'steel': 500}
+CHEMICAL_PLANT_COST = {'wood': 100, 'cement': 1000, 'steel': 1000}
+HIGH_TECH_PLANT_COST = {'wood': 100, 'cement': 1000, 'steel': 1000}
+MECHANICAL_PLANT_COST = {'wood': 400, 'cement': 1000, 'steel': 1000}
+ARMAMENT_PLANT_COST = {'wood': 500, 'cement': 1000, 'steel': 1000}
+AVIATION_PLANT_COST = {'wood': 500, 'cement': 1000, 'steel': 1000}
+SHIPYARD_COST = {'wood': 500, 'cement': 1000, 'steel': 1000}
 
 BUILDING_COST = [CONSTRUCTION_COST, VILLAGE_COST, CITY_COST, HARBOR_COST, AIRPORT_COST, WAREHOUSE_COST, BARRACKS_COST, MINE_COST, SMELTER_COST, OIL_WELL_COST, POWER_PLANT_COST, PRODUCTION_PLANT_COST, CHEMICAL_PLANT_COST,
 HIGH_TECH_PLANT_COST, MECHANICAL_PLANT_COST, ARMAMENT_PLANT_COST, AVIATION_PLANT_COST, SHIPYARD_COST]
-#Production Cost
 
+#Production Cost
 CEMENT_COST = {}
 STEEL_COST = {}
 TOOL_COST = {}
@@ -202,4 +204,4 @@ HELICOPTER_COST = {}
 AIRCRAFT_COST = {} 
 
 #Technologies Cost
-
+#empty for now

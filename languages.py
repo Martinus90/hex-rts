@@ -21,9 +21,8 @@ class Language:
             self.RANKS1 = ["Lieutenant","Captain","Major","Colonel","General"]
             self.RANKS2 = ["Fugleman","Leader","Commander","Chieftain","Warlord"]
 
-            self.COMMANDS = ["Waiting", "Going to: ", "Training", "Constructing"]
-            self.DESCRIPTION = ["Experience", "Mobilized", "Combat Ability", "Men", "Training", "Refill eq.", "Refill crew", "Tiredness"]
-            #self.UNIT_D
+            self.COMMANDS = ["Waiting", "Going to: ", "Training", "Constructing", "Civilian Tasks"]
+            self.DESCRIPTION = ["Experience", "Mobilized", "Combat Ability", "Men", "Training", "Refill eq.", "Refill crew", "Tiredness", "Building"]
 
         elif LANGUAGE == "PL":
             self.BASIC = ["Prawda", "Fałsz", "Tak", "Nie"]
@@ -45,8 +44,8 @@ class Language:
             self.RANKS1 = ["Porucznik","Kapitan","Major","Pulkownik","General"]
             self.RANKS2 = ["Przywodca","Lider","Dowodca","Wodz","Watazka"]
 
-            self.COMMANDS = ["Czeka", "Idzie do: ", "Trenuje", "Buduje"]
-            self.DESCRIPTION = ["Doswiadczenie", "Zmobilizowana", "Zdolosc bojowa", "Ludzie", "Trening", "Uzup. ekw.", "Uzup. załoge", "Zmęczenie"]
+            self.COMMANDS = ["Czeka", "Idzie do: ", "Trenuje", "Buduje", "Zadania Cywilne"]
+            self.DESCRIPTION = ["Doswiadczenie", "Zmobilizowana", "Zdolosc bojowa", "Ludzie", "Trening", "Uzup. ekw.", "Uzup. załoge", "Zmęczenie", "Budowanie"]
 
         self.PERSON_NAME1 = ["Alexi Jastremsky","Stoycho Jellinek","Krastan Lhotzky","Ognyan Wolenska","Kalin Levitsky","Techoslav Sacharov","Blagovest Soloukhin","Razvigor Novak","Vojta Gindin","Borik Malenkov"]
         self.PERSON_NAME2 = ["Darko Brodsky","Tomislav Kruskal","Ljupco Jelinek","Vojkan Winogradsky","Drago Tomasek","Mecek Kudelin","Milo Mirkovic","Savo Sedlacek","Mutimir Volinin","Milutin Wolansky"]
