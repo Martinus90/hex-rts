@@ -69,9 +69,9 @@ line5, = plt.plot(x,t, ctts(GREEN))
 plt.legend( handles =[line1, line2, line3, line4, line5],
             labels = ['A simple line', 'Second line', 'Third line', 'Forth', 'Fifth'])
 
-#plt.show()
-
-der = ["HAHAHA","Dumb text","Hitler did everything wrong"]
+plt.show()
+'''
+#der = ["HAHAHA","Dumb text","Hitler did everything wrong"]
 
 import pyttsx3
 engine = pyttsx3.init()
@@ -81,4 +81,4 @@ engine.runAndWait()
 engine.say("Jakiś tekst do testów.")
 #for a in der:
 #    engine.say(a)
-
+'''

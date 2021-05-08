@@ -7,6 +7,21 @@ class Diplomacy(pg.sprite.Sprite):
     def __init__(self, game):
         self.game = game
 
+class Trade(pg.sprite.Sprite):
+    def __init__(self, game):
+        self.game = game
+        self.resource_exchange_rate = [4,3,3,2,2, #"Wood", "Food", "Cement", "Iron Ore", "Coal",
+        5,1,10,10,5,#    "Steel":5, "Water":1, "Tools":10, "Parts":10, "Aluminum":5, 
+        2,3,2,3,1,#    "Oil":2, "Fuel":3, "Plastic":2, "Chemical Compounds":3, "Fertilizer":1, 
+        1,1,20,1,2,#    "Silicon":1, "Calcium":1, "Electronics":20, "Cotton":1, "Textiles":2, 
+        1,1,5,30,4,#    "Rubber":1, "Bauxite":1, "Furniture":5, "Civilian Machines":30,"Supply":4, 
+        3,3,2,4,30,#    "Uniforms":3, "Fuel":3, "Light Ammo":2, "Heavy Ammo":4, "Rockets":30, 
+        8,40,100,200,300,#    "Rifle":8, "Artilleries":40, "Truck":100, "APC":200, "Tank":300, 
+        500,1000]#    "Helicopters":500, "Aircrafts":1000
+        
+
+
+
 class Contender(pg.sprite.Sprite):
     def __init__(self, game, name="Player", player=False, side=0, exc_rt=1, money=0, global_money=0, reputation=0, stability=0):
         self.game = game
@@ -104,8 +119,14 @@ class Menu(pg.sprite.Sprite):
 
         self.new_building_window = New_Building_Window(self.game, pos=[100,100], size=(300, 400), color=DARKGREY, text="New Building", textsize=18, textcolor=LIGHTGREY, textpos=(40,10), border_size=3)
         
-        self.new_building_button = OW_Button(self.game, self.new_building_window, pos=[WIDTH - MENU_RIGHT[0]+70, 425], size=(20, 20), color=DARKGREY, text="New", textsize=24, textcolor=LIGHTGREY)
+        self.new_building_button = OW_Button(self.game, self.new_building_window, pos=[WIDTH - MENU_RIGHT[0]+70, 425], size=(56, 30), color=DARKGREY, text="New", textsize=24, textcolor=LIGHTGREY)
         self.buttons.append(self.new_building_button)
+
+        
+        self.trade_window = Trade_Window(self.game, pos=[100,100], size=(650, 600), color=DARKGREY, text="Trade", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3)
+        self.open_trade_window = OW_Button(self.game, self.trade_window, pos=[WIDTH - MENU_RIGHT[0]+15, HEIGHT-45], size=(78, 30), color=DARKGREY, text="Trade", textsize=24, textcolor=LIGHTGREY)
+        #self.open_trade_window.image = 
+        self.buttons.append(self.open_trade_window)
 
         if 1 == 1: # right menu
             self.position = [self.game.language.DISPLAY_GUI[0], 20, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 15)]
@@ -428,7 +449,7 @@ class Training_Button(Button): #old button
         self.rect.y = self.pos[1] + self.window.pos[1]
 
 class OW_Button(Button): #open window
-    def __init__(self, game, window, pos=[6,6], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK):
+    def __init__(self, game, window, pos=[6,6], size=(60, 30), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK):
         self.groups = game.buttons
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -443,8 +464,16 @@ class OW_Button(Button): #open window
         self.textsize = textsize
         self.textcolor = textcolor
         self.visible = True
-        self.image = self.game.o_window_img.copy()
-        self.image.set_colorkey(VIOLET)
+
+        self.image = pg.Surface(self.size)
+        pg.draw.rect(self.image, self.textcolor, (0, 0, size[0], size[1]))
+        pg.draw.rect(self.image, self.color, (0+BUTTON_BORDER_SIZE, 0+BUTTON_BORDER_SIZE, size[0]-BUTTON_BORDER_SIZE*2-1, size[1]-BUTTON_BORDER_SIZE*2-1))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.text, False, self.textcolor), (5,5))
+
+
+
+        #self.image = self.game.o_window_img.copy()
+        #self.image.set_colorkey(VIOLET)
 
         self.rect = self.image.get_rect()
         #self.rect.x = 
@@ -568,16 +597,12 @@ class New_Building_Window(Window):
             pass
 
     def func_1(self):
-        print("Function 1")
         if self.building_typ > 1:
             self.building_typ -= 1
         else:
             self.building_typ = 17
-        print(self.building_typ)
-        print(self.buttons)
 
     def func_2(self):
-        print("Function 2")
         if self.building_typ < 17:
             self.building_typ += 1
         else:
@@ -585,8 +610,6 @@ class New_Building_Window(Window):
         print(self.building_typ)
 
     def func_3(self):
-        print("Function 3")
-        print("Adding new construction.")
         self.game.adding_building(self.building_typ)
 
     def show(self):
@@ -677,6 +700,101 @@ class Unit_Window(pg.sprite.Sprite):
         #self.rect.x = 600
         #self.rect.y = 600
     
+    def show(self):
+        self.visible = True
+        self.game.window_display = True
+
+    def hide(self):
+        self.visible = False
+        self.game.window_display = False
+
+    def update(self):
+        self.rect.x = self.pos[0]
+        self.rect.y = self.pos[1]
+
+class Trade_Window(Window):
+    def __init__(self, game, pos=[100,100], size=(500, 500), color=DARKGREY, text="Trade", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3):
+        self.groups = game.menu_windows, game.windows
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.pos = pos
+        self.size = size
+        self.color = color
+        self.text = text
+        self.textsize = textsize
+        self.textcolor = textcolor
+        self.textpos = textpos
+        self.border_size = border_size
+        self.visible = False
+        self.game.window_display = self.visible
+        self.buttons = []
+        self.variables = []
+        self.resources = []
+        self.building_typ = 1
+
+        self.buttons.append(Function_Button(self.game, self, pos=(20, 350), size=(20, 20), color=DARKGREY, text="1", textsize=20, textcolor=LIGHTGREY, function="func_1"))
+        self.buttons.append(Function_Button(self.game, self, pos=(220, 350), size=(20, 20), color=DARKGREY, text="2", textsize=20, textcolor=LIGHTGREY, function="func_2"))
+        self.buttons.append(Function_Button(self.game, self, pos=(120, 350), size=(20, 20), color=DARKGREY, text="3", textsize=20, textcolor=LIGHTGREY, function="func_3"))
+
+
+        if 1 == 1:
+            #draw window
+            self.image = pg.Surface(self.size)
+            pg.draw.rect(self.image, self.textcolor, (0, 0, size[0], size[1]))
+            pg.draw.rect(self.image, self.color, (0+self.border_size, 0+self.border_size, size[0]-self.border_size*2-1, size[1]-self.border_size*2-1))
+            self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.text, False, self.textcolor), self.textpos)
+            #draw buttons
+            self.buttons.append(CW_Button(self.game, self, pos=[10,10]))
+            self.rect = self.image.get_rect()
+            self.rectangle = pg.Surface(self.size)
+            b = 0
+            c = 0
+            for a in RES1_LIST:
+                self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(a, False, self.textcolor), (30 + c, 60 + (b*20)))
+                b += 1
+                if b > 7:
+                    c += 200
+                    b = 0
+            b = 0
+            c = 0 
+            for a in RES2_LIST:
+                self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(a, False, self.textcolor), (30 + c, 260 + (b*20)))
+                b += 1
+                if b > 4:
+                    c += 200
+                    b = 0
+
+
+
+
+
+
+    def function_list(self, function=None):
+        if function == "func_1":
+            self.func_1()
+        elif function == "func_2":
+            self.func_2()
+        elif function == "func_3":
+            self.func_3()
+        else:
+            pass
+
+    def func_1(self):
+        if self.building_typ > 1:
+            self.building_typ -= 1
+        else:
+            self.building_typ = 17
+
+    def func_2(self):
+        if self.building_typ < 17:
+            self.building_typ += 1
+        else:
+            self.building_typ = 1
+        print(self.building_typ)
+
+    def func_3(self):
+        self.game.adding_building(self.building_typ)
+
     def show(self):
         self.visible = True
         self.game.window_display = True

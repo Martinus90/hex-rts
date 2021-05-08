@@ -1,5 +1,6 @@
 import pygame as pg
 import loading as ld
+import inspect
 from hexo import *
 from settings import *
 from queue import PriorityQueue
@@ -462,7 +463,15 @@ class CONSTRUCTION(pg.sprite.Sprite):
             self.progress += (self.fullmaterials - self.progress)
 
     def daily(self):
-        pass
+        if self.progress >= self.fullmaterials:
+            print("Koniec budowy.")
+            if self.game.building == self:
+                self.game.building = None
+            #test
+            self.game.build(self)
+
+
+
 
     def update(self):
         self.fullmaterials = sum(self.materials.values())
@@ -510,13 +519,14 @@ class BUILDING(pg.sprite.Sprite):
         self.groups = game.all_sprites, game.buildings
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
+        self.x = x
+        self.y = y
+        self.owner = self.game.players[owner]
+
         self.name = game.language.BUILDINGS1[0]
         self.image = self.game.resource_img.copy()
         self.image.set_colorkey(VIOLET)
         self.rect = self.image.get_rect()
-        
-        self.x = x
-        self.y = y
         self.storage = []
 
         self.col = x
@@ -534,21 +544,27 @@ class OIL_WELL(BUILDING):
         self.groups = game.all_sprites, game.buildings
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.name = game.language.BUILDINGS1[0]
-        self.image = self.game.resource_img.copy()
-        self.image.set_colorkey(VIOLET)
-        self.rect = self.image.get_rect()
-        
         self.x = x
         self.y = y
-        self.storage = []
+        self.owner = self.game.players[owner]
+        self.name = game.language.BUILDINGS1[0]
+
+        self.image = self.game.oil_well_img.copy()
+        self.image.set_colorkey(VIOLET)
+        self.image.blit(self.owner.image, (44, 10))
+        self.rect = self.image.get_rect()
+        self.storage = {'oil': 0}
 
         self.col = x
         self.row = y
+        #print(self.col)
+        #print(self.row)
         self.hex = roffset_to_cube(-1, self)
 
         self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
         self.rect.y = self.y * TILESIZE[1]
+
+        self.description = ["","","","","","",""]
 
     def daily(self):
         pass
@@ -844,11 +860,11 @@ class Unit(pg.sprite.Sprite):
             if self.experience < 100:
                 self.experience += 1
         elif self.state["mobilized"] == True and self.state["training"] == False and self.state["building"] == True:
-            if self.unit_typ == 14:
-                self.game.map.grids[self.hexid].building.progress += self.men * 3
-            else:
-                self.game.map.grids[self.hexid].building.progress += self.men
-            
+            if self.game.map.grids[self.hexid].building != None:
+                if self.unit_typ == 14:
+                    self.game.map.grids[self.hexid].building.construction(self.men * 3)
+                else:
+                    self.game.map.grids[self.hexid].building.construction(self.men)
 
 
     def update(self): 

@@ -39,8 +39,8 @@ MAROON = (127, 0, 0)
 
 
 # game settings
-WIDTH = 1600    #1280   # 16 * 64 or 32 * 32 or 64 * 16
-HEIGHT = 900    #768    # 16 * 48 or 32 * 24 or 64 * 12
+WIDTH = 1600    #1600     #1280   # 16 * 64 or 32 * 32 or 64 * 16
+HEIGHT = 900   #900      #768    # 16 * 48 or 32 * 24 or 64 * 12
 OFFSET = -1
 FPS = 60
 TITLE = "Testing"
@@ -62,6 +62,8 @@ TOP_BAR_STEP = 100
 STABILITY_SIZE = (21, 21)
 STABILITY_OFFSET = (0, 0)
 
+BUTTON_BORDER_SIZE = 2
+
 SCROLL_SPEED = 10
 GAME_SPEED = 1
 LANGUAGE = "EN" # "EN" / "PL"
@@ -69,6 +71,11 @@ LANGUAGE = "EN" # "EN" / "PL"
 PLAYER_IMG = "player.bmp"
 FLAGS_IMG = "flags.bmp"
 UNITS_IMG = "units.bmp"
+
+RES1_LIST = ["Wood", "Food", "Cement", "Iron Ore", "Coal", "Steel", "Water", "Tools", "Parts", "Aluminum", "Oil", "Fuel", "Plastic", "Chemical Compounds", "Fertilizer",
+            "Silicon", "Calcium", "Electronics", "Cotton", "Textiles", "Rubber", "Bauxite", "Furniture", "Civilian Machines"]
+RES2_LIST = ["Supply", "Uniforms", "Fuel", "Light Ammo", "Heavy Ammo", "Rockets", "Rifle", "Artilleries", "Truck", "APC", "Tank", "Helicopters", "Aircrafts"] 
+
 
 RESOURCE_IMG = "resource.bmp"
 TREE_IMG = "tree.bmp"
@@ -92,12 +99,15 @@ STABILITY_IMG = "stability.bmp"
 
 #list of buildings
 CONSTRUCTION_IMG = "construction.bmp"#0
+
 VILLAGE_IMG = "village.bmp"
 CITY_IMG = "city.bmp"
+
 HARBOR_IMG = "harbor.bmp"
 AIRPORT_IMG = "airport.bmp"
 WAREHOUSE_IMG = "warehouse.bmp"
 BARRACKS_IMG = "barracks.bmp"
+
 MINE_IMG = "mine.bmp"
 SMELTER_IMG = "smelter.bmp"
 OIL_WELL_IMG = "oil_well.bmp"
@@ -153,7 +163,7 @@ TERRAIN_COAST =    (93, 94, 95, 96, 97, 98, 99, 100,
 BUILDING_LIST = ['CONSTRUCTION', 'VILLAGE', 'CITY', 'HARBOR', 'AIRPORT', 'WAREHOUSE', 'BARRACKS', 'MINE', 'SMELTER', 'OIL_WELL', 'POWER_PLANT', 'PRODUCTION_PLANT', 'CHEMICAL_PLANT', 'HIGH_TECH_PLANT', 'MECHANICAL_PLANT', 'ARMAMENT_PLANT', 'AVIATION_PLANT', 'SHIPYARD']
 
 CONSTRUCTION_COST = {'wood': 0, 'cement': 0, 'steel': 0}
-VILLAGE_COST = {'wood': 500, 'cement': 200, 'steel': 100}
+VILLAGE_COST = {'wood': 0, 'cement': 0, 'steel': 100}
 CITY_COST = {'wood': 2000, 'cement': 5000, 'steel': 2000}
 HARBOR_COST = {'wood': 500, 'cement': 500, 'steel': 200}
 AIRPORT_COST = {'wood': 100, 'cement': 5000, 'steel': 500}

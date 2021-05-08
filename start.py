@@ -147,10 +147,10 @@ class Game:
         self.players.append(Contender(self, name="t943", player=False, side=3, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
         self.players.append(Contender(self, name="hj6u654", player=False, side=4, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
 
+        self.diplomacy = Diplomacy(self)
+        self.trade = Trade(self)
 
-
-        #self.UNIT_TYPE = ["Artillery","Mechanized","Reconnaissance","Motorized","Other","Logistic","Headquarters","Helicopters","Aircraft","Anti-Aircraft","Anti-Tank","Missile","Engineering"]
-
+        #unit types
         self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[0], typ=0, s_normal=4, s_water=100, s_mountain=6, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=0, food_usage=1, money_usage=2))
         self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[1], typ=1, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=40, fuel_usage=4, food_usage=1, money_usage=2))
         self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[2], typ=2, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=1, food_usage=1, money_usage=2))
@@ -207,8 +207,10 @@ class Game:
         for b in self.map.buildings:
             if b[2] == "CONSTRUCTION":
                 CONSTRUCTION(self, b[0], b[1], b[3], b[4])
-            #elif b[2] == "Village":
-            #    Village(self, b[0], b[1], b[3], b[4])
+            #elif b[2] == "VILLAGE":
+            #    VILLAGE(self, b[0], b[1], b[3], b[4])
+            elif b[2] == "OIL_WELL":
+                OIL_WELL(self, b[0], b[1], b[3])
 
         for u in self.map.units:
             Unit(self, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15], u[16], u[17], u[18], u[19], u[20], u[21], u[22])
@@ -218,6 +220,12 @@ class Game:
 
     def adding_building(self, variable):
         CONSTRUCTION(self, self.selecting.col, self.selecting.row, BUILDING_LIST[variable], self.player.side)
+
+    def build(self, construction):
+        if construction.what == OIL_WELL:
+            a = construction
+            del construction
+            OIL_WELL(self, a.x, a.y, a.owner)
 
     def time(self):
         if self.timer > 1: #def 1
@@ -309,8 +317,14 @@ class Game:
                 self.menu.unit7[0] = ""
 
         for b in self.buildings:
+            #print("First")
+            #print(str(b.col) + " / " + str(self.mouse_pos.col))
+            #print("Second")
+            #print(str(b.row) + " / " + str(self.mouse_pos.row))
             if (b.col == self.mouse_pos.col) and (b.row == self.mouse_pos.row):
+                print("Selected")
                 self.building = b
+                print(self.building)
                 self.menu.building1[0] = self.building.description[0]
                 self.menu.building2[0] = self.building.description[1]
                 self.menu.building3[0] = self.building.description[2]
@@ -399,6 +413,11 @@ class Game:
         self.screen.blit(self.global_img, (463, 8))
         self.screen.blit(self.money_img, (460, 30))
 
+        #print(self.menu.buttons)
+        #for b in self.menu.buttons:
+        #    self.screen.blit(b.image, b.pos)
+        self.screen.blit(self.menu.buttons[1].image, self.menu.buttons[1].pos)
+
         
         for a in range(5):
             #self.screen.blit(self.stability[a], (STABILITY_OFFSET[0] + (a * 30), STABILITY_OFFSET[1]))
@@ -418,8 +437,7 @@ class Game:
         
         if self.selecting != None:
             self.screen.blit(self.map.tmxdata.images[self.selecting.gid], (WIDTH - MENU_RIGHT[0]+10, 140))
-            
-            if self.selecting.building == None:
+            if self.building == None:
                 #self.screen.blit(self.building.image, (WIDTH - MENU_RIGHT[0]+0, 435))
                 #print("Empty place to build something")
                 self.screen.blit(self.menu.new_building_button.image, self.menu.new_building_button.pos)
@@ -573,6 +591,7 @@ class Game:
                                     for button in window.buttons:
                                         button.check_col(pg.mouse.get_pos())
                                         #print(pg.mouse.get_pos())
+
                     if event.button == 3:
                         if self.uniting != None:
                             #print("To tu")
@@ -586,10 +605,12 @@ class Game:
                         #print(self.selecting.building)
                         if self.uniting: 
                             self.uniting.button.check_col(pg.mouse.get_pos())
+                            print(self.uniting.button.rect)
+                            print(pg.mouse.get_pos())
 
-                        if self.selecting.building == None:
+                        if self.building == None:
                             for a in self.menu.buttons:
-                                print(self.menu.buttons)
+                                #print(self.menu.buttons)
                                 a.check_col(pg.mouse.get_pos())
                         
 
