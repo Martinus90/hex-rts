@@ -26,6 +26,7 @@ DARKGREY = (40, 40, 40)
 BLACK = (0, 0, 0)
 
 RED = (255, 0, 0)
+DARKRED = (160, 0, 0)
 GREEN = (0, 255, 0)
 DARKGREEN = (0, 127, 0)
 BLUE = (0, 0, 250)

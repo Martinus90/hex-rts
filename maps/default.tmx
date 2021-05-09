@@ -60,10 +60,10 @@
     <property name="1_2_2_regiment" type="int" value="1"/>
     <property name="1_2_3_battalion" type="int" value="1"/>
     <property name="1_2_4_company" type="int" value="1"/>
-    <property name="2_1_men" type="int" value="20"/>
+    <property name="2_1_men" type="int" value="30"/>
     <property name="2_2_supply" type="int" value="50"/>
     <property name="2_3_uniforms" type="int" value="20"/>
-    <property name="2_4_fuel" type="int" value="50"/>
+    <property name="2_4_fuel" type="int" value="50000"/>
     <property name="3_1_light_ammo" type="int" value="50"/>
     <property name="3_2_heavy_ammo" type="int" value="0"/>
     <property name="3_3_rockets" type="int" value="0"/>

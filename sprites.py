@@ -586,7 +586,7 @@ class Unit(pg.sprite.Sprite):
         self.regiment = regiment
         self.battalion = battalion
         self.company = company
-        self.state = {"mobilized": True, "training": False, "refill_equipment": False, "refill_crew": False, "building": False} # 1 and 4 
+        self.state = {"mobilized": True, "training": False, "refill_equipment": False, "refill_crew": False, "building": False, "patroling": False, "engage": False}
 
         self.mobilized = True
         self.training = False
@@ -644,7 +644,8 @@ class Unit(pg.sprite.Sprite):
         self.step_to = None
         self.go_to = None
         self.path = None
-        self.doing = 0
+        self.return_to = None
+        self.doing = 0.0
         self.last_step_cost = 0
         self.step_cost = 0
 
@@ -725,6 +726,10 @@ class Unit(pg.sprite.Sprite):
         
     def make_path(self, go_to):
         self.go_to = go_to
+        if self.state["patroling"] == True:
+            self.return_to = roffset_to_cube(-1, self)
+        else:
+            self.return_to = None
         self.step_to = None
         self.frontier = PriorityQueue()
         self.frontier.put((0, self.hexid))
@@ -732,7 +737,7 @@ class Unit(pg.sprite.Sprite):
         self.cost_so_far = dict()
         self.came_from[self.hexid] = None
         self.cost_so_far[self.hexid] = 0
-        self.doing = 0
+        self.doing = 0.0
         self.path = []
         self.step_cost = 0
         self.last_step_cost = 0
@@ -779,30 +784,30 @@ class Unit(pg.sprite.Sprite):
         if self.go_to != None:
             print(self.doing)
             if self.go_to == self.hex:
-                self.stop()
-                #self.step_cost = 0
-                #self.last_step_cost = 0
                 print("Na miejscu")
-                self.task = self.game.language.COMMANDS[0]
+                if self.state["patroling"] == True and self.return_to != None:
+                    self.make_path(self.return_to)
+                else:
+                    self.stop()
+                    self.task = self.game.language.COMMANDS[0]
             else:    
                 if self.step_to == None:
                     if len(self.path) != 0:
                         self.step_to = self.path.pop()
                         self.step_cost = self.cost_so_far[self.step_to] - self.last_step_cost
                     else:
+                        print("Teoretycznie nie powinno do tego dojść / test")
                         print("Koniec drogi")
                         self.stop()
 
                 if self.step_to != None:
                     self.task = self.game.language.COMMANDS[1] + str(roffset_from_cube(-1, self.go_to)[0]) + ", " + str(roffset_from_cube(-1, self.go_to)[1])       
                     if self.fuel < self.unit_typ.fuel_usage:
-                        #print("TU")
-                        #print(self.terrain_cost(self.current[1]))
-                        #self.unit_typ.move_cost(self.terrain_cost(self.current[1]):#
+                        #moving without fuel
                         if self.doing >= self.step_cost:
                             self.doing = self.doing - self.step_cost
                             self.hex = self.game.map.grids[self.step_to].hex
-                            print("Brak paliwa, wolny ruch:")
+                            print("No fuel / Moving slowly")
                             #self.task = self.game.language.COMMANDS[1] + str(roffset_from_cube(-1, self.go_to)[0]) + ", " + str(roffset_from_cube(-1, self.go_to)[1])
                             print(self.step_to)
                             print("Koszt:")
@@ -837,8 +842,6 @@ class Unit(pg.sprite.Sprite):
         if self.state["training"] == True:
                 self.combat_ability = 5
                 self.task = self.game.language.COMMANDS[2]
-
-            #here script that add some progress to constructing near building
         
         if self.state['mobilized'] == True:
             if self.state['building'] == True:
@@ -855,17 +858,18 @@ class Unit(pg.sprite.Sprite):
             elif self.combat_ability > self.combat_ability_max:
                 self.combat_ability = self.combat_ability_max
 
-    def daily(self):
         if self.state["mobilized"] == True and self.state["training"] == True:
             if self.experience < 100:
-                self.experience += 1
+                self.experience += 0.1
         elif self.state["mobilized"] == True and self.state["training"] == False and self.state["building"] == True:
             if self.game.map.grids[self.hexid].building != None:
                 if self.unit_typ == 14:
-                    self.game.map.grids[self.hexid].building.construction(self.men * 3)
+                    self.game.map.grids[self.hexid].building.construction(round(self.men * 3 / 20, 2))
                 else:
-                    self.game.map.grids[self.hexid].building.construction(self.men)
+                    self.game.map.grids[self.hexid].building.construction(round(self.men / 20, 2))
 
+    def daily(self):
+        pass
 
     def update(self): 
         self.hexid = hex_id(OFFSET, self.hex, self.game.map.tmxdata.width)
@@ -875,8 +879,6 @@ class Unit(pg.sprite.Sprite):
 
         self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2 #+ FLAG_OFFSET[0]
         self.rect.y = self.y * TILESIZE[1] #+ FLAG_OFFSET[1]
-
-        
 
         self.description = [self.owner.name, 
                             self.unit_typ.name, 

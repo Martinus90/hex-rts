@@ -499,9 +499,9 @@ class Game:
                 for button in window.buttons:
                     window.image.blit(button.image, button.pos)
                 for variable in window.variables:
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(variable[0], False, LIGHTGREY), (window.pos[0] + variable[3][0], window.pos[1] + variable[3][1]))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render("$ " + str(variable[0]), False, variable[2]), (window.pos[0] + variable[3][0], window.pos[1] + variable[3][1]))
                 for res in window.resources:
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(res[0], False, LIGHTGREY), (window.pos[0] + res[3][0], window.pos[1] + res[3][1]))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(res[0], False, variable[2]), (window.pos[0] + res[3][0], window.pos[1] + res[3][1]))
 
  
 

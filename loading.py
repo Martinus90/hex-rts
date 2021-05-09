@@ -2,6 +2,7 @@ import pygame as pg
 from settings import *
 from languages import *
 from sprites import *
+from random import randint
 
 class Diplomacy(pg.sprite.Sprite):
     def __init__(self, game):
@@ -10,14 +11,29 @@ class Diplomacy(pg.sprite.Sprite):
 class Trade(pg.sprite.Sprite):
     def __init__(self, game):
         self.game = game
-        self.resource_exchange_rate = [4,3,3,2,2, #"Wood", "Food", "Cement", "Iron Ore", "Coal",
+        self.resource_exchange_rate1 = [4,3,3,2,2, #"Wood", "Food", "Cement", "Iron Ore", "Coal",
         5,1,10,10,5,#    "Steel":5, "Water":1, "Tools":10, "Parts":10, "Aluminum":5, 
-        2,3,2,3,1,#    "Oil":2, "Fuel":3, "Plastic":2, "Chemical Compounds":3, "Fertilizer":1, 
-        1,1,20,1,2,#    "Silicon":1, "Calcium":1, "Electronics":20, "Cotton":1, "Textiles":2, 
-        1,1,5,30,4,#    "Rubber":1, "Bauxite":1, "Furniture":5, "Civilian Machines":30,"Supply":4, 
+        2,3,2,3,1,#      "Oil":2, "Fuel":3, "Plastic":2, "Chemical Compounds":3, "Fertilizer":1, 
+        1,1,20,1,2,#     "Silicon":1, "Calcium":1, "Electronics":20, "Cotton":1, "Textiles":2, 
+        1,1,5,30]#       "Rubber":1, "Bauxite":1, "Furniture":5, "Civilian Machines":30,
+        self.resource_exchange_rate2 = [4,#    "Supply":4, 
         3,3,2,4,30,#    "Uniforms":3, "Fuel":3, "Light Ammo":2, "Heavy Ammo":4, "Rockets":30, 
         8,40,100,200,300,#    "Rifle":8, "Artilleries":40, "Truck":100, "APC":200, "Tank":300, 
         500,1000]#    "Helicopters":500, "Aircrafts":1000
+        self.resource_rating = [4,3,3,2,2, #"Wood", "Food", "Cement", "Iron Ore", "Coal",
+        5,1,10,10,5,#    "Steel":5, "Water":1, "Tools":10, "Parts":10, "Aluminum":5, 
+        2,3,2,3,1,#      "Oil":2, "Fuel":3, "Plastic":2, "Chemical Compounds":3, "Fertilizer":1, 
+        1,1,20,1,2,#     "Silicon":1, "Calcium":1, "Electronics":20, "Cotton":1, "Textiles":2, 
+        1,1,5,30]
+    
+    def rating(self, value):#convert int rating to color 1=fall/red 2=stable/grey 3=rising/green
+        if value == 1:
+            return DARKRED
+        elif value == 2:
+            return LIGHTGREY
+        elif value == 3:
+            return DARKGREEN
+
         
 
 
@@ -123,7 +139,7 @@ class Menu(pg.sprite.Sprite):
         self.buttons.append(self.new_building_button)
 
         
-        self.trade_window = Trade_Window(self.game, pos=[100,100], size=(650, 600), color=DARKGREY, text="Trade", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3)
+        self.trade_window = Trade_Window(self.game, pos=[100,100], size=(700, 650), color=DARKGREY, text="Trade", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3)
         self.open_trade_window = OW_Button(self.game, self.trade_window, pos=[WIDTH - MENU_RIGHT[0]+15, HEIGHT-45], size=(78, 30), color=DARKGREY, text="Trade", textsize=24, textcolor=LIGHTGREY)
         #self.open_trade_window.image = 
         self.buttons.append(self.open_trade_window)
@@ -263,9 +279,14 @@ class Function_Button(Button):
         self.visible = self.window.visible
         #self.image = self.game.new_b_button.copy()
 
-        self.image = self.game.button_1_img.copy()
+        self.image = pg.Surface(self.size)
+        pg.draw.rect(self.image, self.textcolor, (0, 0, size[0], size[1]))
+        pg.draw.rect(self.image, self.color, (0+BUTTON_BORDER_SIZE, 0+BUTTON_BORDER_SIZE, size[0]-BUTTON_BORDER_SIZE*2-1, size[1]-BUTTON_BORDER_SIZE*2-1))
+       
+
+        #self.image = self.game.button_1_img.copy()
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.text, False, self.textcolor), (6,7))
-        self.image.set_colorkey(VIOLET)
+        #self.image.set_colorkey(VIOLET)
         self.rect = self.image.get_rect()
 
     def click(self):
@@ -554,9 +575,9 @@ class New_Building_Window(Window):
         self.resources = []
         self.building_typ = 1
 
-        self.buttons.append(Function_Button(self.game, self, pos=(20, 350), size=(20, 20), color=DARKGREY, text="Prev", textsize=20, textcolor=LIGHTGREY, function="func_1"))
-        self.buttons.append(Function_Button(self.game, self, pos=(220, 350), size=(20, 20), color=DARKGREY, text="Next", textsize=20, textcolor=LIGHTGREY, function="func_2"))
-        self.buttons.append(Function_Button(self.game, self, pos=(120, 350), size=(20, 20), color=DARKGREY, text="Done", textsize=20, textcolor=LIGHTGREY, function="func_3"))
+        self.buttons.append(Function_Button(self.game, self, pos=(20, 350), size=(60, 30), color=DARKGREY, text="Prev", textsize=20, textcolor=LIGHTGREY, function="func_1"))
+        self.buttons.append(Function_Button(self.game, self, pos=(220, 350), size=(60, 30), color=DARKGREY, text="Next", textsize=20, textcolor=LIGHTGREY, function="func_2"))
+        self.buttons.append(Function_Button(self.game, self, pos=(120, 350), size=(60, 30), color=DARKGREY, text="Done", textsize=20, textcolor=LIGHTGREY, function="func_3"))
 
 
         self.var1 = ['', 16, LIGHTGREY, (10, 45)]
@@ -668,6 +689,8 @@ class Unit_Window(pg.sprite.Sprite):
         self.buttons.append(Switch_Button(self.game, self, pos=[360,80], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="refill_equipment"))
         self.buttons.append(Switch_Button(self.game, self, pos=[360,100], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="refill_crew"))
         self.buttons.append(Switch_Button(self.game, self, pos=[360,120], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="building"))
+        self.buttons.append(Switch_Button(self.game, self, pos=[360,140], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="patroling"))
+        self.buttons.append(Switch_Button(self.game, self, pos=[360,160], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="engage"))
 
         #draw eq names
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[3], False, self.textcolor), (50, 40))
@@ -693,6 +716,8 @@ class Unit_Window(pg.sprite.Sprite):
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[5], False, self.textcolor), (380,80))
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[6], False, self.textcolor), (380,100))
         self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[8], False, self.textcolor), (380,120))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[9], False, self.textcolor), (380,140))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[10], False, self.textcolor), (380,160))
 
 
         self.rect = self.image.get_rect()
@@ -732,9 +757,10 @@ class Trade_Window(Window):
         self.resources = []
         self.building_typ = 1
 
-        self.buttons.append(Function_Button(self.game, self, pos=(20, 350), size=(20, 20), color=DARKGREY, text="1", textsize=20, textcolor=LIGHTGREY, function="func_1"))
-        self.buttons.append(Function_Button(self.game, self, pos=(220, 350), size=(20, 20), color=DARKGREY, text="2", textsize=20, textcolor=LIGHTGREY, function="func_2"))
-        self.buttons.append(Function_Button(self.game, self, pos=(120, 350), size=(20, 20), color=DARKGREY, text="3", textsize=20, textcolor=LIGHTGREY, function="func_3"))
+        self.buttons.append(Function_Button(self.game, self, pos=(20, 550), size=(len(self.game.language.BASIC[4])*11+15, 30), color=DARKGREY, text=self.game.language.BASIC[4], textsize=20, textcolor=LIGHTGREY, function="func_1"))
+        self.buttons.append(Function_Button(self.game, self, pos=(170, 550), size=(len(self.game.language.BASIC[6])*11+15, 30), color=DARKGREY, text=self.game.language.BASIC[6], textsize=20, textcolor=LIGHTGREY, function="func_2"))
+        self.buttons.append(Function_Button(self.game, self, pos=(320, 550), size=(len(self.game.language.BASIC[7])*11+15, 30), color=DARKGREY, text=self.game.language.BASIC[7], textsize=20, textcolor=LIGHTGREY, function="func_3"))
+        self.buttons.append(Function_Button(self.game, self, pos=(470, 550), size=(len(self.game.language.BASIC[5])*11+15, 30), color=DARKGREY, text=self.game.language.BASIC[5], textsize=20, textcolor=LIGHTGREY, function="func_3"))
 
 
         if 1 == 1:
@@ -750,21 +776,46 @@ class Trade_Window(Window):
             b = 0
             c = 0
             for a in RES1_LIST:
-                self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(a, False, self.textcolor), (30 + c, 60 + (b*20)))
+                self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(a, False, self.textcolor), (70 + c, 60 + (b*20)))
                 b += 1
                 if b > 7:
-                    c += 200
+                    c += 240
                     b = 0
             b = 0
             c = 0 
             for a in RES2_LIST:
-                self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(a, False, self.textcolor), (30 + c, 260 + (b*20)))
+                self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(a, False, self.textcolor), (70 + c, 260 + (b*20)))
                 b += 1
                 if b > 4:
-                    c += 200
+                    c += 240
                     b = 0
 
+        b = 0
+        c = 0
+        for a in self.game.trade.resource_exchange_rate1:
+            self.variables.append([a, 16, self.game.trade.rating(randint(1,3)), (10 + c, 60 + (b*20))])
 
+            b += 1
+            if b > 7:
+                c += 240
+                b = 0
+        b = 0
+        c = 0
+        for a in self.game.trade.resource_exchange_rate2:
+            self.variables.append([a, 16, self.game.trade.rating(randint(1,3)), (10 + c, 260 + (b*20))])
+            print(randint(1,3))
+            #self.game.trade.rating(randint(1,3))
+            b += 1
+            if b > 4:
+                c += 240
+                b = 0
+
+
+
+
+
+        print(self.game.trade.resource_exchange_rate1)
+        print(self.game.trade.resource_exchange_rate2)
 
 
 
