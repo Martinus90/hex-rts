@@ -38,6 +38,7 @@ class Game:
         self.dragged = None
         self.territory_visible = False
         self.s_drag = pg.Vector2
+        self.nations = []
         self.players = []
         self.types = []
 
@@ -140,12 +141,15 @@ class Game:
         self.units = pg.sprite.Group()
         self.texts = []
 
+        self.nations.append(Nation(self, name="Sovenyan"))
+        self.nations.append(Nation(self, name="Nebohracy"))
+
         #first on the list is always neutral, second is player, 3+ are others / to change color just change side
-        self.players.append(Contender(self, name="Neutral", player=False, side=0, exc_rt=1, money=0, global_money=0, reputation=0, stability=0))
-        self.players.append(Contender(self, name="Sovenya", player=True, side=1, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
-        self.players.append(Contender(self, name="Nebohray", player=False, side=2, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
-        self.players.append(Contender(self, name="t943", player=False, side=3, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
-        self.players.append(Contender(self, name="hj6u654", player=False, side=4, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
+        self.players.append(Contender(self, name="Neutral", nation=0, player=False, side=0, exc_rt=1, money=0, global_money=0, reputation=0, stability=0))
+        self.players.append(Contender(self, name="Sovenya", nation=0, player=True, side=1, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
+        self.players.append(Contender(self, name="Nebohray", nation=1, player=False, side=2, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
+        self.players.append(Contender(self, name="Sovenyan Rebels", nation=0, player=False, side=3, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
+        self.players.append(Contender(self, name="hj6u654", nation=1, player=False, side=4, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
 
         self.diplomacy = Diplomacy(self)
         self.trade = Trade(self)
@@ -207,8 +211,8 @@ class Game:
         for b in self.map.buildings:
             if b[2] == "CONSTRUCTION":
                 CONSTRUCTION(self, b[0], b[1], b[3], b[4])
-            #elif b[2] == "VILLAGE":
-            #    VILLAGE(self, b[0], b[1], b[3], b[4])
+            elif b[2] == "VILLAGE":
+                VILLAGE(self, b[0], b[1], b[3], b[4], b[5], b[6])
             elif b[2] == "OIL_WELL":
                 OIL_WELL(self, b[0], b[1], b[3])
 

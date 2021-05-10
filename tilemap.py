@@ -122,8 +122,12 @@ class TiledMap:
                 if obj.name == "building":
                     if obj.properties['typ'] == 'CONSTRUCTION':
                         self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['what'],obj.properties['owner']])
+                    elif obj.properties['typ'] == 'VILLAGE':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['name'],obj.properties['nationality'],obj.properties['population']])
                     elif obj.properties['typ'] == 'OIL_WELL':
                         self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner']])
+
+        
         #self.grid_list = set(self.grid_list)
 
     def get_terrain(self, a):

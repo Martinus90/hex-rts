@@ -422,6 +422,7 @@ class CONSTRUCTION(pg.sprite.Sprite):
         self.col = x
         self.row = y
         self.hex = roffset_to_cube(-1, self)
+        self.hexid = hex_id(OFFSET, self.hex, self.game.map.tmxdata.width)
         self.rect.x = self.x * TILESIZE[0] + self.y % 2 * (TILESIZE[0] / 2)
         self.rect.y = self.y * TILESIZE[1]
         
@@ -470,9 +471,6 @@ class CONSTRUCTION(pg.sprite.Sprite):
             #test
             self.game.build(self)
 
-
-
-
     def update(self):
         self.fullmaterials = sum(self.materials.values())
 
@@ -492,7 +490,7 @@ class CONSTRUCTION(pg.sprite.Sprite):
         self.description[6] = self.game.language.RES1[5] + ": " + str(self.materials['steel']) + "/" + str(self.cost['steel'])
 
 class SETTLEMENT(pg.sprite.Sprite):
-    def __init__(self, game, x, y, owner, name, population):
+    def __init__(self, game, x, y, owner, name, nationality, population):
         self.groups = game.all_sprites, game.buildings
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -502,9 +500,11 @@ class SETTLEMENT(pg.sprite.Sprite):
         self.x = x
         self.y = y
         self.value = value
+
         self.col = x
         self.row = y
         self.hex = roffset_to_cube(-1, self)
+        self.hexid = hex_id(OFFSET, self.hex, self.game.map.tmxdata.width)
         self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
         self.rect.y = self.y * TILESIZE[1]
 
@@ -513,6 +513,85 @@ class SETTLEMENT(pg.sprite.Sprite):
 
     def daily(self):
         pass
+
+class VILLAGE(SETTLEMENT):
+    def __init__(self, game, x, y, owner, name, nationality, population):
+        self.groups = game.all_sprites, game.buildings
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.x = x
+        self.y = y
+        self.owner = self.game.players[owner]
+        self.name = name
+        self.nationality = self.game.nations[nationality]
+        self.population = population
+
+        self.image = self.game.village_img.copy()
+        self.image.set_colorkey(VIOLET)
+        self.image.blit(self.owner.image, (44, 10))
+        self.rect = self.image.get_rect()
+        self.storage = {'food': 0, 'wood': 0}
+        self.grid_with_res = []
+        self.sum_res = []
+
+        self.col = x
+        self.row = y
+        self.hex = roffset_to_cube(-1, self)
+        self.hexid = hex_id(OFFSET, self.hex, self.game.map.tmxdata.width)
+        self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
+        self.rect.y = self.y * TILESIZE[1]
+
+        self.description = [self.owner.name, self.name, "Pop: " + str(self.population), self.game.language.GUI[0], self.game.language.RESOURCES[2] + ":", self.game.language.RESOURCES[1] + ":",""]
+        #here near resources 
+        self.resources_near_building()
+
+    def resources_near_building(self):
+        self.grid_with_res = []
+        self.sum_res = []
+        self.sum_res.append(0)
+        self.game.map.grids[self.hexid].get_near_resources()
+        if self.game.map.grids[self.hexid].resource != None:
+            if self.game.map.grids[self.hexid].resource.name == self.game.language.RESOURCES[2]:
+                self.grid_with_res.append(self.game.map.grids[self.hexid])
+                self.sum_res[0] += self.game.map.grids[self.hexid].resource.value
+        for a in self.game.map.grids[self.hexid].neighbors:
+            if a.resource != None:
+                if a.resource.name == self.game.language.RESOURCES[2]:
+                    self.grid_with_res.append(a)
+                    self.sum_res[0] += a.resource.value
+
+        self.sum_res.append(0)
+        if self.game.map.grids[self.hexid].resource != None:
+            if self.game.map.grids[self.hexid].resource.name == self.game.language.RESOURCES[1]:
+                self.grid_with_res.append(self.game.map.grids[self.hexid])
+                self.sum_res[1] += self.game.map.grids[self.hexid].resource.value
+        for a in self.game.map.grids[self.hexid].neighbors:
+            if a.resource != None:
+                if a.resource.name == self.game.language.RESOURCES[1]:
+                    self.grid_with_res.append(a)
+                    self.sum_res[1] += a.resource.value
+
+        self.description[4] = self.game.language.RESOURCES[2] + ": " + str(self.sum_res[0])
+        self.description[5] = self.game.language.RESOURCES[1] + ": " + str(self.sum_res[1])
+        
+    def daily(self):
+        e = round(self.population / (50), 2)
+        self.resources_near_building()
+        for d in self.grid_with_res:
+            if d.resource.value >= e:
+                if d.resource.name == self.game.language.RESOURCES[2]:  #food
+                    self.storage['food'] += e
+                    d.resource.value -= e
+                if d.resource.name == self.game.language.RESOURCES[2]:  #food
+                    self.storage['food'] += e
+                    d.resource.value -= e
+
+
+        print(self.storage['food'])
+
+
+
+
 
 class BUILDING(pg.sprite.Sprite):
     def __init__(self, game, x, y, owner):
@@ -532,9 +611,11 @@ class BUILDING(pg.sprite.Sprite):
         self.col = x
         self.row = y
         self.hex = roffset_to_cube(-1, self)
-
+        self.hexid = hex_id(OFFSET, self.hex, self.game.map.tmxdata.width)
         self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
         self.rect.y = self.y * TILESIZE[1]
+
+        self.description = [self.owner.name, self.name, "", "", "", "", ""]
 
     def daily(self):
         pass
@@ -547,27 +628,53 @@ class OIL_WELL(BUILDING):
         self.x = x
         self.y = y
         self.owner = self.game.players[owner]
-        self.name = game.language.BUILDINGS1[0]
+        self.name = game.language.BUILDINGS1[9]
 
         self.image = self.game.oil_well_img.copy()
         self.image.set_colorkey(VIOLET)
         self.image.blit(self.owner.image, (44, 10))
         self.rect = self.image.get_rect()
         self.storage = {'oil': 0}
+        self.grid_with_res = []
+        self.sum_res = 0
 
         self.col = x
         self.row = y
-        #print(self.col)
-        #print(self.row)
         self.hex = roffset_to_cube(-1, self)
-
+        self.hexid = hex_id(OFFSET, self.hex, self.game.map.tmxdata.width)
         self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
         self.rect.y = self.y * TILESIZE[1]
 
-        self.description = ["","","","","","",""]
+        self.description = [self.owner.name, self.name, "", self.game.language.GUI[0], self.game.language.RESOURCES[3] + ": ","",""]
+        #here near resources 
+        self.resources_near_building()
 
+    def resources_near_building(self):
+        self.grid_with_res = []
+        self.sum_res = 0
+        self.game.map.grids[self.hexid].get_near_resources()
+        if self.game.map.grids[self.hexid].resource != None:
+            if self.game.map.grids[self.hexid].resource.name == self.game.language.RESOURCES[3]:
+                self.grid_with_res.append(self.game.map.grids[self.hexid])
+                self.sum_res += self.game.map.grids[self.hexid].resource.value
+        for a in self.game.map.grids[self.hexid].neighbors:
+            if a.resource != None:
+                if a.resource.name == self.game.language.RESOURCES[3]:
+                    self.grid_with_res.append(a)
+                    self.sum_res += a.resource.value
+
+        for c in self.grid_with_res:
+            print(c.id)
+            print(c.resource.name)
+            print(c.resource.value)
+
+        print("Suma")
+        print(self.sum_res)
+        self.description[4] = self.game.language.RESOURCES[3] + ": " + str(self.sum_res)
+        
     def daily(self):
         pass
+        #(round(self.men * 3 / 20, 2))
 
 class Unit(pg.sprite.Sprite):
     def __init__(self, game, x, y, owner, typ, unit_name, brigade, regiment, battalion, company, men, supply, uniforms, fuel, light_ammo, heavy_ammo, rockets, rifle, art, truck, apc, tank, heli, aircraft):

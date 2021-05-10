@@ -34,14 +34,17 @@ class Trade(pg.sprite.Sprite):
         elif value == 3:
             return DARKGREEN
 
-        
-
-
-
-class Contender(pg.sprite.Sprite):
-    def __init__(self, game, name="Player", player=False, side=0, exc_rt=1, money=0, global_money=0, reputation=0, stability=0):
+class Nation(pg.sprite.Sprite):
+    def __init__(self, game, name="Nation"):
         self.game = game
         self.name = name
+        self.description = ""
+
+class Contender(pg.sprite.Sprite):
+    def __init__(self, game, name="Player", nation=0, player=False, side=0, exc_rt=1, money=0, global_money=0, reputation=0, stability=0):
+        self.game = game
+        self.name = name
+        self.nation = self.game.nations[nation]
         self.player = player
         self.side = side
         self.exc_rt = exc_rt
@@ -70,6 +73,7 @@ class Contender(pg.sprite.Sprite):
 
     def update(self):
         pass
+
 
 class Unit_Type(pg.sprite.Sprite):
     def __init__(self, game, name="Name", typ=0, s_normal=1, s_water=1, s_mountain=1, s_coast=1, s_river=1, s_no_fuel=20, fuel_usage=0, food_usage=1, money_usage=1):
@@ -803,7 +807,6 @@ class Trade_Window(Window):
         c = 0
         for a in self.game.trade.resource_exchange_rate2:
             self.variables.append([a, 16, self.game.trade.rating(randint(1,3)), (10 + c, 260 + (b*20))])
-            print(randint(1,3))
             #self.game.trade.rating(randint(1,3))
             b += 1
             if b > 4:
@@ -814,8 +817,8 @@ class Trade_Window(Window):
 
 
 
-        print(self.game.trade.resource_exchange_rate1)
-        print(self.game.trade.resource_exchange_rate2)
+        #print(self.game.trade.resource_exchange_rate1)
+        #print(self.game.trade.resource_exchange_rate2)
 
 
 
