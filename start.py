@@ -99,6 +99,7 @@ class Game:
             self.mine_img = pg.image.load(path.join(img_folder, MINE_IMG))
             self.smelter_img = pg.image.load(path.join(img_folder, SMELTER_IMG))
             self.oil_well_img = pg.image.load(path.join(img_folder, OIL_WELL_IMG))
+            self.rafinery_img = pg.image.load(path.join(img_folder, RAFINERY_IMG))
             self.power_plant_img = pg.image.load(path.join(img_folder, POWER_PLANT_IMG))
             self.production_plant_img = pg.image.load(path.join(img_folder, PRODUCTION_PLANT_IMG))
             self.chemical_plant_img = pg.image.load(path.join(img_folder, CHEMICAL_PLANT_IMG))
@@ -174,6 +175,7 @@ class Game:
 
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
+        
         for grid in self.map.grids:
             grid.get_neighbors(self.map)
 
@@ -210,11 +212,15 @@ class Game:
 
         for b in self.map.buildings:
             if b[2] == "CONSTRUCTION":
-                CONSTRUCTION(self, b[0], b[1], b[3], b[4])
+                CONSTRUCTION(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
             elif b[2] == "VILLAGE":
-                VILLAGE(self, b[0], b[1], b[3], b[4], b[5], b[6])
+                VILLAGE(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
             elif b[2] == "OIL_WELL":
-                OIL_WELL(self, b[0], b[1], b[3])
+                OIL_WELL(self, b[0], b[1], b[3], b[4])
+            elif b[2] == "MINE":
+                MINE(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9])
+            elif b[2] == "RAFINERY":
+                RAFINERY(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
 
         for u in self.map.units:
             Unit(self, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15], u[16], u[17], u[18], u[19], u[20], u[21], u[22])
@@ -223,7 +229,7 @@ class Game:
         self.camera = Camera(self.map.width, self.map.height)
 
     def adding_building(self, variable):
-        CONSTRUCTION(self, self.selecting.col, self.selecting.row, BUILDING_LIST[variable], self.player.side)
+        CONSTRUCTION(self, self.selecting.col, self.selecting.row, BUILDING_LIST[variable], self.player.side, 0, 0, 0, 0)
 
     def build(self, construction):
         if construction.what == OIL_WELL:
@@ -245,6 +251,8 @@ class Game:
             self.hour += 1
             for unit in self.units:
                 unit.hourly()
+            for building in self.buildings:
+                building.hourly()
         if self.hour > 23: #def 23
             self.hour -= 24
             self.day += 1
@@ -325,7 +333,7 @@ class Game:
             #print(str(b.col) + " / " + str(self.mouse_pos.col))
             #print("Second")
             #print(str(b.row) + " / " + str(self.mouse_pos.row))
-            if (b.col == self.mouse_pos.col) and (b.row == self.mouse_pos.row):
+            if (b.col == self.mouse_pos.col) and (b.row == self.mouse_pos.row) and (b.owner.player == True):
                 print("Selected")
                 self.building = b
                 print(self.building)
@@ -336,6 +344,10 @@ class Game:
                 self.menu.building5[0] = self.building.description[4]
                 self.menu.building6[0] = self.building.description[5]
                 self.menu.building7[0] = self.building.description[6]
+                self.menu.building8[0] = self.building.description[7]
+                self.menu.building9[0] = self.building.description[8]
+                self.menu.building10[0] = self.building.description[9]
+
                 break
             else:
                 self.building = None
@@ -346,6 +358,12 @@ class Game:
                 self.menu.building5[0] = ""
                 self.menu.building6[0] = ""
                 self.menu.building7[0] = ""
+                self.menu.building8[0] = ""
+                self.menu.building9[0] = ""
+                self.menu.building10[0] = ""
+
+
+
 
     def deselect(self):
         self.selecting = None
@@ -386,6 +404,9 @@ class Game:
             self.menu.building5[0] = self.building.description[4]
             self.menu.building6[0] = self.building.description[5]
             self.menu.building7[0] = self.building.description[6]
+            self.menu.building8[0] = self.building.description[7]
+            self.menu.building9[0] = self.building.description[8]
+            self.menu.building10[0] = self.building.description[9]
         if self.uniting != None:
             self.menu.unit1[0] = self.uniting.description[0]
             self.menu.unit2[0] = self.uniting.description[1]
@@ -401,6 +422,9 @@ class Game:
     def draw(self):
         self.screen.fill(BGCOLOR)
         self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
+        if self.territory_visible == True:
+            self.screen.blit(self.map.surface2, self.camera.apply_rect(self.map_rect))
+
         for sprite in self.all_sprites:
             #if (self.player.x - 8 < sprite.x < self.player.x + 8) and (self.player.y - 8 < sprite.y < self.player.y + 8):
                 #print(sprite.x, sprite.y, sprite.z)

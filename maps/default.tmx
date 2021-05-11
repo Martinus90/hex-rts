@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="hexagonal" renderorder="left-up" width="20" height="20" tilewidth="64" tileheight="64" infinite="0" hexsidelength="32" staggeraxis="y" staggerindex="odd" nextlayerid="3" nextobjectid="28">
+<map version="1.4" tiledversion="1.4.2" orientation="hexagonal" renderorder="left-up" width="20" height="20" tilewidth="64" tileheight="64" infinite="0" hexsidelength="32" staggeraxis="y" staggerindex="odd" nextlayerid="4" nextobjectid="30">
  <tileset firstgid="1" source="tiles.tsx"/>
+ <tileset firstgid="321" source="colors.tsx"/>
  <layer id="1" name="layer1" width="20" height="20">
   <data encoding="csv">
 24,24,21,24,20,24,17,20,17,20,18,17,19,24,18,18,19,20,20,20,
@@ -63,7 +64,7 @@
     <property name="2_1_men" type="int" value="30"/>
     <property name="2_2_supply" type="int" value="50"/>
     <property name="2_3_uniforms" type="int" value="30"/>
-    <property name="2_4_fuel" type="int" value="20"/>
+    <property name="2_4_fuel" type="int" value="2000"/>
     <property name="3_1_light_ammo" type="int" value="50"/>
     <property name="3_2_heavy_ammo" type="int" value="0"/>
     <property name="3_3_rockets" type="int" value="0"/>
@@ -93,14 +94,18 @@
   </object>
   <object id="15" name="building" x="757.48" y="355.852" width="23.8659" height="23.8659">
    <properties>
+    <property name="cement" type="int" value="0"/>
     <property name="owner" type="int" value="1"/>
+    <property name="progress" type="int" value="0"/>
+    <property name="steel" type="int" value="1000"/>
     <property name="typ" value="CONSTRUCTION"/>
     <property name="what" value="OIL_WELL"/>
+    <property name="wood" type="int" value="100"/>
    </properties>
   </object>
   <object id="16" name="calcium" x="724.216" y="785.584" width="23.8659" height="23.8659">
    <properties>
-    <property name="value" type="int" value="40"/>
+    <property name="value" type="int" value="5000"/>
    </properties>
   </object>
   <object id="21" name="unit" x="791.595" y="594.974" width="23.8659" height="23.8659">
@@ -180,6 +185,7 @@
   </object>
   <object id="24" name="building" x="911.48" y="402.852" width="23.8659" height="23.8659">
    <properties>
+    <property name="oil" type="int" value="100"/>
     <property name="owner" type="int" value="1"/>
     <property name="typ" value="OIL_WELL"/>
    </properties>
@@ -196,12 +202,61 @@
   </object>
   <object id="27" name="building" x="816.48" y="546.852" width="23.8659" height="23.8659">
    <properties>
+    <property name="food" type="int" value="0"/>
     <property name="name" value="Wygwizow"/>
     <property name="nationality" type="int" value="0"/>
     <property name="owner" type="int" value="1"/>
     <property name="population" type="int" value="100"/>
     <property name="typ" value="VILLAGE"/>
+    <property name="wood" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="28" name="building" x="693.48" y="739.852" width="23.8659" height="23.8659">
+   <properties>
+    <property name="bauxite" type="int" value="0"/>
+    <property name="calcium" type="int" value="0"/>
+    <property name="coal" type="int" value="0"/>
+    <property name="iron" type="int" value="0"/>
+    <property name="owner" type="int" value="2"/>
+    <property name="silicon" type="int" value="0"/>
+    <property name="typ" value="MINE"/>
+    <property name="uranium" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="29" name="building" x="531.48" y="689.852" width="23.8659" height="23.8659">
+   <properties>
+    <property name="calcium" type="int" value="50"/>
+    <property name="cement" type="int" value="0"/>
+    <property name="coal" type="int" value="20"/>
+    <property name="fuel" type="int" value="0"/>
+    <property name="oil" type="int" value="100"/>
+    <property name="owner" type="int" value="1"/>
+    <property name="typ" value="RAFINERY"/>
    </properties>
   </object>
  </objectgroup>
+ <layer id="3" name="layer3" width="20" height="20" opacity="0.56">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,322,322,322,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,322,322,322,322,322,322,322,0,0,0,0,0,
+0,0,0,0,0,0,0,0,322,322,322,322,322,322,322,322,0,0,0,0,
+0,0,0,0,0,0,0,322,322,322,322,322,322,322,322,0,0,0,0,0,
+0,0,0,0,0,0,0,322,322,322,322,322,322,322,0,0,0,0,0,0,
+0,0,0,0,0,0,0,322,322,322,322,322,322,322,0,0,0,0,0,0,
+0,0,0,0,0,0,0,322,322,321,321,322,322,322,0,0,0,0,0,0,
+0,0,0,0,0,0,0,322,322,321,321,321,322,322,0,0,0,0,0,0,
+0,0,0,0,0,0,0,322,322,322,321,321,323,323,323,0,0,0,0,0,
+0,0,0,0,0,0,0,322,322,323,323,323,323,323,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,323,323,323,323,323,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,323,323,323,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
 </map>

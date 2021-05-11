@@ -112,14 +112,15 @@ BARRACKS_IMG = "barracks.bmp"
 MINE_IMG = "mine.bmp"
 SMELTER_IMG = "smelter.bmp"
 OIL_WELL_IMG = "oil_well.bmp"
-POWER_PLANT_IMG = "power_plant.bmp"#10
+RAFINERY_IMG = "rafinery.bmp"
+POWER_PLANT_IMG = "power_plant.bmp"#11
 PRODUCTION_PLANT_IMG = "production_plant.bmp"
 CHEMICAL_PLANT_IMG = "chemical_plant.bmp"
 HIGH_TECH_PLANT_IMG = "high_tech_plant.bmp"
 MECHANICAL_PLANT_IMG = "mechanical_plant.bmp"
 ARMAMENT_PLANT_IMG = "armament_plant.bmp"
 AVIATION_PLANT_IMG = "aviation_plant.bmp"
-SHIPYARD_IMG = "shipyard.bmp"#17
+SHIPYARD_IMG = "shipyard.bmp"#18
             
 
 X_IMG = "x.bmp"

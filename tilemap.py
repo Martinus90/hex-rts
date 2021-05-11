@@ -26,6 +26,10 @@ class TiledMap:
         self.listtiles = [z for z in tm.gidmap]
         self.tmxdata = tm
         self.id = 0
+        self.surface1 = pg.Surface((self.width, self.height))
+        self.surface2 = pg.Surface((self.width, self.height))
+        pg.draw.rect(self.surface2, VIOLET, (0, 0, self.width, self.height))
+        self.surface2.set_colorkey(VIOLET)
         #print(self.tmxdata.width)
 
         self.grids = []
@@ -57,6 +61,19 @@ class TiledMap:
                     if tile:
                         surface.blit(tile, (x * self.tmxdata.tilewidth + (y&1) * self.tmxdata.tilewidth / 2, y * self.tmxdata.tileheight / TILESIZE[0] * TILESIZE[1]))
                     self.id += 1
+
+            if layer.name == "layer3":
+                for x, y, gid in layer:
+                    tile = ti(gid)
+                    print(x, y, gid, tile)
+                    print(self.listtiles[int(gid - 1)])
+                    
+                    if tile != None:
+                        self.surface2.blit(tile, (x * self.tmxdata.tilewidth + (y&1) * self.tmxdata.tilewidth / 2, y * self.tmxdata.tileheight / TILESIZE[0] * TILESIZE[1]))
+                        
+                        self.grids[(x + (y * self.tmxdata.width))].owner = int(self.listtiles[int(gid - 1)] - 321)
+
+        self.surface2.set_colorkey(VIOLET)
 
         for grp in self.tmxdata.objectgroups:
             for obj in grp:
@@ -121,11 +138,15 @@ class TiledMap:
 
                 if obj.name == "building":
                     if obj.properties['typ'] == 'CONSTRUCTION':
-                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['what'],obj.properties['owner']])
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['what'],obj.properties['owner'],obj.properties['wood'],obj.properties['cement'],obj.properties['steel'],obj.properties['progress']])
                     elif obj.properties['typ'] == 'VILLAGE':
-                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['name'],obj.properties['nationality'],obj.properties['population']])
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['name'],obj.properties['nationality'],obj.properties['population'],obj.properties['food'],obj.properties['wood']])
                     elif obj.properties['typ'] == 'OIL_WELL':
-                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner']])
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['oil']])
+                    elif obj.properties['typ'] == 'MINE':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['iron'],obj.properties['coal'],obj.properties['calcium'],obj.properties['silicon'],obj.properties['bauxite'],obj.properties['uranium']])
+                    elif obj.properties['typ'] == 'RAFINERY':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['oil'],obj.properties['fuel'],obj.properties['calcium'],obj.properties['cement'],obj.properties['coal']])
 
         
         #self.grid_list = set(self.grid_list)
@@ -152,6 +173,9 @@ class TiledMap:
         temp_surface = pg.Surface((self.width, self.height))
         self.render(temp_surface)
         return temp_surface
+
+    def update_map_owning(self):
+        pass
 
     def make_objects(self):
         pass

@@ -176,6 +176,10 @@ class Menu(pg.sprite.Sprite):
             self.building5 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 510)]
             self.building6 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 530)]
             self.building7 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 550)]
+            self.building8 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 570)]
+            self.building9 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 590)]
+            self.building10 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 610)]
+
 
             self.game.texts.append(self.position)
             self.game.texts.append(self.speed)
@@ -202,6 +206,9 @@ class Menu(pg.sprite.Sprite):
             self.game.texts.append(self.building5)
             self.game.texts.append(self.building6)
             self.game.texts.append(self.building7)
+            self.game.texts.append(self.building8)
+            self.game.texts.append(self.building9)
+            self.game.texts.append(self.building10)
 
         if 1 == 1:  #top bar -> tb
             self.tb_player_money  = ['$ 4000000', 16, DARKGREEN, (340, 17)]
