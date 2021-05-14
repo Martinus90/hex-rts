@@ -76,7 +76,8 @@ class Contender(pg.sprite.Sprite):
 
 
 class Unit_Type(pg.sprite.Sprite):
-    def __init__(self, game, name="Name", typ=0, s_normal=1, s_water=1, s_mountain=1, s_coast=1, s_river=1, s_no_fuel=20, fuel_usage=0, food_usage=1, money_usage=1):
+    def __init__(self, game, name="Name", typ=0, s_normal=1, s_water=1, s_mountain=1, s_coast=1, s_river=1, s_no_fuel=20, money_usage=1, max_men=0, max_art=0, max_truck=5, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0):
+
         self.game = game
         self.name = name
         self.typ = typ
@@ -87,9 +88,17 @@ class Unit_Type(pg.sprite.Sprite):
         self.s_river = s_river
         self.s_no_fuel = s_no_fuel
 
-        self.fuel_usage = fuel_usage
-        self.food_usage = food_usage
         self.money_usage = money_usage
+
+        self.max_men = max_men
+        self.max_art = max_art
+        self.max_truck = max_truck
+        self.max_apc = max_apc
+        self.max_tank = max_tank
+        self.max_heli = max_heli
+        self.max_aircraft = max_aircraft
+        self.max_rocket_truck = max_rocket_truck
+
 
         self.image = pg.Surface((TILESIZE[0], TILESIZE[0]))
         self.image.fill(VIOLET)
@@ -170,16 +179,15 @@ class Menu(pg.sprite.Sprite):
 
             self.building = [self.game.language.DISPLAY_GUI[8], 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+60, 400)]
             self.building1 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+40, 420)]
-            self.building2 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+70, 445)]
-            self.building3 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+70, 465)]
-            self.building4 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 490)]
-            self.building5 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 510)]
-            self.building6 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 530)]
-            self.building7 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 550)]
-            self.building8 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 570)]
-            self.building9 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 590)]
-            self.building10 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+20, 610)]
-
+            self.building2 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 490)]
+            self.building3 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 510)]
+            self.building4 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 530)]
+            self.building5 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 550)]
+            self.building6 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 570)]
+            self.building7 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 590)]
+            self.building8 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 610)]
+            self.building9 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 630)]
+            self.building10 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 650)]
 
             self.game.texts.append(self.position)
             self.game.texts.append(self.speed)
@@ -695,41 +703,94 @@ class Unit_Window(pg.sprite.Sprite):
 
         #draw buttons
         self.buttons.append(CW_Button(self.game, self, pos=[10,10]))
-        self.buttons.append(Switch_Button(self.game, self, pos=[360,40], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="mobilized"))
-        self.buttons.append(Switch_Button(self.game, self, pos=[360,60], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="training"))
-        self.buttons.append(Switch_Button(self.game, self, pos=[360,80], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="refill_equipment"))
-        self.buttons.append(Switch_Button(self.game, self, pos=[360,100], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="refill_crew"))
-        self.buttons.append(Switch_Button(self.game, self, pos=[360,120], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="building"))
-        self.buttons.append(Switch_Button(self.game, self, pos=[360,140], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="patroling"))
-        self.buttons.append(Switch_Button(self.game, self, pos=[360,160], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="engage"))
+        self.buttons.append(Switch_Button(self.game, self, pos=[560,40], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="mobilized"))
+        self.buttons.append(Switch_Button(self.game, self, pos=[560,60], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="training"))
+        self.buttons.append(Switch_Button(self.game, self, pos=[560,80], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="refill_equipment"))
+        self.buttons.append(Switch_Button(self.game, self, pos=[560,100], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="refill_crew"))
+        self.buttons.append(Switch_Button(self.game, self, pos=[560,120], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="building"))
+        self.buttons.append(Switch_Button(self.game, self, pos=[560,140], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="patroling"))
+        self.buttons.append(Switch_Button(self.game, self, pos=[560,160], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="engage"))
 
         #draw eq names
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[3], False, self.textcolor), (50, 40))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[0], False, self.textcolor), (50, 60))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[1], False, self.textcolor), (50, 80))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[2], False, self.textcolor), (50, 100))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[3], False, self.textcolor), (150, 40))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[0], False, self.textcolor), (150, 60))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[1], False, self.textcolor), (150, 80))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[2], False, self.textcolor), (150, 100))
 
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[3], False, self.textcolor), (50, 140))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[4], False, self.textcolor), (50, 160))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[5], False, self.textcolor), (50, 180))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[3], False, self.textcolor), (150, 140))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[4], False, self.textcolor), (150, 160))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[5], False, self.textcolor), (150, 180))
 
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[6], False, self.textcolor), (50, 220))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[7], False, self.textcolor), (50, 240))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[8], False, self.textcolor), (50, 260))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[9], False, self.textcolor), (50, 280))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[10], False, self.textcolor), (50, 300))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[11], False, self.textcolor), (50, 320))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[12], False, self.textcolor), (50, 340))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[6], False, self.textcolor), (150, 220))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[7], False, self.textcolor), (150, 240))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[8], False, self.textcolor), (150, 260))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[9], False, self.textcolor), (150, 280))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[10], False, self.textcolor), (150, 300))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[11], False, self.textcolor), (150, 320))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.RES2[12], False, self.textcolor), (150, 340))
 
         #draw gui text
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[1], False, self.textcolor), (380,42))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[4], False, self.textcolor), (380,60))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[5], False, self.textcolor), (380,80))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[6], False, self.textcolor), (380,100))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[8], False, self.textcolor), (380,120))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[9], False, self.textcolor), (380,140))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[10], False, self.textcolor), (380,160))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[1], False, self.textcolor), (580,42))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[4], False, self.textcolor), (580,60))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[5], False, self.textcolor), (580,80))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[6], False, self.textcolor), (580,100))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[8], False, self.textcolor), (580,120))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[9], False, self.textcolor), (580,140))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.game.language.DESCRIPTION[10], False, self.textcolor), (580,160))
 
+
+        self.rect = self.image.get_rect()
+        self.rectangle = pg.Surface(self.size)
+        #self.rect.x = 600
+        #self.rect.y = 600
+    
+    def show(self):
+        self.visible = True
+        self.game.window_display = True
+
+    def hide(self):
+        self.visible = False
+        self.game.window_display = False
+
+    def update(self):
+        self.rect.x = self.pos[0]
+        self.rect.y = self.pos[1]
+
+class Building_Window(pg.sprite.Sprite):
+    def __init__(self, building, game, pos=[100,100], size=(300, 400), color=DARKGREY, text="Text", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3):
+        self.groups = game.building_windows, game.windows
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.building = building
+        self.game = game
+        self.pos = pos
+        self.size = size
+        self.color = color
+        self.text = text
+        self.textsize = textsize
+        self.textcolor = textcolor
+        self.textpos = textpos
+        self.border_size = border_size
+        self.visible = False
+        self.game.window_display = self.visible
+        self.buttons = []
+        self.variables = []
+
+        #draw window
+        self.image = pg.Surface(self.size)
+        pg.draw.rect(self.image, self.textcolor, (0, 0, size[0], size[1]))
+        pg.draw.rect(self.image, self.color, (0+self.border_size, 0+self.border_size, size[0]-self.border_size*2-1, size[1]-self.border_size*2-1))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.text, False, self.textcolor), self.textpos)
+
+        #draw buttons
+        self.buttons.append(CW_Button(self.game, self, pos=[10,10]))
+        #self.buttons.append(Switch_Button(self.game, self, pos=[560,40], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="mobilized"))
+        
+        #draw gui text
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.building.name, False, self.textcolor), (30, 10))
+        self.image.blit(self.building.owner.image, (140, 0))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.building.owner.name, False, self.textcolor), (165, 10))
+        self.image.blit(self.building.image, (0, 25))
+        
 
         self.rect = self.image.get_rect()
         self.rectangle = pg.Surface(self.size)
@@ -897,6 +958,41 @@ class OU_Button(Button):
 
     def click(self):
         self.unit.window.show()
+        print("Unit window")
+
+    def update(self):
+        self.rect.x = self.pos[0]
+        self.rect.y = self.pos[1]
+
+class OB_Button(Button):
+    def __init__(self, building, game, pos=[6,6], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK):
+        self.groups = game.buttons
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.building = building
+        self.window = self.building.window
+        self.pos = tuple(pos)
+        #self.abs_pos = [0,0]
+        #self.abs_pos[0] = self.pos[0] + self.building.pos[0]
+        #self.abs_pos[1] = self.pos[1] + self.building.pos[1]
+        self.size = size
+        self.color = color
+        self.text = text
+        self.textsize = textsize
+        self.textcolor = textcolor
+        self.visible = True
+        self.image = self.game.o_window_img.copy()
+        self.image.set_colorkey(VIOLET)
+
+        self.rect = self.image.get_rect()
+        #self.rect.x = 
+
+    def check_col(self, mouse):
+        if self.rect.collidepoint(mouse):
+            self.click()
+
+    def click(self):
+        self.building.window.show()
         print("Unit window")
 
     def update(self):

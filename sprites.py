@@ -464,6 +464,9 @@ class CONSTRUCTION(pg.sprite.Sprite):
         else:
             self.progress += (self.fullmaterials - self.progress)
 
+    def do(self):
+        pass
+
     def hourly(self):
         pass
 
@@ -520,11 +523,20 @@ class SETTLEMENT(pg.sprite.Sprite):
         self.grid = self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height]
         self.grid.building = self
 
+        self.description = ["", "", "", "", "", "","","","",""]
+        
+
+    def do(self):
+        pass
+
     def hourly(self):
         pass
 
     def daily(self):
         pass
+
+    def update(self):
+        self.description = ["", "", "", "", "", "","","","",""]
 
 class VILLAGE(SETTLEMENT):
     def __init__(self, game, x, y, owner=0, name="New", nationality=0, population=0, food=0, wood=0):
@@ -534,7 +546,8 @@ class VILLAGE(SETTLEMENT):
         self.x = x
         self.y = y
         self.owner = self.game.players[owner]
-        self.name = name
+        self.name = self.game.language.BUILDINGS1[1]
+        self.settlement_name = name
         self.nationality = self.game.nations[nationality]
         self.population = population
 
@@ -545,6 +558,14 @@ class VILLAGE(SETTLEMENT):
         self.storage = {'food': food, 'wood': wood}
         self.grid_with_res = []
         self.sum_res = []
+
+        self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
+        self.button = ld.OB_Button(self, self.game, pos=[WIDTH - MENU_RIGHT[0]+130, 430], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
+
+        g = self.storage.keys()
+        for a in g:
+            self.window.variables.append(a)
+
 
         self.col = x
         self.row = y
@@ -589,6 +610,9 @@ class VILLAGE(SETTLEMENT):
         self.description[4] = self.game.language.RESOURCES[2] + ": " + str(self.sum_res[0])
         self.description[5] = self.game.language.RESOURCES[1] + ": " + str(self.sum_res[1])
         
+    def do(self):
+        pass
+
     def hourly(self):
         pass
     
@@ -603,6 +627,11 @@ class VILLAGE(SETTLEMENT):
                 if d.resource.name == self.game.language.RESOURCES[2]:  #food
                     self.storage['food'] += e
                     d.resource.value -= e
+
+    def update(self):
+        self.description = [self.owner.name, self.name, "Pop: " + str(self.population), self.game.language.GUI[0], self.game.language.RESOURCES[2] + ":", self.game.language.RESOURCES[1] + ":","","","",""]
+        self.description[4] = self.game.language.RESOURCES[2] + ": " + str(self.sum_res[0])
+        self.description[5] = self.game.language.RESOURCES[1] + ": " + str(self.sum_res[1])
 
 class BUILDING(pg.sprite.Sprite):
     def __init__(self, game, x, y, owner):
@@ -619,6 +648,9 @@ class BUILDING(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.storage = {}
 
+        self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
+        self.button = ld.OB_Button(self, self.game, pos=[WIDTH - MENU_RIGHT[0]+130, 430], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
+
         self.col = x
         self.row = y
         self.hex = roffset_to_cube(-1, self)
@@ -631,11 +663,17 @@ class BUILDING(pg.sprite.Sprite):
         self.grid.building = self
         self.description = [self.owner.name, self.name, "", "", "", "", "","","",""]
 
+    def do(self):
+        pass
+
     def hourly(self):
         pass
 
     def daily(self):
         pass
+
+    def update(self):
+        self.description = [self.owner.name, self.name, "", "", "", "", "","","",""]
 
 class OIL_WELL(BUILDING):
     def __init__(self, game, x, y, owner, oil=0):
@@ -654,6 +692,9 @@ class OIL_WELL(BUILDING):
         self.storage = {'oil': oil}
         self.grid_with_res = []
         self.sum_res = 0
+
+        self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
+        self.button = ld.OB_Button(self, self.game, pos=[WIDTH - MENU_RIGHT[0]+130, 430], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
 
         self.col = x
         self.row = y
@@ -684,13 +725,20 @@ class OIL_WELL(BUILDING):
                     self.sum_res += a.resource.value
 
         self.description[4] = self.game.language.RESOURCES[3] + ": " + str(self.sum_res)
-        
+
+    def do(self):
+        pass
+
     def hourly(self):
         pass
 
     def daily(self):
         pass
         #(round(self.men * 3 / 20, 2))
+
+    def update(self):
+        self.description = [self.owner.name, self.name, "", self.game.language.GUI[0], self.game.language.RESOURCES[3] + ": ","","","","",""]
+        self.description[4] = self.game.language.RESOURCES[3] + ": " + str(self.sum_res)
 
 class MINE(BUILDING):
     def __init__(self, game, x, y, owner=0, iron=0, coal=0, calcium=0, silicon=0, bauxite=0, uranium=0):
@@ -709,6 +757,10 @@ class MINE(BUILDING):
         self.storage = {'iron': iron, 'coal': coal, 'calcium': calcium, 'silicon': silicon, 'bauxite': bauxite, 'uranium': uranium}
         self.grid_with_res = []
         self.sum_res = 0
+
+        self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
+        self.button = ld.OB_Button(self, self.game, pos=[WIDTH - MENU_RIGHT[0]+130, 430], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
+
 
         self.col = x
         self.row = y
@@ -801,12 +853,19 @@ class MINE(BUILDING):
         self.description[8] = self.game.language.RESOURCES[10] + ": " + str(self.sum_res[4])
         self.description[9] = self.game.language.RESOURCES[11] + ": " + str(self.sum_res[5])
         
+    def do(self):
+        pass
+
     def hourly(self):
         pass
 
     def daily(self):
         pass
         #(round(self.men * 3 / 20, 2))
+
+    def update(self):
+        pass
+        
 
 class RAFINERY(BUILDING):
     def __init__(self, game, x, y, owner=0, oil=0, fuel=0, calcium=0, cement=0, coal=0):
@@ -823,6 +882,9 @@ class RAFINERY(BUILDING):
         self.image.blit(self.owner.image, (44, 10))
         self.rect = self.image.get_rect()
         self.storage = {'oil': oil, 'fuel': fuel, 'calcium': calcium, 'cement': cement, 'coal': coal}
+
+        self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
+        self.button = ld.OB_Button(self, self.game, pos=[WIDTH - MENU_RIGHT[0]+130, 430], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
 
         self.col = x
         self.row = y
@@ -843,37 +905,49 @@ class RAFINERY(BUILDING):
         self.description[7] = self.game.language.RES1[2] + ": " + str(self.storage['cement'])
         self.description[8] = self.game.language.RES1[4] + ": " + str(self.storage['coal'])
         
-    def hourly(self):
-        e = round(100 / (50), 2)
-        if self.storage['oil'] > e:
+    def do(self):
+        e = 3
+        c = 1
+        if self.storage['oil'] >= e:
             self.storage['oil'] -= e
             self.storage['fuel'] += (e * 2)
-        if self.storage['calcium'] > e:
+        if self.storage['calcium'] >= e and self.storage['coal'] >= c:
             self.storage['calcium'] -= e
-            self.storage['cement'] += (e * 2)
+            self.storage['coal'] -= c
+            self.storage['cement'] += (e * 1)
 
         self.description[4] = self.game.language.RES1[10] + ": " + str(self.storage['oil'])
         self.description[5] = self.game.language.RES1[11] + ": " + str(self.storage['fuel'])
         self.description[6] = self.game.language.RES1[16] + ": " + str(self.storage['calcium'])
         self.description[7] = self.game.language.RES1[2] + ": " + str(self.storage['cement'])
-        self.description[8] = self.game.language.RES1[4] + ": " + str(self.storage['coal'])        
+        self.description[8] = self.game.language.RES1[4] + ": " + str(self.storage['coal'])       
+
+    def hourly(self):
+        pass
         
     def daily(self):
         pass
-        #(round(self.men * 3 / 20, 2))
+
+    def update(self):
+        pass
 
 
 class Unit(pg.sprite.Sprite):
-    def __init__(self, game, x, y, owner, typ, unit_name, brigade, regiment, battalion, company, men, supply, uniforms, fuel, light_ammo, heavy_ammo, rockets, rifle, art, truck, apc, tank, heli, aircraft):
+    def __init__(self, game, x, y, nationality, owner, typ, unit_name, brigade, regiment, battalion, company, men, supply, uniforms, fuel, light_ammo, heavy_ammo, rockets, rifle, art, truck, apc, tank, heli, aircraft):
+        
         self.groups = game.all_sprites, game.units
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
 
         self.x = x
         self.y = y
+        self.nationality = self.game.nations[nationality]
         self.owner = self.game.players[owner]
         self.side = self.owner.side
         self.unit_typ = self.game.types[typ]
+
+        print("Typ jednostki")
+        print(typ)
         self.typ = self.unit_typ.typ
         self.unit_name = unit_name
         self.brigade = brigade
@@ -893,28 +967,51 @@ class Unit(pg.sprite.Sprite):
         self.experience = 0
         self.tiredness = 0
         self.tiredness_max = 20
+        self.fuel_usage = 0
         self.task = self.game.language.COMMANDS[0]
-        
-        self.men = men
-        self.supply = supply
-        self.uniforms = uniforms
-        self.fuel = fuel
 
+        self.men = men
+        self.max_men = self.unit_typ.max_men
+        self.supply = supply
+        self.max_supply = self.men * 5
+        self.uniforms = uniforms
+        self.max_uniforms = self.max_men
+
+        self.fuel = fuel
         self.light_ammo = light_ammo
         self.heavy_ammo = heavy_ammo
         self.rockets = rockets
         
         self.rifle = rifle
+        self.max_rifle = self.max_men
         self.art = art
+        self.max_art = self.unit_typ.max_art
         self.truck = truck
+        self.max_truck = self.unit_typ.max_truck
         self.apc = apc
+        self.max_apc = self.unit_typ.max_apc
         self.tank = tank
+        self.max_tank = self.unit_typ.max_tank
         self.heli = heli
+        self.max_heli = self.unit_typ.max_heli
         self.aircraft = aircraft
+        self.max_aircraft = self.unit_typ.max_aircraft
+
+        self.max_rocket_truck = self.unit_typ.max_rocket_truck
+
+
+        self.max_fuel = (self.truck * TRUCK_FUEL_CAP) + (self.apc * APC_FUEL_CAP) + (self.tank * TANK_FUEL_CAP) + (self.heli * HELI_FUEL_CAP) + (self.aircraft * AIRCRAFT_FUEL_CAP)
+        self.fuel_usage_calc()
+        self.max_light_ammo = 0
+        self.max_light_ammo += self.men * 5 + self.apc * 20 + self.heli * 100 + self.aircraft * 100
+        self.max_heavy_ammo = 0
+        self.max_heavy_ammo += self.apc * 4 + self.tank * 20 + self.heli * 10 + self.aircraft * 10
+        self.max_rockets = 0
+        self.max_rockets += self.max_rocket_truck * 10 + self.heli * 2 +self.aircraft * 2
 
         self.visible = True
         self.pos = [50, 50]
-        self.window = ld.Unit_Window(self, self.game, [100, 100], (500, 400), DARKGREY, self.unit_name + self.game.language.UNIT_STRU_SHORT[0] + str(self.brigade) + self.game.language.UNIT_STRU_SHORT[1] + str(self.regiment) + self.game.language.UNIT_STRU_SHORT[2] + str(self.battalion) + self.game.language.UNIT_STRU_SHORT[3] + str(self.company), 16, LIGHTGREY, (35, 10), 2)
+        self.window = ld.Unit_Window(self, self.game, [300, 200], (700, 500), DARKGREY, self.unit_name + self.game.language.UNIT_STRU_SHORT[0] + str(self.brigade) + self.game.language.UNIT_STRU_SHORT[1] + str(self.regiment) + self.game.language.UNIT_STRU_SHORT[2] + str(self.battalion) + self.game.language.UNIT_STRU_SHORT[3] + str(self.company), 16, LIGHTGREY, (35, 10), 2)
 
         self.button = ld.OU_Button(self, self.game, pos=[WIDTH - MENU_RIGHT[0]+130, 230], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
         
@@ -956,8 +1053,15 @@ class Unit(pg.sprite.Sprite):
                             self.game.language.DESCRIPTION[7] + ": " + str(self.tiredness) + "/" + str(self.tiredness_max),
                             self.task]
 
-    #def print_side(self):
-    #    return self.owner.name
+    def fuel_usage_calc(self):
+        self.fuel_usage = 0
+        self.fuel_usage += TRUCK_FUEL_USAGE * self.truck
+        self.fuel_usage += APC_FUEL_USAGE * self.apc
+        self.fuel_usage += TANK_FUEL_USAGE * self.tank
+        self.fuel_usage += HELI_FUEL_USAGE * self.heli
+        self.fuel_usage += AIRCRAFT_FUEL_USAGE * self.aircraft
+        #return self.fuel_usage
+
     def print_mobilized(self):
         if self.state["mobilized"] == True:
             return self.game.language.DESCRIPTION[1] + ": " + self.game.language.BASIC[2]
@@ -977,7 +1081,7 @@ class Unit(pg.sprite.Sprite):
         t = self.game.map.grids[grid_id].terrain
 
         #if self.typ == 0 and self.fuel >= self.unit_typ.fuel_usage:
-        if self.fuel >= self.unit_typ.fuel_usage:
+        if self.fuel >= self.fuel_usage:
             t = self.game.map.grids[grid_id].terrain
             if t == self.game.language.TERRAIN[0]:
                 c = self.unit_typ.s_normal
@@ -1096,7 +1200,7 @@ class Unit(pg.sprite.Sprite):
 
                 if self.step_to != None:
                     self.task = self.game.language.COMMANDS[1] + str(roffset_from_cube(-1, self.go_to)[0]) + ", " + str(roffset_from_cube(-1, self.go_to)[1])       
-                    if self.fuel < self.unit_typ.fuel_usage:
+                    if self.fuel < self.fuel_usage:
                         #moving without fuel
                         if self.doing >= self.step_cost:
                             self.doing = self.doing - self.step_cost
@@ -1123,8 +1227,10 @@ class Unit(pg.sprite.Sprite):
                             self.step_to = None
             self.doing += 1
             if self.fuel > 0:
-                self.fuel = self.fuel - self.unit_typ.fuel_usage
-                if self.fuel < self.unit_typ.fuel_usage:
+                print("Fuel usage:")
+                print(self.fuel_usage)
+                self.fuel = self.fuel - self.fuel_usage
+                if self.fuel < self.fuel_usage:
                     self.stop()
                     self.fuel = 0
             else:
@@ -1145,26 +1251,59 @@ class Unit(pg.sprite.Sprite):
         else:
             self.combat_ability_max = 5
 
+        if self.state['refill_equipment'] == True:
+            self.refill_eq()
+
+        if self.state['refill_crew'] == True:
+            self.refill_cr()
+
     def refill_eq(self):
         if self.game.map.grids[self.hexid].building != None:
-            print('Tu jest jakiś budynek. Sprawdź czy możesz się uzupełnić.')
             a = self.game.map.grids[self.hexid].building
             if 'fuel' in a.storage.keys() and a.owner == self.owner:
             #if a.storage['fuel']
-                print("Tu jest paliwo do zatankowania.")
-                if a.storage['fuel'] > 100:
-                    a.storage['fuel'] -= 100
-                    self.fuel += 100
+                    if a.storage['fuel'] > 100:
+                        b = 100
+                    else:
+                        b = a.storage['fuel']
+                        
+                    c = self.max_fuel - self.fuel
+                    
+                    if b < c:
+                        a.storage['fuel'] -= b
+                        self.fuel += b
+                    else:
+                        a.storage['fuel'] -= c
+                        self.fuel += c
+
+    def refill_cr(self):
+        if self.game.map.grids[self.hexid].building != None:
+            a = self.game.map.grids[self.hexid].building
+
+            if a.name == self.game.language.BUILDINGS1[1] or a.name == self.game.language.BUILDINGS1[2]:
+                if a.owner == self.owner and a.nationality == self.nationality:
+                #if a.storage['fuel']
+                    if a.population > 20:
+                        b = 4
+                        c = self.max_men - self.men
+                        if b < c:
+                            a.population -= b
+                            self.men += b
+                        else:
+                            a.population -= c
+                            self.men += c
+                    
+                    print(".....")
+                    print(a.population)
+                    print(self.men)
+                    print(self.max_men)
+
             else:
-                print("Nie ma tu paliwa.")
+                print("Tu nie ma populacji do rekrutacji.")
         else:
             print("Nie ma budynku.")
 
     def hourly(self):
-        if self.state['refill_equipment'] == True:
-            self.refill_eq()
-        
-
         if self.state['mobilized'] == True and self.state["training"] == False:
             if self.combat_ability < self.combat_ability_max:
                 self.combat_ability += 1

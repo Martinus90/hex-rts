@@ -23,7 +23,7 @@ class Language:
 
             self.COMMANDS = ["Waiting", "Going to: ", "Training", "Constructing", "Civilian Tasks"]
             self.DESCRIPTION = ["Experience", "Mobilized", "Combat Ability", "Men", "Training", "Refill eq.", "Refill crew", "Tiredness", "Building", "Patroling", "Engage"]
-            self.GUI = ["Nearby resources: ", "Extraction", "Working", "Waiting", "Resources:"]
+            self.GUI = ["Nearby resources: ", "Extraction", "Working", "Waiting", "Resources:", "Building"]
 
         elif LANGUAGE == "PL":
             self.BASIC = ["Prawda", "Fałsz", "Tak", "Nie", "Wstecz", "Następny", "Sprzedaj", "Kup"]
@@ -47,7 +47,7 @@ class Language:
 
             self.COMMANDS = ["Czeka", "Idzie do: ", "Trenuje", "Buduje", "Zadania Cywilne"]
             self.DESCRIPTION = ["Doswiadczenie", "Zmobilizowana", "Zdolosc bojowa", "Ludzie", "Trening", "Uzup. ekw.", "Uzup. załoge", "Zmęczenie", "Budowanie", "Patroluj", "Bojowy"]
-            self.GUI = ["Pobliskie zasoby: ", "Wydobycie", "Pracuje", "Czeka"]
+            self.GUI = ["Pobliskie zasoby: ", "Wydobycie", "Pracuje", "Czeka", "Budynek"]
 
         self.PERSON_NAME1 = ["Alexi Jastremsky","Stoycho Jellinek","Krastan Lhotzky","Ognyan Wolenska","Kalin Levitsky","Techoslav Sacharov","Blagovest Soloukhin","Razvigor Novak","Vojta Gindin","Borik Malenkov"]
         self.PERSON_NAME2 = ["Darko Brodsky","Tomislav Kruskal","Ljupco Jelinek","Vojkan Winogradsky","Drago Tomasek","Mecek Kudelin","Milo Mirkovic","Savo Sedlacek","Mutimir Volinin","Milutin Wolansky"]

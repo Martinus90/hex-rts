@@ -135,6 +135,7 @@ class Game:
         self.menus = pg.sprite.Group()
         self.windows = pg.sprite.Group()
         self.unit_windows = pg.sprite.Group()
+        self.building_windows = pg.sprite.Group()
         self.menu_windows = pg.sprite.Group()
         self.buttons = pg.sprite.Group()
         self.settlements = pg.sprite.Group()
@@ -155,22 +156,50 @@ class Game:
         self.diplomacy = Diplomacy(self)
         self.trade = Trade(self)
 
-        #unit types
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[0], typ=0, s_normal=4, s_water=100, s_mountain=6, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=0, food_usage=1, money_usage=2))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[1], typ=1, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=40, fuel_usage=4, food_usage=1, money_usage=2))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[2], typ=2, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=1, food_usage=1, money_usage=2))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[3], typ=3, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=40, fuel_usage=4, food_usage=1, money_usage=2))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[4], typ=4, s_normal=2, s_water=100, s_mountain=8, s_coast=3, s_river=8, s_no_fuel=20, fuel_usage=2, food_usage=1, money_usage=2))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[5], typ=5, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=2, food_usage=1, money_usage=2))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[6], typ=6, s_normal=4, s_water=100, s_mountain=6, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=0, food_usage=1, money_usage=1))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[7], typ=7, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=2, food_usage=1, money_usage=2))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[8], typ=8, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=2, food_usage=1, money_usage=2))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[9], typ=9, s_normal=2, s_water=2, s_mountain=2, s_coast=2, s_river=2, s_no_fuel=40, fuel_usage=3, food_usage=0, money_usage=10))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[10], typ=10, s_normal=1, s_water=1, s_mountain=1, s_coast=1, s_river=1, s_no_fuel=40, fuel_usage=5, food_usage=0, money_usage=20))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[11], typ=11, s_normal=3, s_water=100, s_mountain=12, s_coast=5, s_river=12, s_no_fuel=40, fuel_usage=2, food_usage=1, money_usage=2))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[12], typ=12, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, fuel_usage=2, food_usage=1, money_usage=2))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[13], typ=13, s_normal=2, s_water=100, s_mountain=12, s_coast=5, s_river=12, s_no_fuel=40, fuel_usage=4, food_usage=1, money_usage=5))
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[14], typ=14, s_normal=2, s_water=100, s_mountain=10, s_coast=4, s_river=12, s_no_fuel=40, fuel_usage=4, food_usage=1, money_usage=3))
+            #unit types
+        #infantry
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[0], typ=0, s_normal=4, s_water=100, s_mountain=6, s_coast=4, s_river=12, s_no_fuel=20, money_usage=2, max_men=79, max_art=0, max_truck=0, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
+        
+        #armored
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[1], typ=1, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=40, money_usage=2, max_men=20, max_art=0, max_truck=0, max_apc=0, max_tank=4, max_heli=0, max_aircraft=0, max_rocket_truck=0))
+        
+        #artillery
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[2], typ=2, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, money_usage=2, max_men=25, max_art=4, max_truck=4, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
+        
+        #mechanized
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[3], typ=3, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=40, money_usage=2, max_men=99, max_art=0, max_truck=0, max_apc=9, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
+        
+        #reconnaissance
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[4], typ=4, s_normal=2, s_water=100, s_mountain=8, s_coast=3, s_river=8, s_no_fuel=20, money_usage=2, max_men=99, max_art=0, max_truck=4, max_apc=4, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
+        
+        #motorized
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[5], typ=5, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, money_usage=2, max_men=99, max_art=0, max_truck=9, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
+        
+        #other
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[6], typ=6, s_normal=4, s_water=100, s_mountain=6, s_coast=4, s_river=12, s_no_fuel=20, money_usage=1, max_men=79, max_art=0, max_truck=0, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
+        
+        #logistic
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[7], typ=7, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, money_usage=2, max_men=25, max_art=0, max_truck=5, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
+        
+        #headquaters
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[8], typ=8, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, money_usage=2, max_men=30, max_art=0, max_truck=5, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
+        
+        #helicopters
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[9], typ=9, s_normal=2, s_water=2, s_mountain=2, s_coast=2, s_river=2, s_no_fuel=40, money_usage=10, max_men=6, max_art=0, max_truck=0, max_apc=0, max_tank=0, max_heli=3, max_aircraft=0, max_rocket_truck=0))
+        
+        #aircraft
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[10], typ=10, s_normal=1, s_water=1, s_mountain=1, s_coast=1, s_river=1, s_no_fuel=40, money_usage=20, max_men=6, max_art=0, max_truck=0, max_apc=0, max_tank=0, max_heli=0, max_aircraft=3, max_rocket_truck=0))
+        
+        #need to do 
+
+        #AA anti-aircraft
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[11], typ=11, s_normal=3, s_water=100, s_mountain=12, s_coast=5, s_river=12, s_no_fuel=40, money_usage=2, max_men=25, max_art=0, max_truck=5, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
+        
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[12], typ=12, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, money_usage=2, max_men=25, max_art=0, max_truck=5, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
+        
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[13], typ=13, s_normal=2, s_water=100, s_mountain=12, s_coast=5, s_river=12, s_no_fuel=40, money_usage=5, max_men=25, max_art=0, max_truck=5, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
+        
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[14], typ=14, s_normal=2, s_water=100, s_mountain=10, s_coast=4, s_river=12, s_no_fuel=40, money_usage=3, max_men=25, max_art=0, max_truck=5, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
 
 
         self.map_img = self.map.make_map()
@@ -223,7 +252,7 @@ class Game:
                 RAFINERY(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
 
         for u in self.map.units:
-            Unit(self, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15], u[16], u[17], u[18], u[19], u[20], u[21], u[22])
+            Unit(self, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15], u[16], u[17], u[18], u[19], u[20], u[21], u[22], u[23])
 
         self.player = Player(self, 0, 0, 1)
         self.camera = Camera(self.map.width, self.map.height)
@@ -245,6 +274,8 @@ class Game:
                 unit.do()
             for res in self.resources:
                 res.do()
+            for building in self.buildings:
+                building.do()
 
         if self.quarter > 3: #def 3
             self.quarter -= 4
@@ -475,9 +506,17 @@ class Game:
 
         if self.resourcing != None:
             self.screen.blit(self.resourcing.image, (WIDTH - MENU_RIGHT[0]+10, 140))
+
         if self.building != None:
-            self.screen.blit(self.building.image, (WIDTH - MENU_RIGHT[0]+0, 435))
             self.screen.blit(self.building.owner.image, (WIDTH - MENU_RIGHT[0]+10, 412))
+            self.screen.blit(self.building.image, (WIDTH - MENU_RIGHT[0]+0, 435))
+            if self.building.name != self.language.BUILDINGS1[0]:
+                self.screen.blit(self.building.button.image, self.building.button.pos)
+                if self.building.window.visible == True:
+                    self.screen.blit(self.building.window.image, self.building.window.pos)
+            #if self.building.what == None:
+            #    language.BUILDINGS1[0]
+            
         if self.uniting != None:
             self.screen.blit(self.uniting.owner.image, (WIDTH - MENU_RIGHT[0]+5, 222))
             self.screen.blit(self.uniting.unit_typ.image, (WIDTH - MENU_RIGHT[0]-5, 248))
@@ -485,41 +524,51 @@ class Game:
             if self.uniting.window.visible == True:
                 self.screen.blit(self.uniting.window.image, self.uniting.window.pos)
                 #for var in self.uniting.window.variables:
-            
+
         for window in self.unit_windows:
             if window.visible == True:
                 self.screen.blit(window.image, window.pos)
                 for button in window.buttons:
                     window.image.blit(button.image, button.pos)
                 if 1 == 1: #rolling display unit variables
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.men), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 38))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.supply), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 58))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.uniforms), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 78))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.fuel), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 98))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.men) + " / " + str(window.unit.max_men), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 38))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.supply) + " / " + str(window.unit.max_supply), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 58))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.uniforms) + " / " + str(window.unit.max_uniforms), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 78))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.fuel) + " / " + str(window.unit.max_fuel), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 98))
                     
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.light_ammo), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 138))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.heavy_ammo), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 158))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.rockets), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 178))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.light_ammo) + " / " + str(window.unit.max_light_ammo), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 138))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.heavy_ammo) + " / " + str(window.unit.max_heavy_ammo), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 158))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.rockets) + " / " + str(window.unit.max_rockets), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 178))
                     
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.rifle), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 218))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.art), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 238))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.truck), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 258))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.apc), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 278))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.tank), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 298))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.heli), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 318))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.aircraft), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 338))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.rifle) + " / " + str(window.unit.max_rifle), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 218))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.art) + " / " + str(window.unit.max_art), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 238))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.truck) + " / " + str(window.unit.max_truck), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 258))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.apc) + " / " + str(window.unit.max_apc), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 278))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.tank) + " / " + str(window.unit.max_tank), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 298))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.heli) + " / " + str(window.unit.max_heli), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 318))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.aircraft) + " / " + str(window.unit.max_aircraft), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 338))
 
-                    self.screen.blit(self.uniting.owner.image, (window.pos[0] + 170, window.pos[1] + 30))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.owner.name, False, LIGHTGREY), (window.pos[0] + 200, window.pos[1] + 38))
-                    self.screen.blit(self.uniting.unit_typ.image, (window.pos[0] + 160, window.pos[1] + 56))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.unit_typ.name, False, LIGHTGREY), (window.pos[0] + 200, window.pos[1] + 58))
-
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.print_mobilized(), False, LIGHTGREY), (window.pos[0] + 170, window.pos[1] + 80))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[2] + ": " + str(window.unit.combat_ability) + "/" + str(window.unit.combat_ability_max), False, LIGHTGREY), (window.pos[0] + 170, window.pos[1] + 96))
+                    self.screen.blit(self.uniting.owner.image, (window.pos[0] + 270, window.pos[1] + 30))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.owner.name, False, LIGHTGREY), (window.pos[0] + 300, window.pos[1] + 38))
+                    self.screen.blit(self.uniting.unit_typ.image, (window.pos[0] + 260, window.pos[1] + 56))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.unit_typ.name, False, LIGHTGREY), (window.pos[0] + 300, window.pos[1] + 58))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.print_mobilized(), False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 80))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[2] + ": " + str(window.unit.combat_ability) + "/" + str(window.unit.combat_ability_max), False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 96))
                     
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[0] + ": " + str(window.unit.experience), False, LIGHTGREY), (window.pos[0] + 170, window.pos[1] + 117))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[7] + ": " + str(window.unit.tiredness) + "/" + str(window.unit.tiredness_max), False, LIGHTGREY), (window.pos[0] + 170, window.pos[1] + 133))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.task, False, LIGHTGREY), (window.pos[0] + 170, window.pos[1] + 153))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[0] + ": " + str(window.unit.experience), False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 117))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[7] + ": " + str(window.unit.tiredness) + "/" + str(window.unit.tiredness_max), False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 133))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.task, False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 153))
+
+        for window in self.building_windows:
+            if window.visible == True:
+                self.screen.blit(window.image, window.pos)
+                for button in window.buttons:
+                    window.image.blit(button.image, button.pos)
+                #if 1 == 1: #rolling display building variables
+                e = 0
+                for v in window.variables:
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(v, False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 78 + (e * 20)))
+                    e += 1
 
         for window in self.menu_windows:
             if window.visible == True:
@@ -580,12 +629,12 @@ class Game:
                     self.territory_visible = not self.territory_visible
                     print(self.territory_visible)
                 if (event.key == 61) or (event.key == 270): #plus key
-                    if self.speed < 50:
-                        self.speed = self.speed + 1
+                    if self.speed < 16:
+                        self.speed = self.speed * 2
                     #print(self.speed)
                 if (event.key == 45) or (event.key == 269): #minus key
                     if self.speed >= 2:
-                        self.speed = self.speed - 1
+                        self.speed = self.speed / 2
                     #print(self.speed)
                 if event.key == pg.K_PAUSE:
                     self.pause = not self.pause
@@ -634,6 +683,10 @@ class Game:
                         if self.uniting: 
                             self.uniting.button.check_col(pg.mouse.get_pos())
                             print(self.uniting.button.rect)
+                            print(pg.mouse.get_pos())
+                        if self.building: 
+                            self.building.button.check_col(pg.mouse.get_pos())
+                            print(self.building.button.rect)
                             print(pg.mouse.get_pos())
 
                         if self.building == None:

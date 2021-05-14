@@ -65,8 +65,8 @@ class TiledMap:
             if layer.name == "layer3":
                 for x, y, gid in layer:
                     tile = ti(gid)
-                    print(x, y, gid, tile)
-                    print(self.listtiles[int(gid - 1)])
+                    #print(x, y, gid, tile)
+                    #print(self.listtiles[int(gid - 1)])
                     
                     if tile != None:
                         self.surface2.blit(tile, (x * self.tmxdata.tilewidth + (y&1) * self.tmxdata.tilewidth / 2, y * self.tmxdata.tileheight / TILESIZE[0] * TILESIZE[1]))
@@ -106,6 +106,7 @@ class TiledMap:
                 if obj.name == "unit":
                     self.units.append([math.floor(obj.x/64),#0
                     math.floor(obj.y/48),
+                    obj.properties['1_1_nationality'],
                     obj.properties['1_1_owner'],
                     obj.properties['1_1_typ'],
                     obj.properties['1_1_unit_name'],
