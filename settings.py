@@ -128,6 +128,8 @@ WINDOW_IMG = "window.bmp"
 O_WINDOW_IMG = "o_window.bmp"
 YES_IMG = "yes.bmp"
 NO_IMG = "no.bmp"
+ELECT_YES = "elect_yes.bmp"
+ELECT_NO = "elect_no.bmp"
 
 TRUCK_FUEL_USAGE = 1
 APC_FUEL_USAGE = 2

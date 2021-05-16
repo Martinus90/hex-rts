@@ -142,12 +142,19 @@ class TiledMap:
                         self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['what'],obj.properties['owner'],obj.properties['wood'],obj.properties['cement'],obj.properties['steel'],obj.properties['progress']])
                     elif obj.properties['typ'] == 'VILLAGE':
                         self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['name'],obj.properties['nationality'],obj.properties['population'],obj.properties['food'],obj.properties['wood']])
-                    elif obj.properties['typ'] == 'OIL_WELL':
-                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['oil']])
+                    
                     elif obj.properties['typ'] == 'MINE':
                         self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['iron'],obj.properties['coal'],obj.properties['calcium'],obj.properties['silicon'],obj.properties['bauxite'],obj.properties['uranium']])
+                    elif obj.properties['typ'] == 'SMELTER':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['iron'],obj.properties['coal'],obj.properties['steel'],obj.properties['bauxite'],obj.properties['aluminum']])
+                    elif obj.properties['typ'] == 'OIL_WELL':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['oil']])
                     elif obj.properties['typ'] == 'RAFINERY':
                         self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['oil'],obj.properties['fuel'],obj.properties['calcium'],obj.properties['cement'],obj.properties['coal']])
+                    elif obj.properties['typ'] == 'POWER_PLANT':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['oil'],obj.properties['coal']])
+                    elif obj.properties['typ'] == 'PRODUCTION_PLANT':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['steel'],obj.properties['plastic'],obj.properties['parts'],obj.properties['wood'],obj.properties['furniture'],obj.properties['cotton'],obj.properties['textiles'],obj.properties['uniforms']])
 
         
         #self.grid_list = set(self.grid_list)

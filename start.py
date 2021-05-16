@@ -74,9 +74,9 @@ class Game:
             self.global_img.set_colorkey(VIOLET)
             self.exchange_img = pg.image.load(path.join(img_folder, EXCHANGE_IMG))
             self.exchange_img.set_colorkey(VIOLET)
-            self.reputation_img = pg.image.load(path.join(img_folder, REPUTATION_IMG))
+            self.reputation_img = pg.image.load(path.join(gui_folder, REPUTATION_IMG))
             self.reputation_img.set_colorkey(VIOLET)
-            self.stability_img = pg.image.load(path.join(img_folder, STABILITY_IMG))
+            self.stability_img = pg.image.load(path.join(gui_folder, STABILITY_IMG))
             self.stability_img.set_colorkey(VIOLET)
             self.stability = []
             for a in range(5):
@@ -114,7 +114,10 @@ class Game:
             self.o_window_img = pg.image.load(path.join(gui_folder, O_WINDOW_IMG))
             self.o_window_img.blit(pg.font.Font(FONT_NAME, 24).render("Open", False, LIGHTGREY), (2,4))
             self.button_1_img = pg.image.load(path.join(gui_folder, O_WINDOW_IMG))
-
+            self.elect_yes_img = pg.image.load(path.join(gui_folder, ELECT_YES))
+            self.elect_yes_img.set_colorkey(VIOLET)
+            self.elect_no_img = pg.image.load(path.join(gui_folder, ELECT_NO))
+            self.elect_no_img.set_colorkey(VIOLET)
 
             self.yes_img = pg.image.load(path.join(gui_folder, YES_IMG))
             self.no_img = pg.image.load(path.join(gui_folder, NO_IMG))
@@ -244,12 +247,19 @@ class Game:
                 CONSTRUCTION(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
             elif b[2] == "VILLAGE":
                 VILLAGE(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
-            elif b[2] == "OIL_WELL":
-                OIL_WELL(self, b[0], b[1], b[3], b[4])
+            
             elif b[2] == "MINE":
                 MINE(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9])
+            elif b[2] == "SMELTER":
+                SMELTER(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
+            elif b[2] == "OIL_WELL":
+                OIL_WELL(self, b[0], b[1], b[3], b[4])
             elif b[2] == "RAFINERY":
                 RAFINERY(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
+            elif b[2] == "POWER_PLANT":
+                POWER_PLANT(self, b[0], b[1], b[3], b[4], b[5])
+            elif b[2] == "PRODUCTION_PLANT":
+                PRODUCTION_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11])
 
         for u in self.map.units:
             Unit(self, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15], u[16], u[17], u[18], u[19], u[20], u[21], u[22], u[23])
@@ -280,6 +290,8 @@ class Game:
         if self.quarter > 3: #def 3
             self.quarter -= 4
             self.hour += 1
+            for cont in self.players:
+                cont.hourly()
             for unit in self.units:
                 unit.hourly()
             for building in self.buildings:
@@ -296,9 +308,11 @@ class Game:
         if self.day > 7: #def 7
             self.day -= 7
             self.week += 1
-        if self.week > 3: #13
-            self.week -= 3
+        if self.week > 13: #13
+            self.week -= 13
             self.season += 1
+            for res in self.resources:
+                res.seasonly()
         if self.season > 3: #def 3
             self.season -= 4
             self.year += 1
@@ -378,6 +392,9 @@ class Game:
                 self.menu.building8[0] = self.building.description[7]
                 self.menu.building9[0] = self.building.description[8]
                 self.menu.building10[0] = self.building.description[9]
+                self.menu.building11[0] = self.building.description[10]
+                self.menu.building12[0] = self.building.description[11]
+                self.menu.building13[0] = self.building.description[12]
 
                 break
             else:
@@ -392,9 +409,9 @@ class Game:
                 self.menu.building8[0] = ""
                 self.menu.building9[0] = ""
                 self.menu.building10[0] = ""
-
-
-
+                self.menu.building11[0] = ""
+                self.menu.building12[0] = ""
+                self.menu.building13[0] = ""
 
     def deselect(self):
         self.selecting = None
@@ -472,6 +489,14 @@ class Game:
         self.screen.blit(self.global_img, (463, 8))
         self.screen.blit(self.money_img, (460, 30))
 
+        #print("HERE")
+        #print(self.players[self.player.side].electricity)
+        if self.players[self.player.side].electricity == True:
+            
+            self.screen.blit(self.elect_yes_img, (23, 23))
+        else:
+            self.screen.blit(self.elect_no_img, (23, 23))
+
         #print(self.menu.buttons)
         #for b in self.menu.buttons:
         #    self.screen.blit(b.image, b.pos)
@@ -531,33 +556,33 @@ class Game:
                 for button in window.buttons:
                     window.image.blit(button.image, button.pos)
                 if 1 == 1: #rolling display unit variables
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.men) + " / " + str(window.unit.max_men), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 38))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.supply) + " / " + str(window.unit.max_supply), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 58))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.uniforms) + " / " + str(window.unit.max_uniforms), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 78))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.fuel) + " / " + str(window.unit.max_fuel), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 98))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.men) + " / " + str(window.thing.max_men), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 38))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.supply) + " / " + str(window.thing.max_supply), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 58))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.uniforms) + " / " + str(window.thing.max_uniforms), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 78))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.fuel) + " / " + str(window.thing.max_fuel), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 98))
                     
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.light_ammo) + " / " + str(window.unit.max_light_ammo), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 138))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.heavy_ammo) + " / " + str(window.unit.max_heavy_ammo), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 158))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.rockets) + " / " + str(window.unit.max_rockets), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 178))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.light_ammo) + " / " + str(window.thing.max_light_ammo), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 138))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.heavy_ammo) + " / " + str(window.thing.max_heavy_ammo), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 158))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.rockets) + " / " + str(window.thing.max_rockets), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 178))
                     
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.rifle) + " / " + str(window.unit.max_rifle), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 218))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.art) + " / " + str(window.unit.max_art), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 238))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.truck) + " / " + str(window.unit.max_truck), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 258))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.apc) + " / " + str(window.unit.max_apc), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 278))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.tank) + " / " + str(window.unit.max_tank), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 298))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.heli) + " / " + str(window.unit.max_heli), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 318))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.unit.aircraft) + " / " + str(window.unit.max_aircraft), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 338))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.rifle) + " / " + str(window.thing.max_rifle), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 218))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.art) + " / " + str(window.thing.max_art), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 238))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.truck) + " / " + str(window.thing.max_truck), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 258))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.apc) + " / " + str(window.thing.max_apc), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 278))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.tank) + " / " + str(window.thing.max_tank), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 298))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.heli) + " / " + str(window.thing.max_heli), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 318))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.aircraft) + " / " + str(window.thing.max_aircraft), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 338))
 
                     self.screen.blit(self.uniting.owner.image, (window.pos[0] + 270, window.pos[1] + 30))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.owner.name, False, LIGHTGREY), (window.pos[0] + 300, window.pos[1] + 38))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.owner.name, False, LIGHTGREY), (window.pos[0] + 300, window.pos[1] + 38))
                     self.screen.blit(self.uniting.unit_typ.image, (window.pos[0] + 260, window.pos[1] + 56))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.unit_typ.name, False, LIGHTGREY), (window.pos[0] + 300, window.pos[1] + 58))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.print_mobilized(), False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 80))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[2] + ": " + str(window.unit.combat_ability) + "/" + str(window.unit.combat_ability_max), False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 96))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.unit_typ.name, False, LIGHTGREY), (window.pos[0] + 300, window.pos[1] + 58))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.print_mobilized(), False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 80))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[2] + ": " + str(window.thing.combat_ability) + "/" + str(window.thing.combat_ability_max), False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 96))
                     
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[0] + ": " + str(window.unit.experience), False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 117))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[7] + ": " + str(window.unit.tiredness) + "/" + str(window.unit.tiredness_max), False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 133))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.unit.task, False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 153))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[0] + ": " + str(window.thing.experience), False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 117))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[7] + ": " + str(window.thing.tiredness) + "/" + str(window.thing.tiredness_max), False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 133))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.task, False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 153))
 
         for window in self.building_windows:
             if window.visible == True:
@@ -566,9 +591,17 @@ class Game:
                     window.image.blit(button.image, button.pos)
                 #if 1 == 1: #rolling display building variables
                 e = 0
+                self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.GUI[4], False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 80 + (e * 20)))
                 for v in window.variables:
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(v, False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 78 + (e * 20)))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(v, False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 100 + (e * 20)))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.storage[v]), False, LIGHTGREY), (window.pos[0] + 100, window.pos[1] + 100 + (e * 20)))
                     e += 1
+                if window.thing.name == self.language.BUILDINGS1[1]:
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.GUI[7], False, LIGHTGREY), (window.pos[0] + 400, window.pos[1] + 40))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.nationality.name, False, LIGHTGREY), (window.pos[0] + 350, window.pos[1] + 60))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.population), False, LIGHTGREY), (window.pos[0] + 450, window.pos[1] + 60))
+                    
+
 
         for window in self.menu_windows:
             if window.visible == True:

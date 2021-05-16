@@ -52,6 +52,7 @@ class Contender(pg.sprite.Sprite):
         self.global_money = global_money
         self.reputation = reputation
         self.stability = stability
+        self.electricity = False
 
         self.image = pg.Surface((64, 64))
         self.image.fill(VIOLET)
@@ -70,6 +71,14 @@ class Contender(pg.sprite.Sprite):
 
     def do(self):
         pass
+
+    def hourly(self):
+        self.electricity = False
+        for a in self.game.buildings:
+            if a.owner.name == self.name:
+                if a.name == self.game.language.BUILDINGS1[11]:
+                    if a.working == True:
+                        self.electricity = True
 
     def update(self):
         pass
@@ -188,6 +197,9 @@ class Menu(pg.sprite.Sprite):
             self.building8 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 610)]
             self.building9 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 630)]
             self.building10 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 650)]
+            self.building11 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 670)]
+            self.building12 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 690)]
+            self.building13 = ['', 16, LIGHTGREY, (WIDTH-MENU_RIGHT[0]+10, 710)]
 
             self.game.texts.append(self.position)
             self.game.texts.append(self.speed)
@@ -217,6 +229,9 @@ class Menu(pg.sprite.Sprite):
             self.game.texts.append(self.building8)
             self.game.texts.append(self.building9)
             self.game.texts.append(self.building10)
+            self.game.texts.append(self.building11)
+            self.game.texts.append(self.building12)
+            self.game.texts.append(self.building13)
 
         if 1 == 1:  #top bar -> tb
             self.tb_player_money  = ['$ 4000000', 16, DARKGREEN, (340, 17)]
@@ -373,7 +388,7 @@ class Switch_Button(Button):
         self.variable = variable
 
         self.visible = self.window.visible
-        if self.window.unit.state[self.variable] == True:
+        if self.window.thing.state[self.variable] == True:
             self.image = self.game.yes_img.copy()
         else:
             self.image = self.game.no_img.copy()
@@ -381,10 +396,10 @@ class Switch_Button(Button):
         self.rect = self.image.get_rect()
 
     def click(self):
-        self.window.unit.state[self.variable] = not self.window.unit.state[self.variable]
+        self.window.thing.state[self.variable] = not self.window.thing.state[self.variable]
         #print(self.window.unit.state[self.variable])
 
-        if self.window.unit.state[self.variable] == True:
+        if self.window.thing.state[self.variable] == True:
             self.image = self.game.yes_img.copy()
         else:
             self.image = self.game.no_img.copy()
@@ -680,7 +695,7 @@ class Unit_Window(pg.sprite.Sprite):
     def __init__(self, unit, game, pos=[100,100], size=(300, 400), color=DARKGREY, text="Text", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3):
         self.groups = game.unit_windows, game.windows
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.unit = unit
+        self.thing = unit
         self.game = game
         self.pos = pos
         self.size = size
@@ -760,7 +775,7 @@ class Building_Window(pg.sprite.Sprite):
     def __init__(self, building, game, pos=[100,100], size=(300, 400), color=DARKGREY, text="Text", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3):
         self.groups = game.building_windows, game.windows
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.building = building
+        self.thing = building
         self.game = game
         self.pos = pos
         self.size = size
@@ -786,10 +801,10 @@ class Building_Window(pg.sprite.Sprite):
         #self.buttons.append(Switch_Button(self.game, self, pos=[560,40], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable="mobilized"))
         
         #draw gui text
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.building.name, False, self.textcolor), (30, 10))
-        self.image.blit(self.building.owner.image, (140, 0))
-        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.building.owner.name, False, self.textcolor), (165, 10))
-        self.image.blit(self.building.image, (0, 25))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.thing.name, False, self.textcolor), (30, 10))
+        self.image.blit(self.thing.image, (0, 25))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.thing.owner.name, False, self.textcolor), (245, 10))
+        self.image.blit(self.thing.owner.image, (220, 0))
         
 
         self.rect = self.image.get_rect()

@@ -110,7 +110,7 @@ class Resource(pg.sprite.Sprite):
     def weekly(self):
         pass
 
-    def seasons(self):
+    def seasonly(self):
         pass
 
 class Tree(Resource):
@@ -138,7 +138,11 @@ class Tree(Resource):
         self.rect.y = self.y * TILESIZE[1]
 
     def daily(self):
-        self.value += 1
+        if self.game.season < 3 and self.value < 5000:#3 == winter
+            self.value += 50
+
+    def seasonly(self):
+        pass
 
 class Grain(Resource):
     def __init__(self, game, x, y, value):
@@ -153,6 +157,7 @@ class Grain(Resource):
         self.x = x
         self.y = y
         self.value = value
+        self.growth = 0
         self.off_road_value = 0
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
         self.game.map.grids[self.grid_id].resource = self
@@ -163,6 +168,22 @@ class Grain(Resource):
 
         self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
         self.rect.y = self.y * TILESIZE[1]
+
+    def daily(self):
+        if self.game.season < 2:#0 and 1 // spring and summer
+            self.growth += 1000
+
+    def seasonly(self):
+        if self.game.season == 0:#spring
+            pass
+        if self.game.season == 1:#summer
+            self.value += self.growth
+            self.growth = 0
+        if self.game.season == 2:#autumn
+            self.value += self.growth
+            self.growth = 0
+        if self.game.season == 3:
+            self.value = 0
 
 class Oil(Resource):
     def __init__(self, game, x, y, value):
@@ -308,6 +329,22 @@ class Cotton(Resource):
         self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
         self.rect.y = self.y * TILESIZE[1]
 
+    def daily(self):
+        if self.game.season < 2:#0 and 1 // spring and summer
+            self.growth += 1000
+
+    def seasonly(self):
+        if self.game.season == 0:#spring
+            pass
+        if self.game.season == 1:#summer
+            self.value += self.growth
+            self.growth = 0
+        if self.game.season == 2:#autumn
+            self.value += self.growth
+            self.growth = 0
+        if self.game.season == 3:
+            self.value = 0
+
 class Rubber(Resource):
     def __init__(self, game, x, y, value):
         self.groups = game.all_sprites, game.resources
@@ -331,6 +368,22 @@ class Rubber(Resource):
 
         self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
         self.rect.y = self.y * TILESIZE[1]
+
+    def daily(self):
+        if self.game.season < 3:#0 and 1 // spring and summer
+            self.growth += 1000
+
+    def seasonly(self):
+        if self.game.season == 0:#spring
+            pass
+        if self.game.season == 1:#summer
+            self.value += self.growth
+            self.growth = 0
+        if self.game.season == 2:#autumn
+            self.value += self.growth
+            self.growth = 0
+        if self.game.season == 3:
+            self.value = 0
 
 class Bauxite(Resource):
     def __init__(self, game, x, y, value):
@@ -404,6 +457,10 @@ class Water(Resource):
         self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
         self.rect.y = self.y * TILESIZE[1]
 
+    def daily(self):
+        if self.value < 2000:
+            self.value += 100
+
 class CONSTRUCTION(pg.sprite.Sprite):
     def __init__(self, game, x, y, what, owner, wood=0, cement=0, steel=0, progress=0):
         self.groups = game.all_sprites, game.buildings#, game.grids[]
@@ -436,7 +493,7 @@ class CONSTRUCTION(pg.sprite.Sprite):
         self.fullcost = sum(self.cost.values())
         self.fullmaterials = sum(self.materials.values())
         self.progress = progress
-        self.description = [self.owner.name, self.name, self.what, self.print_progress(), "", "", "","","",""]
+        self.description = [self.owner.name, self.name, self.what, self.print_progress(), "", "", "","","","","","",""]
 
         #self.screen.blit(self.building.owner.image, (WIDTH - MENU_RIGHT[0]+10, 412))
 
@@ -523,7 +580,7 @@ class SETTLEMENT(pg.sprite.Sprite):
         self.grid = self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height]
         self.grid.building = self
 
-        self.description = ["", "", "", "", "", "","","","",""]
+        self.description = ["","","","","","","","","","","","",""]
         
 
     def do(self):
@@ -536,7 +593,7 @@ class SETTLEMENT(pg.sprite.Sprite):
         pass
 
     def update(self):
-        self.description = ["", "", "", "", "", "","","","",""]
+        self.description = ["","","","","","","","","","","","",""]
 
 class VILLAGE(SETTLEMENT):
     def __init__(self, game, x, y, owner=0, name="New", nationality=0, population=0, food=0, wood=0):
@@ -550,6 +607,7 @@ class VILLAGE(SETTLEMENT):
         self.settlement_name = name
         self.nationality = self.game.nations[nationality]
         self.population = population
+        self.state = {'food': True, 'wood': True}
 
         self.image = self.game.village_img.copy()
         self.image.set_colorkey(VIOLET)
@@ -565,7 +623,13 @@ class VILLAGE(SETTLEMENT):
         g = self.storage.keys()
         for a in g:
             self.window.variables.append(a)
-
+        self.all_jobs = self.state.keys()
+        b = 0
+        for a in self.all_jobs:
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.game.language.GUI[6], False, LIGHTGREY), (180, 40))
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(a, False, LIGHTGREY), (180, 60 + (b * 20)))
+            self.window.buttons.append(ld.Switch_Button(self.game, self.window, pos=[160,60 + (b * 20)], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable=a))
+            b += 1
 
         self.col = x
         self.row = y
@@ -577,7 +641,7 @@ class VILLAGE(SETTLEMENT):
         self.side = self.owner.side
         self.grid = self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height]
         self.grid.building = self
-        self.description = [self.owner.name, self.name, "Pop: " + str(self.population), self.game.language.GUI[0], self.game.language.RESOURCES[2] + ":", self.game.language.RESOURCES[1] + ":","","","",""]
+        self.description = [self.owner.name, self.name, "Pop: " + str(self.population), self.game.language.GUI[0], self.game.language.RESOURCES[2] + ":", self.game.language.RESOURCES[1] + ":","","","","","","",""]
         #here near resources 
         self.resources_near_building()
 
@@ -614,22 +678,31 @@ class VILLAGE(SETTLEMENT):
         pass
 
     def hourly(self):
-        pass
+        jobs = 0
+        for aa in self.all_jobs:
+            if self.state[aa] == True:
+                jobs += 1
+
+        if jobs > 0:
+            e = int(self.population / jobs)
+            self.resources_near_building()
+            for d in self.grid_with_res:
+                if d.resource.value > e:
+                    if d.resource.name == self.game.language.RESOURCES[2]:  #food
+                        if self.state['food'] == True:
+                            self.storage['food'] += e
+                            d.resource.value -= e
+                    if d.resource.name == self.game.language.RESOURCES[1]:  #food
+                        if self.state['wood'] == True:
+                            self.storage['wood'] += e
+                            d.resource.value -= e
+
     
     def daily(self):
-        e = round(self.population / (50), 2)
-        self.resources_near_building()
-        for d in self.grid_with_res:
-            if d.resource.value > e:
-                if d.resource.name == self.game.language.RESOURCES[2]:  #food
-                    self.storage['food'] += e
-                    d.resource.value -= e
-                if d.resource.name == self.game.language.RESOURCES[2]:  #food
-                    self.storage['food'] += e
-                    d.resource.value -= e
+        pass
 
     def update(self):
-        self.description = [self.owner.name, self.name, "Pop: " + str(self.population), self.game.language.GUI[0], self.game.language.RESOURCES[2] + ":", self.game.language.RESOURCES[1] + ":","","","",""]
+        self.description = [self.owner.name, self.name, "Pop: " + str(self.population), self.game.language.GUI[0], self.game.language.RESOURCES[2] + ":", self.game.language.RESOURCES[1] + ":","","","","","","",""]
         self.description[4] = self.game.language.RESOURCES[2] + ": " + str(self.sum_res[0])
         self.description[5] = self.game.language.RESOURCES[1] + ": " + str(self.sum_res[1])
 
@@ -661,7 +734,7 @@ class BUILDING(pg.sprite.Sprite):
         self.side = self.owner.side
         self.grid = self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height]
         self.grid.building = self
-        self.description = [self.owner.name, self.name, "", "", "", "", "","","",""]
+        self.description = [self.owner.name, self.name, "", "", "", "", "","","","","","","","","",""]
 
     def do(self):
         pass
@@ -673,7 +746,7 @@ class BUILDING(pg.sprite.Sprite):
         pass
 
     def update(self):
-        self.description = [self.owner.name, self.name, "", "", "", "", "","","",""]
+        self.description = [self.owner.name, self.name,"","","","","","","","","","",""]
 
 class OIL_WELL(BUILDING):
     def __init__(self, game, x, y, owner, oil=0):
@@ -684,6 +757,7 @@ class OIL_WELL(BUILDING):
         self.y = y
         self.owner = self.game.players[owner]
         self.name = game.language.BUILDINGS1[9]
+        self.state = {'oil': True}
 
         self.image = self.game.oil_well_img.copy()
         self.image.set_colorkey(VIOLET)
@@ -696,6 +770,17 @@ class OIL_WELL(BUILDING):
         self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
         self.button = ld.OB_Button(self, self.game, pos=[WIDTH - MENU_RIGHT[0]+130, 430], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
 
+        g = self.storage.keys()
+        for a in g:
+            self.window.variables.append(a)
+        self.all_jobs = self.state.keys()
+        b = 0
+        for a in self.all_jobs:
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.game.language.GUI[6], False, LIGHTGREY), (180, 40))
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(a, False, LIGHTGREY), (180, 60 + (b * 20)))
+            self.window.buttons.append(ld.Switch_Button(self.game, self.window, pos=[160,60 + (b * 20)], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable=a))
+            b += 1
+
         self.col = x
         self.row = y
         self.hex = roffset_to_cube(-1, self)
@@ -706,7 +791,7 @@ class OIL_WELL(BUILDING):
         self.side = self.owner.side
         self.grid = self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height]
         self.grid.building = self
-        self.description = [self.owner.name, self.name, "", self.game.language.GUI[0], self.game.language.RESOURCES[3] + ": ","","","","",""]
+        self.description = [self.owner.name, self.name, "", self.game.language.GUI[0], self.game.language.RESOURCES[3] + ": ","","","","","","","",""]
         #here near resources 
         self.resources_near_building()
 
@@ -727,7 +812,24 @@ class OIL_WELL(BUILDING):
         self.description[4] = self.game.language.RESOURCES[3] + ": " + str(self.sum_res)
 
     def do(self):
-        pass
+        jobs = 0
+        for aa in self.all_jobs:
+            if self.state[aa] == True:
+                jobs += 1
+
+        if jobs > 0:
+            if self.owner.electricity == False:
+                e = int(12 / jobs)
+            else:
+                e = int(60 / jobs)
+
+            self.resources_near_building()
+            for d in self.grid_with_res:
+                if d.resource.value > e:
+                    if d.resource.name == self.game.language.RESOURCES[3]:  #food
+                        if self.state['oil'] == True:
+                            self.storage['oil'] += e
+                            d.resource.value -= e
 
     def hourly(self):
         pass
@@ -737,7 +839,7 @@ class OIL_WELL(BUILDING):
         #(round(self.men * 3 / 20, 2))
 
     def update(self):
-        self.description = [self.owner.name, self.name, "", self.game.language.GUI[0], self.game.language.RESOURCES[3] + ": ","","","","",""]
+        self.description = [self.owner.name, self.name, "", self.game.language.GUI[0], self.game.language.RESOURCES[3] + ": ","","","","","","","",""]
         self.description[4] = self.game.language.RESOURCES[3] + ": " + str(self.sum_res)
 
 class MINE(BUILDING):
@@ -749,6 +851,7 @@ class MINE(BUILDING):
         self.y = y
         self.owner = self.game.players[owner]
         self.name = game.language.BUILDINGS1[7]
+        self.state = {'iron': True, 'coal': True, 'calcium': True, 'silicon': True, 'bauxite': True, 'uranium': True}
 
         self.image = self.game.mine_img.copy()
         self.image.set_colorkey(VIOLET)
@@ -761,6 +864,16 @@ class MINE(BUILDING):
         self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
         self.button = ld.OB_Button(self, self.game, pos=[WIDTH - MENU_RIGHT[0]+130, 430], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
 
+        g = self.storage.keys()
+        for a in g:
+            self.window.variables.append(a)
+        self.all_jobs = self.state.keys()
+        b = 0
+        for a in self.all_jobs:
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.game.language.GUI[6], False, LIGHTGREY), (180, 40))
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(a, False, LIGHTGREY), (180, 60 + (b * 20)))
+            self.window.buttons.append(ld.Switch_Button(self.game, self.window, pos=[160,60 + (b * 20)], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable=a))
+            b += 1
 
         self.col = x
         self.row = y
@@ -772,7 +885,7 @@ class MINE(BUILDING):
         self.side = self.owner.side
         self.grid = self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height]
         self.grid.building = self
-        self.description = [self.owner.name, self.name, "", self.game.language.GUI[0], "","","","","",""]
+        self.description = [self.owner.name, self.name, "", self.game.language.GUI[0], "","","","","","","","",""]
         #here near resources 
         self.resources_near_building()
 
@@ -854,37 +967,63 @@ class MINE(BUILDING):
         self.description[9] = self.game.language.RESOURCES[11] + ": " + str(self.sum_res[5])
         
     def do(self):
-        pass
+        jobs = 0
+        for aa in self.all_jobs:
+            if self.state[aa] == True:
+                jobs += 1
+
+        if jobs > 0:
+            if self.owner.electricity == False:
+                e = int(12 / jobs)
+            else:
+                e = int(60 / jobs)
+            self.resources_near_building()
+            for d in self.grid_with_res:
+                if d.resource.value > e:
+                    if d.resource.name == self.game.language.RESOURCES[3]:  #food
+                        if self.state['oil'] == True:
+                            self.storage['oil'] += e
+                            d.resource.value -= e
 
     def hourly(self):
         pass
 
     def daily(self):
         pass
-        #(round(self.men * 3 / 20, 2))
 
     def update(self):
         pass
         
-
-class RAFINERY(BUILDING):
-    def __init__(self, game, x, y, owner=0, oil=0, fuel=0, calcium=0, cement=0, coal=0):
+class SMELTER(BUILDING):
+    def __init__(self, game, x, y, owner=0, iron=0, coal=0, steel=0, bauxite=0, aluminum=0):
         self.groups = game.all_sprites, game.buildings
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.x = x
         self.y = y
         self.owner = self.game.players[owner]
-        self.name = game.language.BUILDINGS1[10]
+        self.name = game.language.BUILDINGS1[8]
+        self.state = {'steel': True, 'aluminum': True}
 
-        self.image = self.game.rafinery_img.copy()
+        self.image = self.game.smelter_img.copy()
         self.image.set_colorkey(VIOLET)
         self.image.blit(self.owner.image, (44, 10))
         self.rect = self.image.get_rect()
-        self.storage = {'oil': oil, 'fuel': fuel, 'calcium': calcium, 'cement': cement, 'coal': coal}
+        self.storage = {'iron': iron, 'coal': coal, 'steel': steel, 'bauxite': bauxite, 'aluminum': aluminum}
 
         self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
         self.button = ld.OB_Button(self, self.game, pos=[WIDTH - MENU_RIGHT[0]+130, 430], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
+
+        g = self.storage.keys()
+        for a in g:
+            self.window.variables.append(a)
+        self.all_jobs = self.state.keys()
+        b = 0
+        for a in self.all_jobs:
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.game.language.GUI[6], False, LIGHTGREY), (180, 40))
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(a, False, LIGHTGREY), (180, 60 + (b * 20)))
+            self.window.buttons.append(ld.Switch_Button(self.game, self.window, pos=[160,60 + (b * 20)], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable=a))
+            b += 1
 
         self.col = x
         self.row = y
@@ -896,7 +1035,93 @@ class RAFINERY(BUILDING):
         self.side = self.owner.side
         self.grid = self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height]
         self.grid.building = self
-        self.description = [self.owner.name, self.name, "", self.game.language.GUI[4], "","","","","",""]
+        self.description = [self.owner.name, self.name, "", self.game.language.GUI[4], "","","","","","","","",""]
+        #here near resources 
+
+        self.description[4] = self.game.language.RES1[3] + ": " + str(self.storage['iron'])
+        self.description[5] = self.game.language.RES1[4] + ": " + str(self.storage['coal'])
+        self.description[6] = self.game.language.RES1[5] + ": " + str(self.storage['steel'])
+        self.description[7] = self.game.language.RES1[21] + ": " + str(self.storage['bauxite'])
+        self.description[8] = self.game.language.RES1[9] + ": " + str(self.storage['aluminum'])
+        
+    def do(self):
+        jobs = 0
+        for aa in self.all_jobs:
+            if self.state[aa] == True:
+                jobs += 1
+
+        if jobs > 0:
+            if self.owner.electricity == False:
+                e = int(12 / jobs)
+            else:
+                e = int(60 / jobs)
+
+            if self.storage['iron'] >= e and self.storage['coal'] >= e and self.state['steel'] == True:
+                self.storage['iron'] -= e
+                self.storage['coal'] -= e
+                self.storage['steel'] += e
+            if self.storage['bauxite'] >= e and self.state['aluminum'] == True:
+                self.storage['bauxite'] -= e
+                self.storage['aluminum'] += (e * 2)
+
+        self.description[4] = self.game.language.RES1[3] + ": " + str(self.storage['iron'])
+        self.description[5] = self.game.language.RES1[4] + ": " + str(self.storage['coal'])
+        self.description[6] = self.game.language.RES1[5] + ": " + str(self.storage['steel'])
+        self.description[7] = self.game.language.RES1[21] + ": " + str(self.storage['bauxite'])
+        self.description[8] = self.game.language.RES1[9] + ": " + str(self.storage['aluminum'])
+        
+    def hourly(self):
+        pass
+        
+    def daily(self):
+        pass
+
+    def update(self):
+        pass
+
+
+class RAFINERY(BUILDING):
+    def __init__(self, game, x, y, owner=0, oil=0, fuel=0, calcium=0, cement=0, coal=0):
+        self.groups = game.all_sprites, game.buildings
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.x = x
+        self.y = y
+        self.owner = self.game.players[owner]
+        self.name = game.language.BUILDINGS1[10]
+        self.state = {'fuel': True, 'cement': True}
+
+        self.image = self.game.rafinery_img.copy()
+        self.image.set_colorkey(VIOLET)
+        self.image.blit(self.owner.image, (44, 10))
+        self.rect = self.image.get_rect()
+        self.storage = {'oil': oil, 'fuel': fuel, 'calcium': calcium, 'cement': cement, 'coal': coal}
+
+        self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
+        self.button = ld.OB_Button(self, self.game, pos=[WIDTH - MENU_RIGHT[0]+130, 430], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
+
+        g = self.storage.keys()
+        for a in g:
+            self.window.variables.append(a)
+        self.all_jobs = self.state.keys()
+        b = 0
+        for a in self.all_jobs:
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.game.language.GUI[6], False, LIGHTGREY), (180, 40))
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(a, False, LIGHTGREY), (180, 60 + (b * 20)))
+            self.window.buttons.append(ld.Switch_Button(self.game, self.window, pos=[160,60 + (b * 20)], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable=a))
+            b += 1
+
+        self.col = x
+        self.row = y
+        self.hex = roffset_to_cube(-1, self)
+        self.hexid = hex_id(OFFSET, self.hex, self.game.map.tmxdata.width)
+        self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
+        self.rect.y = self.y * TILESIZE[1]
+
+        self.side = self.owner.side
+        self.grid = self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height]
+        self.grid.building = self
+        self.description = [self.owner.name, self.name, "", self.game.language.GUI[4], "","","","","","","","",""]
         #here near resources 
 
         self.description[4] = self.game.language.RES1[10] + ": " + str(self.storage['oil'])
@@ -906,15 +1131,24 @@ class RAFINERY(BUILDING):
         self.description[8] = self.game.language.RES1[4] + ": " + str(self.storage['coal'])
         
     def do(self):
-        e = 3
-        c = 1
-        if self.storage['oil'] >= e:
-            self.storage['oil'] -= e
-            self.storage['fuel'] += (e * 2)
-        if self.storage['calcium'] >= e and self.storage['coal'] >= c:
-            self.storage['calcium'] -= e
-            self.storage['coal'] -= c
-            self.storage['cement'] += (e * 1)
+        jobs = 0
+        for aa in self.all_jobs:
+            if self.state[aa] == True:
+                jobs += 1
+
+        if jobs > 0:
+            if self.owner.electricity == False:
+                e = int(12 / jobs)
+            else:
+                e = int(60 / jobs)
+
+            if self.storage['oil'] >= e and self.state['fuel'] == True:
+                self.storage['oil'] -= e
+                self.storage['fuel'] += (e * 2)
+            if self.storage['calcium'] >= e and self.storage['coal'] >= 1 and self.state['cement'] == True:
+                self.storage['calcium'] -= e
+                self.storage['coal'] -= 1
+                self.storage['cement'] += e
 
         self.description[4] = self.game.language.RES1[10] + ": " + str(self.storage['oil'])
         self.description[5] = self.game.language.RES1[11] + ": " + str(self.storage['fuel'])
@@ -930,6 +1164,180 @@ class RAFINERY(BUILDING):
 
     def update(self):
         pass
+
+class POWER_PLANT(BUILDING):
+    def __init__(self, game, x, y, owner=0, oil=0, coal=0):
+        self.groups = game.all_sprites, game.buildings
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.x = x
+        self.y = y
+        self.owner = self.game.players[owner]
+        self.name = game.language.BUILDINGS1[11]
+        self.state = {'oil': True, 'coal': True}
+        self.working = False
+
+        self.image = self.game.power_plant_img.copy()
+        self.image.set_colorkey(VIOLET)
+        self.image.blit(self.owner.image, (44, 10))
+        self.rect = self.image.get_rect()
+        self.storage = {'oil': oil, 'coal': coal}
+
+        self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
+        self.button = ld.OB_Button(self, self.game, pos=[WIDTH - MENU_RIGHT[0]+130, 430], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
+
+        g = self.storage.keys()
+        for a in g:
+            self.window.variables.append(a)
+        self.all_jobs = self.state.keys()
+        b = 0
+        for a in self.all_jobs:
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.game.language.GUI[6], False, LIGHTGREY), (180, 40))
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(a, False, LIGHTGREY), (180, 60 + (b * 20)))
+            self.window.buttons.append(ld.Switch_Button(self.game, self.window, pos=[160,60 + (b * 20)], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable=a))
+            b += 1
+
+        self.col = x
+        self.row = y
+        self.hex = roffset_to_cube(-1, self)
+        self.hexid = hex_id(OFFSET, self.hex, self.game.map.tmxdata.width)
+        self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
+        self.rect.y = self.y * TILESIZE[1]
+
+        self.side = self.owner.side
+        self.grid = self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height]
+        self.grid.building = self
+        self.description = [self.owner.name, self.name, "", self.game.language.GUI[4], "","","","","","","","",""]
+        #here near resources 
+
+        self.description[4] = self.game.language.RES1[10] + ": " + str(self.storage['oil'])
+        self.description[5] = self.game.language.RES1[4] + ": " + str(self.storage['coal'])
+        
+    def do(self):
+        self.working = False
+        jobs = 0
+        for aa in self.all_jobs:
+            if self.state[aa] == True:
+                jobs += 1
+
+        if jobs > 0:
+            e = int(6 / jobs)
+            if self.storage['oil'] >= e and self.state['oil'] == True:
+                self.storage['oil'] -= e
+                self.working = True
+            if self.storage['coal'] >= e and self.state['coal'] == True:
+                self.storage['coal'] -= e
+                self.working = True
+        self.description[4] = self.game.language.RES1[10] + ": " + str(self.storage['oil'])
+        self.description[5] = self.game.language.RES1[4] + ": " + str(self.storage['coal'])
+        
+    def hourly(self):
+        pass
+        
+    def daily(self):
+        pass
+
+    def update(self):
+        pass
+
+class PRODUCTION_PLANT(BUILDING):
+    def __init__(self, game, x, y, owner=0, steel=0, plastic=0, parts=0, wood=0, furniture=0, cotton=0, textiles=0, uniforms=0):
+        self.groups = game.all_sprites, game.buildings
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.x = x
+        self.y = y
+        self.owner = self.game.players[owner]
+        self.name = game.language.BUILDINGS1[12]
+        self.state = {'parts': True, 'furniture': True, 'textiles': True, 'uniforms': True}
+
+        self.image = self.game.production_plant_img.copy()
+        self.image.set_colorkey(VIOLET)
+        self.image.blit(self.owner.image, (44, 10))
+        self.rect = self.image.get_rect()
+        self.storage = {'steel': steel, 'plastic': plastic, 'parts': parts, 'wood': wood, 'furniture': furniture, 'cotton': cotton, 'textiles': textiles, 'uniforms': uniforms}
+
+        self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
+        self.button = ld.OB_Button(self, self.game, pos=[WIDTH - MENU_RIGHT[0]+130, 430], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
+
+        g = self.storage.keys()
+        for a in g:
+            self.window.variables.append(a)
+        self.all_jobs = self.state.keys()
+        b = 0
+        for a in self.all_jobs:
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.game.language.GUI[6], False, LIGHTGREY), (180, 40))
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(a, False, LIGHTGREY), (180, 60 + (b * 20)))
+            self.window.buttons.append(ld.Switch_Button(self.game, self.window, pos=[160,60 + (b * 20)], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable=a))
+            b += 1
+
+        self.col = x
+        self.row = y
+        self.hex = roffset_to_cube(-1, self)
+        self.hexid = hex_id(OFFSET, self.hex, self.game.map.tmxdata.width)
+        self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
+        self.rect.y = self.y * TILESIZE[1]
+
+        self.side = self.owner.side
+        self.grid = self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height]
+        self.grid.building = self
+        self.description = [self.owner.name, self.name, "", self.game.language.GUI[4], "","","","","","","","",""]
+        #here resources 
+
+        self.description[4] = self.game.language.RES1[5] + ": " + str(self.storage['steel'])
+        self.description[5] = self.game.language.RES1[12] + ": " + str(self.storage['plastic'])
+        self.description[6] = self.game.language.RES1[8] + ": " + str(self.storage['parts'])
+        self.description[7] = self.game.language.RES1[0] + ": " + str(self.storage['wood'])
+        self.description[8] = self.game.language.RES1[22] + ": " + str(self.storage['furniture'])
+        self.description[9] = self.game.language.RES1[18] + ": " + str(self.storage['cotton'])
+        self.description[10] = self.game.language.RES1[19] + ": " + str(self.storage['textiles'])
+        self.description[11] = self.game.language.RES2[1] + ": " + str(self.storage['uniforms'])
+        
+    def do(self):
+        jobs = 0
+        for aa in self.all_jobs:
+            if self.state[aa] == True:
+                jobs += 1
+
+        if jobs > 0:
+            if self.owner.electricity == False:
+                e = int(12 / jobs)
+            else:
+                e = int(60 / jobs)
+
+            if self.storage['steel'] >= e and self.storage['plastic'] >= e and self.state['parts'] == True:
+                self.storage['steel'] -= e
+                self.storage['plastic'] -= e
+                self.storage['parts'] += e
+            if self.storage['wood'] >= e*2 and self.state['furniture'] == True:
+                self.storage['wood'] -= e*2
+                self.storage['furniture'] += e
+            if self.storage['cotton'] >= e*2 and self.state['textiles'] == True:
+                self.storage['cotton'] -= e*2
+                self.storage['textiles'] += e
+            if self.storage['textiles'] >= e*4 and self.state['uniforms'] == True:
+                self.storage['textiles'] -= e*4
+                self.storage['uniforms'] += e
+
+        self.description[4] = self.game.language.RES1[5] + ": " + str(self.storage['steel'])
+        self.description[5] = self.game.language.RES1[12] + ": " + str(self.storage['plastic'])
+        self.description[6] = self.game.language.RES1[8] + ": " + str(self.storage['parts'])
+        self.description[7] = self.game.language.RES1[0] + ": " + str(self.storage['wood'])
+        self.description[8] = self.game.language.RES1[22] + ": " + str(self.storage['furniture'])
+        self.description[9] = self.game.language.RES1[18] + ": " + str(self.storage['cotton'])
+        self.description[10] = self.game.language.RES1[19] + ": " + str(self.storage['textiles'])
+        self.description[11] = self.game.language.RES2[1] + ": " + str(self.storage['uniforms'])
+        
+    def hourly(self):
+        pass
+        
+    def daily(self):
+        pass
+
+    def update(self):
+        pass
+
+
 
 
 class Unit(pg.sprite.Sprite):
