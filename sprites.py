@@ -1240,8 +1240,8 @@ class POWER_PLANT(BUILDING):
     def update(self):
         pass
 
-class PRODUCTION_PLANT(BUILDING):
-    def __init__(self, game, x, y, owner=0, steel=0, plastic=0, parts=0, wood=0, furniture=0, cotton=0, textiles=0, uniforms=0):
+class LIGHT_INDUSTRY_PLANT(BUILDING):
+    def __init__(self, game, x, y, owner=0, steel=0, food=0, supply=0, wood=0, furniture=0, cotton=0, textiles=0, uniforms=0):
         self.groups = game.all_sprites, game.buildings
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -1249,13 +1249,13 @@ class PRODUCTION_PLANT(BUILDING):
         self.y = y
         self.owner = self.game.players[owner]
         self.name = game.language.BUILDINGS1[12]
-        self.state = {'parts': True, 'furniture': True, 'textiles': True, 'uniforms': True}
+        self.state = {'supply': True, 'furniture': True, 'textiles': True, 'uniforms': True}
 
-        self.image = self.game.production_plant_img.copy()
+        self.image = self.game.light_industry_plant_img.copy()
         self.image.set_colorkey(VIOLET)
         self.image.blit(self.owner.image, (44, 10))
         self.rect = self.image.get_rect()
-        self.storage = {'steel': steel, 'plastic': plastic, 'parts': parts, 'wood': wood, 'furniture': furniture, 'cotton': cotton, 'textiles': textiles, 'uniforms': uniforms}
+        self.storage = {'steel': steel, 'food': food, 'supply': supply, 'wood': wood, 'furniture': furniture, 'cotton': cotton, 'textiles': textiles, 'uniforms': uniforms}
 
         self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
         self.button = ld.OB_Button(self, self.game, pos=[WIDTH - MENU_RIGHT[0]+130, 430], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
@@ -1285,8 +1285,8 @@ class PRODUCTION_PLANT(BUILDING):
         #here resources 
 
         self.description[4] = self.game.language.RES1[5] + ": " + str(self.storage['steel'])
-        self.description[5] = self.game.language.RES1[12] + ": " + str(self.storage['plastic'])
-        self.description[6] = self.game.language.RES1[8] + ": " + str(self.storage['parts'])
+        self.description[5] = self.game.language.RES1[1] + ": " + str(self.storage['food'])
+        self.description[6] = self.game.language.RES2[0] + ": " + str(self.storage['supply'])
         self.description[7] = self.game.language.RES1[0] + ": " + str(self.storage['wood'])
         self.description[8] = self.game.language.RES1[22] + ": " + str(self.storage['furniture'])
         self.description[9] = self.game.language.RES1[18] + ": " + str(self.storage['cotton'])
@@ -1305,10 +1305,10 @@ class PRODUCTION_PLANT(BUILDING):
             else:
                 e = int(60 / jobs)
 
-            if self.storage['steel'] >= e and self.storage['plastic'] >= e and self.state['parts'] == True:
+            if self.storage['steel'] >= e and self.storage['food'] >= e*4 and self.state['supply'] == True:
                 self.storage['steel'] -= e
-                self.storage['plastic'] -= e
-                self.storage['parts'] += e
+                self.storage['food'] -= e*4
+                self.storage['supply'] += e*3
             if self.storage['wood'] >= e*2 and self.state['furniture'] == True:
                 self.storage['wood'] -= e*2
                 self.storage['furniture'] += e
@@ -1320,8 +1320,8 @@ class PRODUCTION_PLANT(BUILDING):
                 self.storage['uniforms'] += e
 
         self.description[4] = self.game.language.RES1[5] + ": " + str(self.storage['steel'])
-        self.description[5] = self.game.language.RES1[12] + ": " + str(self.storage['plastic'])
-        self.description[6] = self.game.language.RES1[8] + ": " + str(self.storage['parts'])
+        self.description[5] = self.game.language.RES1[1] + ": " + str(self.storage['food'])
+        self.description[6] = self.game.language.RES2[0] + ": " + str(self.storage['supply'])
         self.description[7] = self.game.language.RES1[0] + ": " + str(self.storage['wood'])
         self.description[8] = self.game.language.RES1[22] + ": " + str(self.storage['furniture'])
         self.description[9] = self.game.language.RES1[18] + ": " + str(self.storage['cotton'])
@@ -1336,6 +1336,202 @@ class PRODUCTION_PLANT(BUILDING):
 
     def update(self):
         pass
+
+class HEAVY_INDUSTRY_PLANT(BUILDING):
+    def __init__(self, game, x, y, owner=0, steel=0, aluminum=0, plastic=0, parts=0, tools=0, civ_mach=0, rifle=0):
+        self.groups = game.all_sprites, game.buildings
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.x = x
+        self.y = y
+        self.owner = self.game.players[owner]
+        self.name = game.language.BUILDINGS1[13]
+        self.state = {'parts': True, 'tools': True, 'civ_mach': True, 'rifle': True}
+
+        self.image = self.game.heavy_industry_plant_img.copy()
+        self.image.set_colorkey(VIOLET)
+        self.image.blit(self.owner.image, (44, 10))
+        self.rect = self.image.get_rect()
+        self.storage = {'steel': steel, 'aluminum': aluminum, 'plastic': plastic, 'parts': parts, 'tools': tools, 'civ_mach': civ_mach, 'rifle': rifle}
+
+        self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
+        self.button = ld.OB_Button(self, self.game, pos=[WIDTH - MENU_RIGHT[0]+130, 430], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
+
+        g = self.storage.keys()
+        for a in g:
+            self.window.variables.append(a)
+        self.all_jobs = self.state.keys()
+        b = 0
+        for a in self.all_jobs:
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.game.language.GUI[6], False, LIGHTGREY), (180, 40))
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(a, False, LIGHTGREY), (180, 60 + (b * 20)))
+            self.window.buttons.append(ld.Switch_Button(self.game, self.window, pos=[160,60 + (b * 20)], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable=a))
+            b += 1
+
+        self.col = x
+        self.row = y
+        self.hex = roffset_to_cube(-1, self)
+        self.hexid = hex_id(OFFSET, self.hex, self.game.map.tmxdata.width)
+        self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
+        self.rect.y = self.y * TILESIZE[1]
+
+        self.side = self.owner.side
+        self.grid = self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height]
+        self.grid.building = self
+        self.description = [self.owner.name, self.name, "", self.game.language.GUI[4], "","","","","","","","",""]
+        #here resources 
+
+        self.description[4] = self.game.language.RES1[5] + ": " + str(self.storage['steel'])
+        self.description[5] = self.game.language.RES1[9] + ": " + str(self.storage['aluminum'])
+        self.description[6] = self.game.language.RES1[12] + ": " + str(self.storage['plastic'])
+        self.description[7] = self.game.language.RES1[8] + ": " + str(self.storage['parts'])
+        self.description[8] = self.game.language.RES1[7] + ": " + str(self.storage['tools'])
+        self.description[9] = self.game.language.RES1[23] + ": " + str(self.storage['civ_mach'])
+        self.description[10] = self.game.language.RES2[6] + ": " + str(self.storage['rifle'])
+
+    def do(self):
+        jobs = 0
+        for aa in self.all_jobs:
+            if self.state[aa] == True:
+                jobs += 1
+
+        if jobs > 0:
+            if self.owner.electricity == False:
+                e = int(12 / jobs)
+            else:
+                e = int(60 / jobs)
+                if self.storage['steel'] >= 100 and self.storage['aluminum'] >= 30 and self.storage['plastic'] >= 20 and self.storage['parts'] >= 10 and self.state['civ_mach'] == True:
+                    self.storage['steel'] -= 100
+                    self.storage['aluminum'] -= 30
+                    self.storage['plastic'] -= 20
+                    self.storage['parts'] -= 10
+                    self.storage['civ_mach'] += 1
+
+            if self.storage['steel'] >= e and self.storage['aluminum'] >= e and self.state['parts'] == True:
+                self.storage['steel'] -= e
+                self.storage['aluminum'] -= e
+                self.storage['parts'] += e
+            if self.storage['steel'] >= e*2 and self.storage['plastic'] >= e and self.state['tools'] == True:
+                self.storage['steel'] -= e*2
+                self.storage['plastic'] -= e
+                self.storage['tools'] += e
+            if self.storage['steel'] >= e*4 and self.storage['plastic'] >= e and self.state['rifle'] == True:
+                self.storage['steel'] -= e*4
+                self.storage['plastic'] -= e
+                self.storage['rifle'] += e
+
+        self.description[4] = self.game.language.RES1[5] + ": " + str(self.storage['steel'])
+        self.description[5] = self.game.language.RES1[9] + ": " + str(self.storage['aluminum'])
+        self.description[6] = self.game.language.RES1[12] + ": " + str(self.storage['plastic'])
+        self.description[7] = self.game.language.RES1[8] + ": " + str(self.storage['parts'])
+        self.description[8] = self.game.language.RES1[7] + ": " + str(self.storage['tools'])
+        self.description[9] = self.game.language.RES1[23] + ": " + str(self.storage['civ_mach'])
+        self.description[10] = self.game.language.RES2[6] + ": " + str(self.storage['rifle'])
+
+    def hourly(self):
+        pass
+        
+    def daily(self):
+        pass
+
+    def update(self):
+        pass
+
+
+
+class CHEMICAL_PLANT(BUILDING):
+    def __init__(self, game, x, y, owner=0, oil=0, plastic=0, chem_comp=0, textiles=0, fertilizer=0):
+        self.groups = game.all_sprites, game.buildings
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.x = x
+        self.y = y
+        self.owner = self.game.players[owner]
+        self.name = game.language.BUILDINGS1[14]
+        self.state = {'plastic': True, 'chem_comp': True, 'textiles': True, 'fertilizer': True}
+
+        self.image = self.game.chemical_plant_img.copy()
+        self.image.set_colorkey(VIOLET)
+        self.image.blit(self.owner.image, (44, 10))
+        self.rect = self.image.get_rect()
+        self.storage = {'oil': oil, 'plastic': plastic, 'chem_comp': chem_comp, 'textiles': textiles, 'fertilizer': fertilizer}
+
+        self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
+        self.button = ld.OB_Button(self, self.game, pos=[WIDTH - MENU_RIGHT[0]+130, 430], size=(20, 20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK) 
+
+        g = self.storage.keys()
+        for a in g:
+            self.window.variables.append(a)
+        self.all_jobs = self.state.keys()
+        b = 0
+        for a in self.all_jobs:
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.game.language.GUI[6], False, LIGHTGREY), (180, 40))
+            self.window.image.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(a, False, LIGHTGREY), (180, 60 + (b * 20)))
+            self.window.buttons.append(ld.Switch_Button(self.game, self.window, pos=[160,60 + (b * 20)], size=(20,20), color=LIGHTGREY, text="X", textsize=10, textcolor=BLACK, variable=a))
+            b += 1
+
+        self.col = x
+        self.row = y
+        self.hex = roffset_to_cube(-1, self)
+        self.hexid = hex_id(OFFSET, self.hex, self.game.map.tmxdata.width)
+        self.rect.x = self.x * TILESIZE[0] + self.y % 2 * TILESIZE[0] / 2
+        self.rect.y = self.y * TILESIZE[1]
+
+        self.side = self.owner.side
+        self.grid = self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height]
+        self.grid.building = self
+        self.description = [self.owner.name, self.name, "", self.game.language.GUI[4], "","","","","","","","",""]
+        #here resources 
+
+        self.description[4] = self.game.language.RES1[10] + ": " + str(self.storage['oil'])
+        self.description[5] = self.game.language.RES1[12] + ": " + str(self.storage['plastic'])
+        self.description[6] = self.game.language.RES1[13] + ": " + str(self.storage['chem_comp'])
+        self.description[7] = self.game.language.RES1[19] + ": " + str(self.storage['textiles'])
+        self.description[8] = self.game.language.RES1[14] + ": " + str(self.storage['fertilizer'])
+        
+    def do(self):
+        jobs = 0
+        for aa in self.all_jobs:
+            if self.state[aa] == True:
+                jobs += 1
+
+        if jobs > 0:
+            if self.owner.electricity == False:
+                e = int(12 / jobs)
+            else:
+                e = int(60 / jobs)
+
+            if self.storage['oil'] >= e*2 and self.state['plastic'] == True:
+                self.storage['oil'] -= e*2
+                self.storage['plastic'] += e
+            if self.storage['oil'] >= e*2 and self.state['chem_comp'] == True:
+                self.storage['oil'] -= e*2
+                self.storage['chem_comp'] += e
+            if self.storage['plastic'] >= e*4 and self.state['textiles'] == True:
+                self.storage['plastic'] -= e*4
+                self.storage['textiles'] += e
+            if self.storage['chem_comp'] >= e*4 and self.state['fertilizer'] == True:
+                self.storage['chem_comp'] -= e*4
+                self.storage['fertilizer'] += e
+
+        self.description[4] = self.game.language.RES1[10] + ": " + str(self.storage['oil'])
+        self.description[5] = self.game.language.RES1[12] + ": " + str(self.storage['plastic'])
+        self.description[6] = self.game.language.RES1[13] + ": " + str(self.storage['chem_comp'])
+        self.description[7] = self.game.language.RES1[19] + ": " + str(self.storage['textiles'])
+        self.description[8] = self.game.language.RES1[14] + ": " + str(self.storage['fertilizer'])
+           
+    def hourly(self):
+        pass
+        
+    def daily(self):
+        pass
+
+    def update(self):
+        pass
+
+
+
+
 
 
 

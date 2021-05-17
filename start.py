@@ -101,7 +101,8 @@ class Game:
             self.oil_well_img = pg.image.load(path.join(img_folder, OIL_WELL_IMG))
             self.rafinery_img = pg.image.load(path.join(img_folder, RAFINERY_IMG))
             self.power_plant_img = pg.image.load(path.join(img_folder, POWER_PLANT_IMG))
-            self.production_plant_img = pg.image.load(path.join(img_folder, PRODUCTION_PLANT_IMG))
+            self.light_industry_plant_img = pg.image.load(path.join(img_folder, LIGHT_INDUSTRY_PLANT_IMG))
+            self.heavy_industry_plant_img = pg.image.load(path.join(img_folder, HEAVY_INDUSTRY_PLANT_IMG))
             self.chemical_plant_img = pg.image.load(path.join(img_folder, CHEMICAL_PLANT_IMG))
             self.high_tech_plant_img = pg.image.load(path.join(img_folder, HIGH_TECH_PLANT_IMG))
             self.mechanical_plant_img = pg.image.load(path.join(img_folder, MECHANICAL_PLANT_IMG))
@@ -182,7 +183,7 @@ class Game:
         self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[6], typ=6, s_normal=4, s_water=100, s_mountain=6, s_coast=4, s_river=12, s_no_fuel=20, money_usage=1, max_men=79, max_art=0, max_truck=0, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
         
         #logistic
-        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[7], typ=7, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, money_usage=2, max_men=25, max_art=0, max_truck=5, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
+        self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[7], typ=7, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, money_usage=2, max_men=64, max_art=0, max_truck=20, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
         
         #headquaters
         self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[8], typ=8, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, money_usage=2, max_men=30, max_art=0, max_truck=5, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
@@ -198,10 +199,13 @@ class Game:
         #AA anti-aircraft
         self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[11], typ=11, s_normal=3, s_water=100, s_mountain=12, s_coast=5, s_river=12, s_no_fuel=40, money_usage=2, max_men=25, max_art=0, max_truck=5, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
         
+        #anti-armor
         self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[12], typ=12, s_normal=2, s_water=100, s_mountain=12, s_coast=4, s_river=12, s_no_fuel=20, money_usage=2, max_men=25, max_art=0, max_truck=5, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
         
+        #rocket
         self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[13], typ=13, s_normal=2, s_water=100, s_mountain=12, s_coast=5, s_river=12, s_no_fuel=40, money_usage=5, max_men=25, max_art=0, max_truck=5, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
         
+        #engineering
         self.types.append(Unit_Type(self, name=self.language.UNIT_TYPE[14], typ=14, s_normal=2, s_water=100, s_mountain=10, s_coast=4, s_river=12, s_no_fuel=40, money_usage=3, max_men=25, max_art=0, max_truck=5, max_apc=0, max_tank=0, max_heli=0, max_aircraft=0, max_rocket_truck=0))
 
 
@@ -258,8 +262,13 @@ class Game:
                 RAFINERY(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
             elif b[2] == "POWER_PLANT":
                 POWER_PLANT(self, b[0], b[1], b[3], b[4], b[5])
-            elif b[2] == "PRODUCTION_PLANT":
-                PRODUCTION_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11])
+            elif b[2] == "LIGHT_INDUSTRY_PLANT":
+                LIGHT_INDUSTRY_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11])
+            elif b[2] == "HEAVY_INDUSTRY_PLANT":
+                HEAVY_INDUSTRY_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10])
+            elif b[2] == "CHEMICAL_PLANT":
+                CHEMICAL_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
+
 
         for u in self.map.units:
             Unit(self, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15], u[16], u[17], u[18], u[19], u[20], u[21], u[22], u[23])

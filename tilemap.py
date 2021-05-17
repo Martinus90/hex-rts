@@ -153,8 +153,12 @@ class TiledMap:
                         self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['oil'],obj.properties['fuel'],obj.properties['calcium'],obj.properties['cement'],obj.properties['coal']])
                     elif obj.properties['typ'] == 'POWER_PLANT':
                         self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['oil'],obj.properties['coal']])
-                    elif obj.properties['typ'] == 'PRODUCTION_PLANT':
-                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['steel'],obj.properties['plastic'],obj.properties['parts'],obj.properties['wood'],obj.properties['furniture'],obj.properties['cotton'],obj.properties['textiles'],obj.properties['uniforms']])
+                    elif obj.properties['typ'] == 'LIGHT_INDUSTRY_PLANT':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['steel'],obj.properties['food'],obj.properties['supply'],obj.properties['wood'],obj.properties['furniture'],obj.properties['cotton'],obj.properties['textiles'],obj.properties['uniforms']])
+                    elif obj.properties['typ'] == 'HEAVY_INDUSTRY_PLANT':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['steel'],obj.properties['aluminum'],obj.properties['plastic'],obj.properties['parts'],obj.properties['tools'],obj.properties['civ_mach'],obj.properties['rifle']])
+                    elif obj.properties['typ'] == 'CHEMICAL_PLANT':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['oil'],obj.properties['plastic'],obj.properties['chem_comp'],obj.properties['textiles'],obj.properties['fertilizer']])
 
         
         #self.grid_list = set(self.grid_list)

@@ -17,7 +17,7 @@ class Language:
             self.UNIT_TYPE = ["Infantry","Armored","Artillery","Mechanized","Reconnaissance","Motorized","Other","Logistic","Headquarters","Helicopters","Aircraft","Anti-Aircraft","Anti-Tank","Missile","Engineering"]
             self.UNIT_STRU = ["Brigade", "Regiment", "Battalion", "Company"]
             self.UNIT_STRU_SHORT = [", Brig.: ", ", Reg.: ", ", Batt.: ", ", Comp.: "]
-            self.BUILDINGS1 = ["Construction","Village","City","Harbor","Airport","Warehouse","Barracks","Mine","Smelter","Oil Well", "Rafinery", "Power Plant","Production Plant","Chemical Plant","High-Tech Plant","Mechanical Plant","Armament Plant","Aviation Plant","Shipyard"]
+            self.BUILDINGS1 = ["Construction","Village","City","Harbor","Airport","Warehouse","Barracks","Mine","Smelter","Oil Well", "Rafinery", "Power Plant","Light Industry Plant","Heavy Industry Plant","Chemical Plant","High-Tech Plant","Mechanical Plant","Armament Plant","Aviation Plant","Shipyard"]
             self.RANKS1 = ["Lieutenant","Captain","Major","Colonel","General"]
             self.RANKS2 = ["Fugleman","Leader","Commander","Chieftain","Warlord"]
 
@@ -41,7 +41,7 @@ class Language:
             self.UNIT_STRU_SHORT = [", Bryg.: ", ", Pułk.: ", ", Bat.: ", ", Komp.: "]
 
 
-            self.BUILDINGS1 = ["Budowa","Wioska","Miasto","Port","Lotnisko","Magazyn","Baraki","Kopalnia","Huta","Szyb Naftowy", "Rafineria", "Elektrownia","Zaklad Produkcyjny","Zaklad Chemiczny","Zaklad High-Tech","Zaklad Mechaniczny","Zaklad Zbrojeniowy","Zaklad Lotniczy","Stocznia"]
+            self.BUILDINGS1 = ["Budowa","Wioska","Miasto","Port","Lotnisko","Magazyn","Baraki","Kopalnia","Huta","Szyb Naftowy", "Rafineria", "Elektrownia","Zaklad Przemysłu Lekkiego","Zaklad Przemysłu Ciężkiego","Zaklad Chemiczny","Zaklad High-Tech","Zaklad Mechaniczny","Zaklad Zbrojeniowy","Zaklad Lotniczy","Stocznia"]
             self.RANKS1 = ["Porucznik","Kapitan","Major","Pulkownik","General"]
             self.RANKS2 = ["Przywodca","Lider","Dowodca","Wodz","Watazka"]
 
