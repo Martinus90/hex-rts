@@ -268,7 +268,15 @@ class Game:
                 HEAVY_INDUSTRY_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10])
             elif b[2] == "CHEMICAL_PLANT":
                 CHEMICAL_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
-
+            elif b[2] == "HIGH_TECH_PLANT":
+                HIGH_TECH_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10])
+            elif b[2] == "MECHANICAL_PLANT":
+                MECHANICAL_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11])
+            elif b[2] == "ARMAMENT_PLANT":
+                ARMAMENT_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11])
+            elif b[2] == "AVIATION_PLANT":
+                AVIATION_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11])
+            
 
         for u in self.map.units:
             Unit(self, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15], u[16], u[17], u[18], u[19], u[20], u[21], u[22], u[23])
@@ -678,7 +686,7 @@ class Game:
                     if self.speed >= 2:
                         self.speed = self.speed / 2
                     #print(self.speed)
-                if event.key == pg.K_PAUSE:
+                if event.key == pg.K_PAUSE or event.key == 32:
                     self.pause = not self.pause
             if event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:

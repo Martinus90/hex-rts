@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="hexagonal" renderorder="left-up" width="20" height="20" tilewidth="64" tileheight="64" infinite="0" hexsidelength="32" staggeraxis="y" staggerindex="odd" nextlayerid="4" nextobjectid="35">
+<map version="1.4" tiledversion="1.4.2" orientation="hexagonal" renderorder="left-up" width="20" height="20" tilewidth="64" tileheight="64" infinite="0" hexsidelength="32" staggeraxis="y" staggerindex="odd" nextlayerid="4" nextobjectid="39">
  <tileset firstgid="1" source="tiles.tsx"/>
  <tileset firstgid="321" source="colors.tsx"/>
  <layer id="1" name="layer1" width="20" height="20">
@@ -293,6 +293,61 @@
     <property name="steel" type="int" value="6000"/>
     <property name="tools" type="int" value="500"/>
     <property name="typ" value="HEAVY_INDUSTRY_PLANT"/>
+   </properties>
+  </object>
+  <object id="35" name="building" x="691.48" y="643.852" width="23.8659" height="23.8659">
+   <properties>
+    <property name="aluminum" type="int" value="2000"/>
+    <property name="chem_comp" type="int" value="1000"/>
+    <property name="elec_comp" type="int" value="0"/>
+    <property name="electronics" type="int" value="1"/>
+    <property name="owner" type="int" value="1"/>
+    <property name="plastic" type="int" value="6000"/>
+    <property name="silicon" type="int" value="4000"/>
+    <property name="steel" type="int" value="10000"/>
+    <property name="typ" value="HIGH_TECH_PLANT"/>
+   </properties>
+  </object>
+  <object id="36" name="building" x="757.48" y="643.852" width="23.8659" height="23.8659">
+   <properties>
+    <property name="apc" type="int" value="10"/>
+    <property name="electronics" type="int" value="1000"/>
+    <property name="owner" type="int" value="1"/>
+    <property name="parts" type="int" value="4000"/>
+    <property name="rubber" type="int" value="50000"/>
+    <property name="steel" type="int" value="20000"/>
+    <property name="textiles" type="int" value="6000"/>
+    <property name="tools" type="int" value="5000"/>
+    <property name="truck" type="int" value="20"/>
+    <property name="typ" value="MECHANICAL_PLANT"/>
+   </properties>
+  </object>
+  <object id="37" name="building" x="818.48" y="644.852" width="23.8659" height="23.8659">
+   <properties>
+    <property name="artilleries" type="int" value="2"/>
+    <property name="electronics" type="int" value="1200"/>
+    <property name="owner" type="int" value="1"/>
+    <property name="parts" type="int" value="3000"/>
+    <property name="plastic" type="int" value="2000"/>
+    <property name="rifle" type="int" value="100"/>
+    <property name="rubber" type="int" value="1000"/>
+    <property name="steel" type="int" value="20000"/>
+    <property name="tank" type="int" value="0"/>
+    <property name="typ" value="ARMAMENT_PLANT"/>
+   </properties>
+  </object>
+  <object id="38" name="building" x="851.48" y="400.852" width="23.8659" height="23.8659">
+   <properties>
+    <property name="aircraft" type="int" value="0"/>
+    <property name="aluminum" type="int" value="20000"/>
+    <property name="electronics" type="int" value="1200"/>
+    <property name="helicopters" type="int" value="2"/>
+    <property name="owner" type="int" value="1"/>
+    <property name="parts" type="int" value="3000"/>
+    <property name="plastic" type="int" value="2000"/>
+    <property name="rockets" type="int" value="100"/>
+    <property name="rubber" type="int" value="4000"/>
+    <property name="typ" value="AVIATION_PLANT"/>
    </properties>
   </object>
  </objectgroup>

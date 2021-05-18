@@ -159,7 +159,16 @@ class TiledMap:
                         self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['steel'],obj.properties['aluminum'],obj.properties['plastic'],obj.properties['parts'],obj.properties['tools'],obj.properties['civ_mach'],obj.properties['rifle']])
                     elif obj.properties['typ'] == 'CHEMICAL_PLANT':
                         self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['oil'],obj.properties['plastic'],obj.properties['chem_comp'],obj.properties['textiles'],obj.properties['fertilizer']])
-
+                    elif obj.properties['typ'] == 'HIGH_TECH_PLANT':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['steel'],obj.properties['aluminum'],obj.properties['plastic'],obj.properties['chem_comp'],obj.properties['silicon'],obj.properties['electronics'],obj.properties['elec_comp']])
+                    elif obj.properties['typ'] == 'MECHANICAL_PLANT':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['steel'],obj.properties['rubber'],obj.properties['parts'],obj.properties['tools'],obj.properties['textiles'],obj.properties['electronics'],obj.properties['truck'],obj.properties['apc']])
+                    elif obj.properties['typ'] == 'ARMAMENT_PLANT':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['steel'],obj.properties['rubber'],obj.properties['plastic'],obj.properties['parts'],obj.properties['electronics'],obj.properties['rifle'],obj.properties['artilleries'],obj.properties['tank']])
+                    elif obj.properties['typ'] == 'AVIATION_PLANT':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['aluminum'],obj.properties['rubber'],obj.properties['plastic'],obj.properties['parts'],obj.properties['electronics'],obj.properties['rockets'],obj.properties['helicopters'],obj.properties['aircraft']])
+                    
+                    
         
         #self.grid_list = set(self.grid_list)
 

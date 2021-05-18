@@ -10,8 +10,8 @@ class Language:
             self.DISPLAY_GUI = ["Position: ", "Time: ", "Week: ", " , Day: ", "Pause", "Game Speed: ", "Terrain", "Unit", "Building"]
             self.TERRAIN = ["Grass", "Desert", "See", "Mountain", "Coast", "River", "Ford"]
             self.RESOURCES = ["Resource","Tree","Grain","Oil","Iron","Coal","Calcium","Silicon","Cotton","Rubber","Bauxite","Uranium","Water"]
-            self.RES1 = ["Wood", "Food", "Cement", "Iron Ore", "Coal", "Steel", "Water", "Tools", "Parts", "Aluminum", "Oil", "Fuel", "Plastic", "Chemical Compounds", "Fertilizer",
-            "Silicon", "Calcium", "Electronics", "Cotton", "Textiles", "Rubber", "Bauxite", "Furniture", "Civilian Machines"]
+            self.RES1 = ["Wood", "Food", "Cement", "Iron Ore", "Coal", "Steel", "Water", "Tools", "Parts", "Aluminum", "Oil", "Fuel", "Plastic", "Chemical Comp.", "Fertilizer",
+            "Silicon", "Calcium", "Electronics", "Cotton", "Textiles", "Rubber", "Bauxite", "Furniture", "Civilian Machines", "Electronic Comp."]
             self.RES2 = ["Supply", "Uniforms", "Fuel", "Light Ammo", "Heavy Ammo", "Rockets", "Rifle", "Artilleries", "Truck", "APC", "Tank", "Helicopters", "Aircrafts"] 
 
             self.UNIT_TYPE = ["Infantry","Armored","Artillery","Mechanized","Reconnaissance","Motorized","Other","Logistic","Headquarters","Helicopters","Aircraft","Anti-Aircraft","Anti-Tank","Missile","Engineering"]
@@ -32,8 +32,8 @@ class Language:
             self.DISPLAY_GUI = ["Pozycja: ", "Czas", "Tydzień", "Dzień: ", "Pauza", "Prędkość Gry: ", "Teren", "Jednostka", "Budynek"]
             self.TERRAIN = ["Zielen", "Pustynia", "Morze", "Gory", "Wybrzeże", "Rzeka", "Brod"]
             self.RESOURCES = ["Zasob","Drewno","Zboze","Ropa","Zelazo","Wegiel","Wapn","Krzem","Bawelna","Guma","Boksyt","Uran","Woda"]
-            self.RES1 = ["Drewno", "Jedzenie", "Cement", "Ruda żelaza", "Koks", "Stal", "Woda", "Narzędzie", "Części", "Aluminium", "Ropa", "Paliwo", "Plastik", "Produkty Chemiczne", "Nawozy",
-            "Krzem", "Wapń", "Elektronika", "Bawełna", "Tkaniny", "Guma", "Boksyt", "Meble", "Urządzenia Cywilne"]
+            self.RES1 = ["Drewno", "Jedzenie", "Cement", "Ruda żelaza", "Koks", "Stal", "Woda", "Narzędzie", "Części", "Aluminium", "Ropa", "Paliwo", "Plastik", "Produkty Chem.", "Nawozy",
+            "Krzem", "Wapń", "Elektronika", "Bawełna", "Tkaniny", "Guma", "Boksyt", "Meble", "Urządzenia Cywilne", "Podzespoły Elek."]
             self.RES2 = ["Zaopatrzenie", "Mudury", "Paliwo", "Lekka Amunicja", "Ciężka Amunicja", "Rakiety", "Karabiny", "Artyleria", "Ciężarówki", "BWPy", "Czołgi", "Helikoptery", "Samoloty"] 
             
             self.UNIT_TYPE = ["Piechota","Pancerna","Artyleria","Zmechanizowana","Zwiad","Zmotoryzowana","Inne","Logistyka","Sztab","Helikoptery","Samoloty","PLOT","Przeciwpancerna","Rakietowa","Inżynieryjna"]
