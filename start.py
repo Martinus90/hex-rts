@@ -325,6 +325,8 @@ class Game:
         if self.day > 7: #def 7
             self.day -= 7
             self.week += 1
+            for building in self.buildings:
+                building.weekly()
         if self.week > 13: #13
             self.week -= 13
             self.season += 1
@@ -609,14 +611,24 @@ class Game:
                 #if 1 == 1: #rolling display building variables
                 e = 0
                 self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.GUI[4], False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 80 + (e * 20)))
+                self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.GUI[8], False, LIGHTGREY), (window.pos[0] + 350, window.pos[1] + 40))
                 for v in window.variables:
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(v, False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 100 + (e * 20)))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.storage[v]), False, LIGHTGREY), (window.pos[0] + 100, window.pos[1] + 100 + (e * 20)))
                     e += 1
+                if len(window.thing.orders) > 0:
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.orders[0][0], False, LIGHTGREY), (window.pos[0] + 300, window.pos[1] + 60))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.orders[0][1]), False, LIGHTGREY), (window.pos[0] + 350, window.pos[1] + 60))
+                    
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.GUI[9], False, LIGHTGREY), (window.pos[0] + 300, window.pos[1] + 80))
+                
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(len(window.thing.orders)), False, LIGHTGREY), (window.pos[0] + 350, window.pos[1] + 80))
+                    
+
                 if window.thing.name == self.language.BUILDINGS1[1]:
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.GUI[7], False, LIGHTGREY), (window.pos[0] + 400, window.pos[1] + 40))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.nationality.name, False, LIGHTGREY), (window.pos[0] + 350, window.pos[1] + 60))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.population), False, LIGHTGREY), (window.pos[0] + 450, window.pos[1] + 60))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.GUI[7], False, LIGHTGREY), (window.pos[0] + 600, window.pos[1] + 40))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.nationality.name, False, LIGHTGREY), (window.pos[0] + 550, window.pos[1] + 60))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.population), False, LIGHTGREY), (window.pos[0] + 550, window.pos[1] + 60))
                     
 
 

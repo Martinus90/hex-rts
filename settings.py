@@ -202,32 +202,35 @@ SHIPYARD_COST = {'wood': 500, 'cement': 1000, 'steel': 1000}
 BUILDING_COST = [CONSTRUCTION_COST, VILLAGE_COST, CITY_COST, HARBOR_COST, AIRPORT_COST, WAREHOUSE_COST, BARRACKS_COST, MINE_COST, SMELTER_COST, OIL_WELL_COST, POWER_PLANT_COST, PRODUCTION_PLANT_COST, CHEMICAL_PLANT_COST,
 HIGH_TECH_PLANT_COST, MECHANICAL_PLANT_COST, ARMAMENT_PLANT_COST, AVIATION_PLANT_COST, SHIPYARD_COST]
 
-#Production Cost
+#Production Cost 
+#Time 1=15 min, 4=1h, 96=1day, 480=5 work days
 CEMENT_COST = {}
 STEEL_COST = {}
-TOOL_COST = {}
-PARTS_COST = {}
+TOOL_COST = {'steel': 3, 'plastic': 1, 'output': 1}
+PARTS_COST = {'steel': 4, 'aluminum': 4, 'output': 1}
 ALUMINUM_COST = {}
 FUEL_COST = {}
-PLASTIC_COST = {}
-CHEMICAL_COMPOUNDS_COST = {}
-FERTILIZER_COST = {}
-ELECTRONICS_COST = {}
-TEXTILSE_COST = {}
+PLASTIC_COST = {'oil': 2, 'output': 1}
+CHEM_COMP_COST = {'oil': 2, 'output': 1}
+FERTILIZER_COST = {'calcium': 3, 'chem_comp': 1, 'output': 2}
+ELEC_COMP_COST = {'aluminum' : 3, 'chem_comp': 3, 'silicon': 3, 'output': 2}
+ELECTRONICS_COST = {'steel': 3, 'plastic': 3, 'elec_comp': 2, 'output': 1}
+PET_TEXTILSE_COST = {'plastic': 4, 'output': 1}
 SYNTHETIC_RUBBER_COST = {}
 FURNITURE_COST = {}
-CIVILIAN_MACHINES_COST = {}
+CIV_MACH_COST = {'steel': 100, 'aluminum': 30, 'plastic': 20, 'parts': 10, 'time': 100}
 
-BULLETS_COST = {}
-AMONITION_COST = {}
-ROCKET_COST = {}
-SUPPLY_COST = {}
-RILFE_COST = {}
-TRUCK_COST = {}
-APC_COST = {}
-TANK_COST = {}
-ARTILLERIE_COST = {}
-HELICOPTER_COST = {}
+SUPPLY_COST = {'food': 2, 'steel': 1}#ns
+UNIFORMS_COST = {}
+LIGHT_AMMO_COST = {}
+HEAVY_AMMO_COST = {}
+ROCKETS_COST = {}
+RILFE_COST = {'steel': 4, 'plastic': 1, 'time': 4}
+ARTILLERIES_COST = {'steel': 100, 'rubber': 50, 'parts': 10, 'electronics': 5, 'time': 100}
+TRUCK_COST = {'steel': 200, 'rubber': 100, 'parts': 20, 'tools': 5, 'textiles': 200, 'electronics': 10, 'time': 200}
+APC_COST = {'steel': 1000, 'rubber': 100, 'parts': 20, 'tools': 5, 'textiles': 100, 'electronics': 20, 'time': 500}
+TANK_COST = {'steel': 3000, 'rubber': 400, 'parts': 30, 'electronics': 30, 'time': 1200}
+HELICOPTERS_COST = {}
 AIRCRAFT_COST = {} 
 
 #Technologies Cost
