@@ -4,7 +4,7 @@ from settings import LANGUAGE
 class Language:
     def __init__(self):
         if LANGUAGE == "EN":
-            self.BASIC = ["True", "False", "Yes", "No", "Previous", "Next", "Sell", "Buy"]
+            self.BASIC = ["True", "False", "Yes", "No", "Prev", "Next", "Sell", "Buy", "Graph", "Done", "Global currency:"]
             self.SEASONS = ["Spring", "Summer", "Autumn", "Winter"]
             self.DAY = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
             self.DISPLAY_GUI = ["Position: ", "Time: ", "Week: ", " , Day: ", "Pause", "Game Speed: ", "Terrain", "Unit", "Building"]
@@ -12,21 +12,23 @@ class Language:
             self.RESOURCES = ["Resource","Tree","Grain","Oil","Iron","Coal","Calcium","Silicon","Cotton","Rubber","Bauxite","Uranium","Water"]
             self.RES1 = ["Wood", "Food", "Cement", "Iron Ore", "Coal", "Steel", "Water", "Tools", "Parts", "Aluminum", "Oil", "Fuel", "Plastic", "Chemical Comp.", "Fertilizer",
             "Silicon", "Calcium", "Electronics", "Cotton", "Textiles", "Rubber", "Bauxite", "Furniture", "Civilian Machines", "Electronic Comp."]
-            self.RES2 = ["Supply", "Uniforms", "Fuel", "Light Ammo", "Heavy Ammo", "Rockets", "Rifle", "Artilleries", "Truck", "APC", "Tank", "Helicopters", "Aircrafts"] 
+            self.RES2 = ["Supply", "Uniforms", "Fuel", "Light Ammo", "Heavy Ammo", "Rockets", "Rifle", "Artilleries", "Truck", "APC", "Tank", "Helicopters", "Aircrafts", "Rocket truck"] 
 
             self.UNIT_TYPE = ["Infantry","Armored","Artillery","Mechanized","Reconnaissance","Motorized","Other","Logistic","Headquarters","Helicopters","Aircraft","Anti-Aircraft","Anti-Tank","Missile","Engineering"]
             self.UNIT_STRU = ["Brigade", "Regiment", "Battalion", "Company"]
             self.UNIT_STRU_SHORT = [", Brig.: ", ", Reg.: ", ", Batt.: ", ", Comp.: "]
-            self.BUILDINGS1 = ["Construction","Village","City","Harbor","Airport","Warehouse","Barracks","Mine","Smelter","Oil Well", "Rafinery", "Power Plant","Light Industry Plant","Heavy Industry Plant","Chemical Plant","High-Tech Plant","Mechanical Plant","Armament Plant","Aviation Plant","Shipyard"]
+            self.BUILDINGS1 = ["Construction","Village","City","Harbor","Airport","Warehouse","Barrack","Mine","Smelter","Oil Well", "Rafinery", "Power Plant","Light Industry Plant","Heavy Industry Plant","Chemical Plant","High-Tech Plant","Mechanical Plant","Armament Plant","Aviation Plant","Shipyard"]
             self.RANKS1 = ["Lieutenant","Captain","Major","Colonel","General"]
             self.RANKS2 = ["Fugleman","Leader","Commander","Chieftain","Warlord"]
 
             self.COMMANDS = ["Waiting", "Going to: ", "Training", "Constructing", "Civilian Tasks"]
-            self.DESCRIPTION = ["Experience", "Mobilized", "Combat Ability", "Men", "Training", "Refill eq.", "Refill crew", "Tiredness", "Building", "Patroling", "Engage"]
-            self.GUI = ["Nearby resources: ", "Extraction", "Working", "Waiting", "Resources:", "Building", "Production:", "Population:", "Orders:", 'Other']
+            self.DESCRIPTION = ["Experience", "Mobilized", "Combat Ability", "Men", "Training", "Refill eq.", "Refill crew", "Tiredness", "Building", "Patroling", "Engage", "Conquest"]
+            self.GUI = ["Nearby resources: ", "Extraction", "Working", "Waiting", "Resources:", "Building", "Production:", "Population:", "Order/time", 'total orders:', 'Electricity:', 'Fuel usage:']
+            self.TRADE = ["Trade building:", "None", "Trade goods:", "Quantity:", "-10", "-1", "+1", "+10", "Cost:", "Transport:", "Goods cost:", "Total cost:", "Status:", "not enough money", "correct"]
+            self.DECISIONS = ["Decision", "Option"]
 
         elif LANGUAGE == "PL":
-            self.BASIC = ["Prawda", "Fałsz", "Tak", "Nie", "Wstecz", "Następny", "Sprzedaj", "Kup"]
+            self.BASIC = ["Prawda", "Fałsz", "Tak", "Nie", "Wstecz", "Następny", "Sprzedaj", "Kup", "Wykres", "Ok", "Waluta globalna:"]
             self.SEASONS = ["Wiosna", "Lato", "Jesien", "Zima"]
             self.DAY = ["Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela"]
             self.DISPLAY_GUI = ["Pozycja: ", "Czas", "Tydzień", "Dzień: ", "Pauza", "Prędkość Gry: ", "Teren", "Jednostka", "Budynek"]
@@ -41,13 +43,15 @@ class Language:
             self.UNIT_STRU_SHORT = [", Bryg.: ", ", Pułk.: ", ", Bat.: ", ", Komp.: "]
 
 
-            self.BUILDINGS1 = ["Budowa","Wioska","Miasto","Port","Lotnisko","Magazyn","Baraki","Kopalnia","Huta","Szyb Naftowy", "Rafineria", "Elektrownia","Zaklad Przemysłu Lekkiego","Zaklad Przemysłu Ciężkiego","Zaklad Chemiczny","Zaklad High-Tech","Zaklad Mechaniczny","Zaklad Zbrojeniowy","Zaklad Lotniczy","Stocznia"]
+            self.BUILDINGS1 = ["Budowa","Wioska","Miasto","Port","Lotnisko","Magazyn","Koszary","Kopalnia","Huta","Szyb Naftowy", "Rafineria", "Elektrownia","Zaklad Przemysłu Lekkiego","Zaklad Przemysłu Ciężkiego","Zaklad Chemiczny","Zaklad High-Tech","Zaklad Mechaniczny","Zaklad Zbrojeniowy","Zaklad Lotniczy","Stocznia"]
             self.RANKS1 = ["Porucznik","Kapitan","Major","Pulkownik","General"]
             self.RANKS2 = ["Przywodca","Lider","Dowodca","Wodz","Watazka"]
 
             self.COMMANDS = ["Czeka", "Idzie do: ", "Trenuje", "Buduje", "Zadania Cywilne"]
-            self.DESCRIPTION = ["Doswiadczenie", "Zmobilizowana", "Zdolosc bojowa", "Ludzie", "Trening", "Uzup. ekw.", "Uzup. załoge", "Zmęczenie", "Budowanie", "Patroluj", "Bojowy"]
-            self.GUI = ["Pobliskie zasoby: ", "Wydobycie", "Pracuje", "Czeka", "Zasoby:", "Budynek", "Produkcja:", "Populacja:", "Zlecenia:", "Inne:"]
+            self.DESCRIPTION = ["Doswiadczenie", "Zmobilizowana", "Zdolosc bojowa", "Ludzie", "Trening", "Uzup. ekw.", "Uzup. załoge", "Zmęczenie", "Budowanie", "Patroluj", "Bojowy", "Podbuj"]
+            self.GUI = ["Pobliskie zasoby: ", "Wydobycie", "Pracuje", "Czeka", "Zasoby:", "Budynek", "Produkcja:", "Populacja:", "Zlecenie/czas", "lacznie zlecen:", "Elektrycznosc:"]
+            self.TRADE = ["Budynek wymiany:", "Brak", "Dobra handlowe:", "Ilosc:", "-10", "-1", "+1", "+10", "Koszt:", "Transport:", "Koszt dóbr:", "Koszt całkowity:", "Status", "brak funduszy", "gotowe"]
+            self.DECISIONS = ["Decyzja", "Opcja"]
 
         self.PERSON_NAME1 = ["Alexi Jastremsky","Stoycho Jellinek","Krastan Lhotzky","Ognyan Wolenska","Kalin Levitsky","Techoslav Sacharov","Blagovest Soloukhin","Razvigor Novak","Vojta Gindin","Borik Malenkov"]
         self.PERSON_NAME2 = ["Darko Brodsky","Tomislav Kruskal","Ljupco Jelinek","Vojkan Winogradsky","Drago Tomasek","Mecek Kudelin","Milo Mirkovic","Savo Sedlacek","Mutimir Volinin","Milutin Wolansky"]

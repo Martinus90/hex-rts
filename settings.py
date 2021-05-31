@@ -37,7 +37,7 @@ VIOLET = (255, 0, 255)
 
 MAROON = (127, 0, 0)
 
-
+ALL_COLORS = [WHITE, LIGHTGREY, GREY, DARKGREY, RED, DARKRED, GREEN, DARKGREEN, BLUE, YELLOW, CYAN, VIOLET, MAROON]
 
 # game settings
 WIDTH = 1600    #1600     #1280   # 16 * 64 or 32 * 32 or 64 * 16
@@ -72,10 +72,11 @@ LANGUAGE = "EN" # "EN" / "PL"
 PLAYER_IMG = "player.bmp"
 FLAGS_IMG = "flags.bmp"
 UNITS_IMG = "units.bmp"
+COLOR_GRIDS = "colors.bmp"
 
-RES1_LIST = ["Wood", "Food", "Cement", "Iron Ore", "Coal", "Steel", "Water", "Tools", "Parts", "Aluminum", "Oil", "Fuel", "Plastic", "Chemical Compounds", "Fertilizer",
-            "Silicon", "Calcium", "Electronics", "Cotton", "Textiles", "Rubber", "Bauxite", "Furniture", "Civilian Machines"]
-RES2_LIST = ["Supply", "Uniforms", "Fuel", "Light Ammo", "Heavy Ammo", "Rockets", "Rifle", "Artilleries", "Truck", "APC", "Tank", "Helicopters", "Aircrafts"] 
+RES1_LIST = ["Wood", "Food", "Cement", "Iron_Ore", "Coal", "Steel", "Water", "Tools", "Parts", "Aluminum", "Oil", "Fuel", "Plastic", "Chem_Comp", "Fertilizer",
+            "Silicon", "Calcium", "Electronics", "Cotton", "Textiles", "Rubber", "Bauxite", "Furniture", "civ_mach", "elec_comp"]
+RES2_LIST = ["Supply", "Uniforms", "Fuel", "Light_Ammo", "Heavy_Ammo", "Rockets", "Rifle", "Artilleries", "Truck", "APC", "Tank", "Heli", "Aircrafts"] 
 
 
 RESOURCE_IMG = "resource.bmp"
@@ -107,7 +108,7 @@ CITY_IMG = "city.bmp"
 HARBOR_IMG = "harbor.bmp"
 AIRPORT_IMG = "airport.bmp"
 WAREHOUSE_IMG = "warehouse.bmp"
-BARRACKS_IMG = "barracks.bmp"
+BARRACK_IMG = "barrack.bmp"
 
 MINE_IMG = "mine.bmp"
 SMELTER_IMG = "smelter.bmp"
@@ -133,12 +134,14 @@ ELECT_YES = "elect_yes.bmp"
 ELECT_NO = "elect_no.bmp"
 
 TRUCK_FUEL_USAGE = 1
+ROCKET_TRUCK_FUEL_USAGE = 1
 APC_FUEL_USAGE = 2
 TANK_FUEL_USAGE = 3
 HELI_FUEL_USAGE = 2
 AIRCRAFT_FUEL_USAGE = 5
 
 TRUCK_FUEL_CAP = 50
+ROCKET_TRUCK_FUEL_CAP = 50
 APC_FUEL_CAP = 150
 TANK_FUEL_CAP = 200
 HELI_FUEL_CAP = 100
@@ -233,5 +236,7 @@ TANK_COST = {'steel': 3000, 'rubber': 400, 'parts': 30, 'electronics': 30, 'time
 HELICOPTERS_COST = {}
 AIRCRAFT_COST = {} 
 
+HARBOR_TRANSPORT_COST = 1
+AIRPORT_TRANSPORT_COST = 10
 #Technologies Cost
 #empty for now

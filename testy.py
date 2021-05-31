@@ -37,9 +37,6 @@ d = doc_generator({"Args" : None, "Returns" : None, "Raises" : None, "Attributes
 #d.do_html()
 
 
-print(ctts(RED))
-print(plt.style.available)
-
 plt.style.use('dark_background')
 #seaborn-dark
 #plt.style.use('seaborn-dark')

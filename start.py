@@ -11,7 +11,7 @@ from loading import *
 from languages import *
 
 class Game:
-    def __init__(self):
+    def __init__(self, player=1):
         pg.init()
         pg.font.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -24,6 +24,7 @@ class Game:
         self.quarter = 0
         self.hour = 0
         self.day = 1
+        self.idn = 0
         self.week = 1
         self.season = 0
         self.year = 1980
@@ -55,6 +56,8 @@ class Game:
             self.plr_img = pg.image.load(path.join(img_folder, PLAYER_IMG))
             self.flags_img = pg.image.load(path.join(img_folder, FLAGS_IMG))
             self.units_img = pg.image.load(path.join(img_folder, UNITS_IMG))
+            self.colors_img = pg.image.load(path.join(img_folder, COLOR_GRIDS))
+            self.colors_img.set_colorkey(VIOLET)
             self.resource_img = pg.image.load(path.join(img_folder, RESOURCE_IMG))
             self.tree_img = pg.image.load(path.join(img_folder, TREE_IMG))
             self.grain_img = pg.image.load(path.join(img_folder, GRAIN_IMG))
@@ -86,16 +89,13 @@ class Game:
                 self.image.blit(self.stability_img.copy(),(0, 0), (0, a*STABILITY_SIZE[1], STABILITY_SIZE[0], STABILITY_SIZE[1]))
                 self.stability.append(self.image)
 
-            print(self.stability)
-
-
             self.construction_img = pg.image.load(path.join(img_folder, CONSTRUCTION_IMG))
             self.village_img = pg.image.load(path.join(img_folder, VILLAGE_IMG))
             self.city_img = pg.image.load(path.join(img_folder, CITY_IMG))
             self.harbor_img = pg.image.load(path.join(img_folder, HARBOR_IMG))
             self.airport_img = pg.image.load(path.join(img_folder, AIRPORT_IMG))
             self.warehouse_img = pg.image.load(path.join(img_folder, WAREHOUSE_IMG))
-            self.barracks_img = pg.image.load(path.join(img_folder, BARRACKS_IMG))
+            self.barrack_img = pg.image.load(path.join(img_folder, BARRACK_IMG))
             self.mine_img = pg.image.load(path.join(img_folder, MINE_IMG))
             self.smelter_img = pg.image.load(path.join(img_folder, SMELTER_IMG))
             self.oil_well_img = pg.image.load(path.join(img_folder, OIL_WELL_IMG))
@@ -151,14 +151,22 @@ class Game:
         self.nations.append(Nation(self, name="Nebohracy"))
 
         #first on the list is always neutral, second is player, 3+ are others / to change color just change side
-        self.players.append(Contender(self, name="Neutral", nation=0, player=False, side=0, exc_rt=1, money=0, global_money=0, reputation=0, stability=0))
-        self.players.append(Contender(self, name="Sovenya", nation=0, player=True, side=1, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
-        self.players.append(Contender(self, name="Nebohray", nation=1, player=False, side=2, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
-        self.players.append(Contender(self, name="Sovenyan Rebels", nation=0, player=False, side=3, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
-        self.players.append(Contender(self, name="hj6u654", nation=1, player=False, side=4, exc_rt=1, money=1000, global_money=100, reputation=0, stability=0))
+        self.player = Player(self, 0, 0, 1)
+        self.players.append(Contender(self, name="Neutral", nation=0, player=False, side=0, exc_rt=1.0, money=0, global_money=0, reputation=0, stability=0, tax=3))
+        self.players.append(Contender(self, name="Sovenya", nation=0, player=True, side=1, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=0, tax=3))
+        self.players.append(Contender(self, name="Nebohray", nation=1, player=False, side=2, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=0, tax=3))
+        self.players.append(Contender(self, name="Sovenyan Rebels", nation=0, player=False, side=3.0, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=0, tax=3))
+        self.players.append(Contender(self, name="hj6u654", nation=1, player=False, side=4, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=0, tax=3))
 
         self.diplomacy = Diplomacy(self)
+        self.event_list = Event_List(self, [[5, "event_name", 'here_event_properties'], [7, "event_name2", "here_event_properies2"]])
+        self.event_list.add_event([7, "event_name", "Event 3"])
+
+
+        
         self.trade = Trade(self)
+        self.players[1].relations[2][2] = False
+        self.players[2].relations[1][2] = False
 
             #unit types
         #infantry
@@ -250,8 +258,18 @@ class Game:
             if b[2] == "CONSTRUCTION":
                 CONSTRUCTION(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
             elif b[2] == "VILLAGE":
-                VILLAGE(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
-            
+                VILLAGE(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9])
+            elif b[2] == "CITY":
+                CITY(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11])
+            elif b[2] == "HARBOR":
+                HARBOR(self, b[0], b[1], b[3], b[4], b[5])
+            elif b[2] == "AIRPORT":
+                AIRPORT(self, b[0], b[1], b[3], b[4], b[5])
+            elif b[2] == "WAREHOUSE":
+                WAREHOUSE(self, b[0], b[1], b[3], b[4], b[5])
+            elif b[2] == "BARRACK":
+                BARRACK(self, b[0], b[1], b[3], b[4], b[5])
+
             elif b[2] == "MINE":
                 MINE(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9])
             elif b[2] == "SMELTER":
@@ -279,9 +297,9 @@ class Game:
             
 
         for u in self.map.units:
-            Unit(self, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15], u[16], u[17], u[18], u[19], u[20], u[21], u[22], u[23])
+            Unit(self, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15], u[16], u[17], u[18], u[19], u[20], u[21], u[22], u[23], u[24])
 
-        self.player = Player(self, 0, 0, 1)
+        
         self.camera = Camera(self.map.width, self.map.height)
 
     def adding_building(self, variable):
@@ -316,12 +334,22 @@ class Game:
         if self.hour > 23: #def 23
             self.hour -= 24
             self.day += 1
+            self.idn = (self.day + (
+                                    (self.week - 1) * 7) + (
+                                    self.season * 91) + (
+                                    (self.year - 1980) * 364))
+
+
             for res in self.resources:
                 res.daily()
             for building in self.buildings:
                 building.daily()
             for unit in self.units:
                 unit.daily()
+            self.diplomacy.dayli()
+            self.menu.trade_window.dayli()
+            self.trade.dayli()
+            self.event_list.dayli()
         if self.day > 7: #def 7
             self.day -= 7
             self.week += 1
@@ -332,6 +360,8 @@ class Game:
             self.season += 1
             for res in self.resources:
                 res.seasonly()
+            for building in self.buildings:
+                building.seasonly()
         if self.season > 3: #def 3
             self.season -= 4
             self.year += 1
@@ -359,6 +389,7 @@ class Game:
                 self.menu.terrain1[0] = "X: " + str(self.selecting.col) + ", Y: " + str(self.selecting.row)
                 self.menu.terrain2[0] = str(self.selecting.terrain)
                 self.selecting.get_near_resources()
+                print(self.selecting.owner)
 
         for r in self.resources:
             if (r.col == self.mouse_pos.col) and (r.row == self.mouse_pos.row):
@@ -381,6 +412,9 @@ class Game:
                 self.menu.unit5[0] = self.uniting.description[4]
                 self.menu.unit6[0] = self.uniting.description[5]
                 self.menu.unit7[0] = self.uniting.description[6]
+                print("Unit typ:")
+                print(self.uniting.unit_typ.name)
+                print(self.uniting.unit_typ.equipment)
                 break
             else:
                 self.uniting = None
@@ -500,10 +534,10 @@ class Game:
         self.screen.blit(self.menu2, (0, 0))
 
         #draw top bar
-        self.screen.blit(self.players[1].image, (5, -2))
-        self.screen.blit(self.stability[self.players[1].stability], (4, 23))
+        self.screen.blit(self.players[self.player.side].image, (5, -2))
+        self.screen.blit(self.stability[self.players[self.player.side].stability], (4, 23))
 
-        self.screen.blit(self.players[1].image, (312, 0))
+        self.screen.blit(self.players[self.player.side].image, (312, 0))
         self.screen.blit(self.money_img, (310, 30))
         self.screen.blit(self.global_img, (463, 8))
         self.screen.blit(self.money_img, (460, 30))
@@ -521,10 +555,6 @@ class Game:
         #    self.screen.blit(b.image, b.pos)
         self.screen.blit(self.menu.buttons[1].image, self.menu.buttons[1].pos)
 
-        
-        for a in range(5):
-            #self.screen.blit(self.stability[a], (STABILITY_OFFSET[0] + (a * 30), STABILITY_OFFSET[1]))
-            pass
 
         for a in range(len(self.players)-1):
             self.screen.blit(self.players[a+1].image, (TOP_BAR_DISTANS + (a * TOP_BAR_STEP), -6))
@@ -585,12 +615,14 @@ class Game:
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.rockets) + " / " + str(window.thing.max_rockets), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 178))
                     
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.rifle) + " / " + str(window.thing.max_rifle), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 218))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.art) + " / " + str(window.thing.max_art), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 238))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.artilleries) + " / " + str(window.thing.max_artilleries), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 238))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.truck) + " / " + str(window.thing.max_truck), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 258))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.apc) + " / " + str(window.thing.max_apc), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 278))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.tank) + " / " + str(window.thing.max_tank), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 298))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.heli) + " / " + str(window.thing.max_heli), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 318))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.aircraft) + " / " + str(window.thing.max_aircraft), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 338))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.rocket_truck) + " / " + str(window.thing.max_rocket_truck), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 358))
+
 
                     self.screen.blit(self.uniting.owner.image, (window.pos[0] + 270, window.pos[1] + 30))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.owner.name, False, LIGHTGREY), (window.pos[0] + 300, window.pos[1] + 38))
@@ -602,32 +634,61 @@ class Game:
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[0] + ": " + str(window.thing.experience), False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 117))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[7] + ": " + str(window.thing.tiredness) + "/" + str(window.thing.tiredness_max), False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 133))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.task, False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 153))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.fuel_usage), False, YELLOW), (window.pos[0] + 510, window.pos[1] + 40))
+
 
         for window in self.building_windows:
             if window.visible == True:
                 self.screen.blit(window.image, window.pos)
                 for button in window.buttons:
                     window.image.blit(button.image, button.pos)
+                for t in window.texts:
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(t[0], False, t[2]), (window.pos[0] + t[3][0], window.pos[1] + t[3][1]))
+                
                 #if 1 == 1: #rolling display building variables
                 e = 0
-                self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.GUI[4], False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 80 + (e * 20)))
+                f = 0
+                if window.thing.name != self.language.BUILDINGS1[6]:
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.GUI[4], False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 80 + (e * 20)))
+                else:
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[3], False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 80 + (e * 20)))
+                
                 self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.GUI[8], False, LIGHTGREY), (window.pos[0] + 350, window.pos[1] + 40))
+                self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.GUI[10], False, LIGHTGREY), (window.pos[0] + 580, window.pos[1] + 10))
+                
+                if window.thing.owner.electricity == True:
+                    self.screen.blit(self.elect_yes_img, (window.pos[0] + 670, window.pos[1] + 7))
+                else:
+                    self.screen.blit(self.elect_no_img, (window.pos[0] + 670, window.pos[1] + 7))
+                
                 for v in window.variables:
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(v, False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 100 + (e * 20)))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.storage[v]), False, LIGHTGREY), (window.pos[0] + 100, window.pos[1] + 100 + (e * 20)))
+                    
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(v, False, LIGHTGREY), (window.pos[0] + 10 + f, window.pos[1] + 100 + (e * 20)))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.storage[v]), False, LIGHTGREY), (window.pos[0] + 110 + f, window.pos[1] + 100 + (e * 20)))
                     e += 1
+                    if e > 18:
+                        e = 0
+                        f += 160
                 if len(window.thing.orders) > 0:
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.orders[0][0], False, LIGHTGREY), (window.pos[0] + 300, window.pos[1] + 60))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.orders[0][1]), False, LIGHTGREY), (window.pos[0] + 350, window.pos[1] + 60))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.orders[0][1]), False, LIGHTGREY), (window.pos[0] + 420, window.pos[1] + 60))
                     
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.GUI[9], False, LIGHTGREY), (window.pos[0] + 300, window.pos[1] + 80))
-                
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(len(window.thing.orders)), False, LIGHTGREY), (window.pos[0] + 350, window.pos[1] + 80))
+                if len(window.thing.orders) > 1:
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.orders[1][0], False, LIGHTGREY), (window.pos[0] + 300, window.pos[1] + 80))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.orders[1][1]), False, LIGHTGREY), (window.pos[0] + 420, window.pos[1] + 80))
+                    
+                if len(window.thing.orders) > 2:
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.orders[2][0], False, LIGHTGREY), (window.pos[0] + 300, window.pos[1] + 100))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.orders[2][1]), False, LIGHTGREY), (window.pos[0] + 420, window.pos[1] + 100))
+
+                if len(window.thing.orders) > 3:
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.GUI[9], False, LIGHTGREY), (window.pos[0] + 300, window.pos[1] + 140))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(len(window.thing.orders)), False, LIGHTGREY), (window.pos[0] + 420, window.pos[1] + 140))
                     
 
-                if window.thing.name == self.language.BUILDINGS1[1]:
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.GUI[7], False, LIGHTGREY), (window.pos[0] + 600, window.pos[1] + 40))
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.nationality.name, False, LIGHTGREY), (window.pos[0] + 550, window.pos[1] + 60))
+                if window.thing.name == self.language.BUILDINGS1[1] or window.thing.name == self.language.BUILDINGS1[2]:
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.GUI[7], False, LIGHTGREY), (window.pos[0] + 550, window.pos[1] + 40))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render("/ " + window.thing.nationality.name, False, LIGHTGREY), (window.pos[0] + 320, window.pos[1] + 8))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.population), False, LIGHTGREY), (window.pos[0] + 550, window.pos[1] + 60))
                     
 
@@ -640,7 +701,10 @@ class Game:
                 for variable in window.variables:
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render("$ " + str(variable[0]), False, variable[2]), (window.pos[0] + variable[3][0], window.pos[1] + variable[3][1]))
                 for res in window.resources:
-                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(res[0], False, variable[2]), (window.pos[0] + res[3][0], window.pos[1] + res[3][1]))
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(res[0], False, res[2]), (window.pos[0] + res[3][0], window.pos[1] + res[3][1]))
+                for t in window.texts:
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(t[0], False, t[2]), (window.pos[0] + t[3][0], window.pos[1] + t[3][1]))
+                
 
  
 
@@ -677,7 +741,7 @@ class Game:
                     self.player.x = 12
                     self.player.y = 12
                 if event.key == pg.K_r:
-                    self.players[1].stability += 1 
+                    self.players[self.player.side].stability += 1 
                 if event.key == pg.K_t:
                     print(self.building)
                     print(self.building.materials)
@@ -691,7 +755,7 @@ class Game:
                     self.territory_visible = not self.territory_visible
                     print(self.territory_visible)
                 if (event.key == 61) or (event.key == 270): #plus key
-                    if self.speed < 16:
+                    if self.speed < 32:
                         self.speed = self.speed * 2
                     #print(self.speed)
                 if (event.key == 45) or (event.key == 269): #minus key

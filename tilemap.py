@@ -131,6 +131,7 @@ class TiledMap:
                     obj.properties['4_5_tank'],
                     obj.properties['4_6_heli'],
                     obj.properties['4_7_aircraft'],
+                    obj.properties['4_8_rocket_truck'],
                     
                     #22
                     
@@ -141,8 +142,18 @@ class TiledMap:
                     if obj.properties['typ'] == 'CONSTRUCTION':
                         self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['what'],obj.properties['owner'],obj.properties['wood'],obj.properties['cement'],obj.properties['steel'],obj.properties['progress']])
                     elif obj.properties['typ'] == 'VILLAGE':
-                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['name'],obj.properties['nationality'],obj.properties['population'],obj.properties['food'],obj.properties['wood']])
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['name'],obj.properties['nationality'],obj.properties['population'],obj.properties['prosperity'],obj.properties['food'],obj.properties['wood']])
+                    elif obj.properties['typ'] == 'CITY':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['name'],obj.properties['nationality'],obj.properties['population'],obj.properties['prosperity'],obj.properties['food'],obj.properties['textiles'],obj.properties['furniture'],obj.properties['electronics']])
+
+                    elif obj.properties['typ'] == 'HARBOR' or obj.properties['typ'] == 'AIRPORT' or obj.properties['typ'] == 'WAREHOUSE':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],[obj.properties['1_1_wood'],obj.properties['1_2_food'],obj.properties['1_3_cement'],obj.properties['1_4_iron_ore'],obj.properties['1_5_coal'],obj.properties['1_6_steel'],obj.properties['1_7_water'],obj.properties['1_8_tools'],obj.properties['1_9_parts'],obj.properties['2_1_aluminum'],obj.properties['2_2_oil'],obj.properties['2_3_fuel'],obj.properties['2_4_plastic'],obj.properties['2_5_chem_comp'],obj.properties['2_6_fertilizer'],obj.properties['2_7_silicon'],obj.properties['2_8_calcium'],obj.properties['2_9_electronics'],obj.properties['3_1_cotton'],obj.properties['3_2_textiles'],obj.properties['3_3_rubber'],obj.properties['3_4_bauxite'],obj.properties['3_5_furniture'],obj.properties['3_6_civ_mach'],obj.properties['3_7_elec_comp']],
+                        [obj.properties['4_1_supply'],obj.properties['4_2_uniforms'],obj.properties['4_3_fuel'],obj.properties['4_4_light_ammo'],obj.properties['4_5_heavy_ammo'],obj.properties['4_6_rockets'],obj.properties['4_7_rifle'],obj.properties['4_8_artilleries'],obj.properties['4_9_truck'],obj.properties['5_1_apc'],obj.properties['5_2_tank'],obj.properties['5_3_heli'],obj.properties['5_4_aircraft']]])
+                    elif obj.properties['typ'] == 'BARRACK':
+                        self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['cadets'],obj.properties['graduates']])
                     
+
+
                     elif obj.properties['typ'] == 'MINE':
                         self.buildings.append([math.floor(obj.x/64),math.floor(obj.y/48),obj.properties['typ'],obj.properties['owner'],obj.properties['iron'],obj.properties['coal'],obj.properties['calcium'],obj.properties['silicon'],obj.properties['bauxite'],obj.properties['uranium']])
                     elif obj.properties['typ'] == 'SMELTER':
@@ -171,6 +182,14 @@ class TiledMap:
                     
         
         #self.grid_list = set(self.grid_list)
+
+    def new_owner(self, owner, coord):
+        print("HERE")
+        print(owner)
+        print(self.game.players[owner].color)
+        print(coord[0])
+        self.surface2.blit(self.game.players[owner].color, (coord[0] * self.tmxdata.tilewidth + (coord[1]&1) * self.tmxdata.tilewidth / 2, coord[1] * self.tmxdata.tileheight / TILESIZE[0] * TILESIZE[1]))
+        
 
     def get_terrain(self, a):
         b = ""
