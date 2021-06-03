@@ -19,6 +19,7 @@ class Game:
         self.clock = pg.time.Clock()
         pg.key.set_repeat(500, 100)
         self.load_data()
+        self.load_save("maps/save1.txt")
         self.language = Language()
         self.timer = 0
         self.quarter = 0
@@ -42,6 +43,7 @@ class Game:
         self.nations = []
         self.players = []
         self.types = []
+        
 
     def load_data(self):
         game_folder = path.dirname(__file__)
@@ -124,11 +126,26 @@ class Game:
             self.no_img = pg.image.load(path.join(gui_folder, NO_IMG))
 
         self.map = TiledMap(self, path.join(map_folder, 'default.tmx'))#test / test2 / default
-        
+
         #side 0 is always neutral / side 1 is always player / other side are variable
         #self.side_0 = "Neutral" 
         #self.side_1 = "Player"
         #self.side_2 = "Enemy"
+
+    def load_save(self, save_file):
+        self.save_file = save_file
+        self.saved_data = []
+        with open(self.save_file, 'r') as reader:
+        # Read & print the first 5 characters of the line 5 times
+            all_lines = reader.readlines()
+            for a in all_lines:
+                #print(a[-1])
+                if '\n' in a:
+                    b = a[:-1]
+                    self.saved_data.append(b)
+                else:
+                    self.saved_data.append(a)
+        print(self.saved_data)
 
     def new(self):
         # initialize all variables and do all the setup for a new game
@@ -152,16 +169,18 @@ class Game:
 
         #first on the list is always neutral, second is player, 3+ are others / to change color just change side
         self.player = Player(self, 0, 0, 1)
-        self.players.append(Contender(self, name="Neutral", nation=0, player=False, side=0, exc_rt=1.0, money=0, global_money=0, reputation=0, stability=0, tax=3))
-        self.players.append(Contender(self, name="Sovenya", nation=0, player=True, side=1, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=0, tax=3))
-        self.players.append(Contender(self, name="Nebohray", nation=1, player=False, side=2, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=0, tax=3))
-        self.players.append(Contender(self, name="Sovenyan Rebels", nation=0, player=False, side=3.0, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=0, tax=3))
-        self.players.append(Contender(self, name="hj6u654", nation=1, player=False, side=4, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=0, tax=3))
+        self.players.append(Contender(self, name="Neutral", nation=0, player=False, side=0, exc_rt=1.0, money=0, global_money=0, reputation=0, stability=2, tax=3))
+        self.players.append(Contender(self, name="Sovenya", nation=0, player=True, side=1, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=2, tax=3))
+        self.players.append(Contender(self, name="Nebohray", nation=1, player=False, side=2, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=2, tax=3))
+        self.players.append(Contender(self, name="Sovenyan Rebels", nation=0, player=False, side=3.0, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=2, tax=3))
+        self.players.append(Contender(self, name="hj6u654", nation=1, player=False, side=4, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=2, tax=3))
 
         self.diplomacy = Diplomacy(self)
         self.event_list = Event_List(self, [[5, "event_name", 'here_event_properties'], [7, "event_name2", "here_event_properies2"]])
         self.event_list.add_event([7, "event_name", "Event 3"])
-
+        self.event_list.add_event([10, "new_decision", ["Kasa","Stab","Kurs"], [["add_money_to_player", self.player.side, 300], ["gain_stability", self.player.side, 1], ["strengthen_the_currency", self.player.side, 0.8]],["Decyzja pozwalająca dodac jakis bonus:","Kasa, doda Ci $300", "Stab, wziekszy stabilnosc", "Kurs, polepszy kurs wymiany"]])
+        self.event_list.add_event([12, "new_decision", ["Kasa","Stab","Kurs"], [["add_money_to_player", self.player.side, 300], ["gain_stability", self.player.side, 1], ["strengthen_the_currency", self.player.side, 0.8]],["Decyzja pozwalająca dodac jakis bonus:","Kasa, doda Ci $300", "Stab, wziekszy stabilnosc", "Kurs, polepszy kurs wymiany"]])
+        self.event_list.add_event([4, "show_new_info", ["First line of text", "Second line", "Last third line of the thext.", "The End"]])
 
         
         self.trade = Trade(self)
@@ -515,10 +534,7 @@ class Game:
             self.menu.unit4[0] = self.uniting.description[3]
             self.menu.unit5[0] = self.uniting.description[4]
             self.menu.unit6[0] = self.uniting.description[5]
-            self.menu.unit7[0] = self.uniting.description[6]
-
-
-                
+            self.menu.unit7[0] = self.uniting.description[6]      
 
     def draw(self):
         self.screen.fill(BGCOLOR)
@@ -829,7 +845,7 @@ class Game:
         pass
 
 # create the game object
-g = Game()
+g = Game(player=1)
 g.show_start_screen()
 while True:
     g.new()

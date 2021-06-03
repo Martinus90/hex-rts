@@ -1,0 +1,5 @@
+First line of save file
+Another
+And Another
+Line before lastone
+Last line

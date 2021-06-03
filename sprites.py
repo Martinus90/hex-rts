@@ -2590,7 +2590,21 @@ class Unit(pg.sprite.Sprite):
             elif t == self.game.language.TERRAIN[6]:
                 c = self.unit_typ.s_normal
         else:
-            c = 20
+            t = self.game.map.grids[grid_id].terrain
+            if t == self.game.language.TERRAIN[0]:
+                c = self.unit_typ.s_normal + self.unit_typ.s_no_fuel
+            elif t == self.game.language.TERRAIN[1]:
+                c = self.unit_typ.s_normal + self.unit_typ.s_no_fuel
+            elif t == self.game.language.TERRAIN[2]:
+                c = self.unit_typ.s_water + self.unit_typ.s_no_fuel
+            elif t == self.game.language.TERRAIN[3]:
+                c = self.unit_typ.s_mountain + self.unit_typ.s_no_fuel
+            elif t == self.game.language.TERRAIN[4]:
+                c = self.unit_typ.s_coast + self.unit_typ.s_no_fuel
+            elif t == self.game.language.TERRAIN[5]:
+                c = self.unit_typ.s_river + self.unit_typ.s_no_fuel
+            elif t == self.game.language.TERRAIN[6]:
+                c = self.unit_typ.s_normal + self.unit_typ.s_no_fuel
         #return int(c)
         return c #self.unit_typ.move_cost(t)
 

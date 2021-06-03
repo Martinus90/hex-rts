@@ -16,7 +16,9 @@ class Event_List(pg.sprite.Sprite):
             self.queue.put((self.events[e][0], e))
         self.check = None
         
-
+        self.window = Decision_Window(self.game, pos=[100,100], size=(500, 500), color=DARKGREY, text="Decision window", textsize=15, textcolor=LIGHTGREY, textpos=(150,10), border_size=3, available=True, decisions=[])
+        self.info = Info_Window(self.game, pos=[100,100], size=(300, 200), color=DARKGREY, text="Info Window", textsize=15, textcolor=LIGHTGREY, textpos=(100,10), border_size=3, display_text=[])
+        
         #self.frontier.put((0, self.hexid))
 
     def add_event(self, event):
@@ -26,6 +28,47 @@ class Event_List(pg.sprite.Sprite):
     def add_to_building(self, building, what, quantity):
         building.storage[what] += quantity
 
+    def add_money_to_player(self, player, quantity):
+        self.game.players[player].global_money += quantity
+
+    def gain_stability(self, player, gain):
+        self.game.players[player].stability -= gain
+
+    def strengthen_the_currency(self, player, value):
+        self.game.players[player].exc_rt = self.game.players[player].exc_rt * value
+        self.game.players[player].exc_rt = round(self.game.players[player].exc_rt, 4)
+
+    def show_new_info(self, info):
+        self.info.new_text_to_display(info)
+        self.info.show()
+
+    def new_decisions(self, deci, option, text):
+        self.window.decisions = []
+        for a in range(len(deci)):
+            self.window.decisions.append(deci[a])
+        self.window.scripts = []
+        for b in range(len(option)):
+            self.window.scripts.append(option[b])
+        self.window.texts = []
+        for c in range(len(text)):
+            self.window.texts.append([text[c], 16, LIGHTGREY, (10, 45+(c*20))])
+
+        self.window.generate_wbat()
+        self.open_decision_window()
+
+    def switch(self, var):
+        if var[0] == "add_to_building":
+            self.add_to_building(var[1], var[2], var[3])
+        elif var[0] == "add_money_to_player":
+            self.add_money_to_player(var[1], var[2])
+        elif var[0] == "gain_stability":
+            self.gain_stability(var[1], var[2])
+        elif var[0] == "strengthen_the_currency":
+            self.strengthen_the_currency(var[1], var[2])
+
+
+    def open_decision_window(self):
+        self.window.show()
 
     def dayli(self):
         print(self.game.idn)#identification date number
@@ -33,14 +76,16 @@ class Event_List(pg.sprite.Sprite):
             self.check = self.queue.get()
         if self.check != None:
             if self.check[0] == self.game.idn:
-                print("event:")
-                print(self.check)
-                print(self.events[self.check[1]])
                 c = self.events[self.check[1]]
                 if c[1] == "add_to_building":
                     print("Items go to building")
                     self.add_to_building(c[2], c[3], c[4])
-
+                elif c[1] == "new_decision":
+                    print("Decyzja")
+                    self.new_decisions(c[2], c[3], c[4])
+                elif c[1] == "show_new_info":
+                    print("Info")
+                    self.show_new_info(c[2])
 
 
 
@@ -779,6 +824,7 @@ class Window(pg.sprite.Sprite):
         self.game.window_display = self.visible
         self.buttons = []
         self.variables = []
+        self.resources = []
         self.texts = []
 
         #draw window
@@ -808,6 +854,58 @@ class Window(pg.sprite.Sprite):
         self.rect.x = self.pos[0]
         self.rect.y = self.pos[1]
 
+class Info_Window(Window):
+    def __init__(self, game, pos=[100,100], size=(300, 400), color=DARKGREY, text="Text", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3, display_text=["Just random text."]):
+        self.groups = game.menu_windows, game.windows
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.pos = pos
+        self.size = size
+        self.color = color
+        self.text = text
+        self.textsize = textsize
+        self.textcolor = textcolor
+        self.textpos = textpos
+        self.border_size = border_size
+        self.visible = False
+        self.game.window_display = self.visible
+        self.buttons = []
+        self.variables = []
+        self.resources = []
+        self.texts = display_text
+
+        #draw window
+        self.image = pg.Surface(self.size)
+        pg.draw.rect(self.image, self.textcolor, (0, 0, size[0], size[1]))
+        pg.draw.rect(self.image, self.color, (0+self.border_size, 0+self.border_size, size[0]-self.border_size*2-1, size[1]-self.border_size*2-1))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.text, False, self.textcolor), self.textpos)
+
+        #draw buttons
+        self.buttons.append(CW_Button(self.game, self, pos=[10,10]))
+
+        self.rect = self.image.get_rect()
+        self.rectangle = pg.Surface(self.size)
+
+    def function_list(self, function=None):
+        pass
+
+    def new_text_to_display(self, display_text):
+        self.texts = []
+        for a in range(len(display_text)):
+            self.texts.append([display_text[a], 16, LIGHTGREY, (10, 45 + (a * 20))])
+    
+    def show(self):
+        self.visible = True
+        self.game.window_display = True
+
+    def hide(self):
+        self.visible = False
+        self.game.window_display = False
+
+    def update(self):
+        self.rect.x = self.pos[0]
+        self.rect.y = self.pos[1]
+
 class Decision_Window(Window):
     def __init__(self, game, pos=[100,100], size=(300, 400), color=DARKGREY, text="Text", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3, available=True, decisions=[]):
         self.groups = game.menu_windows, game.windows
@@ -822,36 +920,15 @@ class Decision_Window(Window):
         self.textpos = textpos
         self.border_size = border_size
         self.available = available
-        self.decitions = decisions
+        self.decisions = decisions
         self.visible = False
         self.game.window_display = self.visible
         self.buttons = []
         self.variables = []
+        self.resources = []
         self.texts = []
+        self.scripts = []
         self.building_typ = 1
-
-        for a in range(len(self.decitions)):
-            self.buttons.append(Function_Button(self.game, self, pos=(20, 350), size=(60, 30), color=DARKGREY, text=self.game.language.DECISIONS[1] + " " + str(a), textsize=20, textcolor=LIGHTGREY, function="func_" + str(a + 1)))
-        
-        #self.buttons.append(Function_Button(self.game, self, pos=(220, 350), size=(60, 30), color=DARKGREY, text="Next", textsize=20, textcolor=LIGHTGREY, function="func_2"))
-        #self.buttons.append(Function_Button(self.game, self, pos=(120, 350), size=(60, 30), color=DARKGREY, text="Done", textsize=20, textcolor=LIGHTGREY, function="func_3"))
-
-
-        self.var1 = ['24fgr', 16, LIGHTGREY, (10, 45)]
-        self.var2 = ['Resouce cost:', 16, LIGHTGREY, (10, 65)]
-        self.var3 = ['fdfg4', 16, LIGHTGREY, (10, 85)]
-        self.var4 = ['3rtg', 16, LIGHTGREY, (10, 105)]
-        self.var5 = ['hj6', 16, LIGHTGREY, (10, 125)]
-        self.var6 = ['Near resources:', 16, LIGHTGREY, (140, 65)]
-
-
-
-        self.texts.append(self.var1)
-        self.texts.append(self.var2)
-        self.texts.append(self.var3)
-        self.texts.append(self.var4)
-        self.texts.append(self.var5)
-        self.texts.append(self.var6)
 
         if 1 == 1:
             #draw window
@@ -864,6 +941,11 @@ class Decision_Window(Window):
             self.rect = self.image.get_rect()
             self.rectangle = pg.Surface(self.size)
 
+    def generate_wbat(self):
+        self.buttons = []
+        for a in range(len(self.decisions)):
+            self.buttons.append(Function_Button(self.game, self, pos=(20 + (a * 120), 300), size=(15 + (len(self.decisions[a]) * 11), 30), color=DARKGREY, text=self.decisions[a], textsize=20, textcolor=LIGHTGREY, function="func_" + str(a + 1)))
+        
     def function_list(self, function=None):
         if function == "func_1":
             self.func_1()
@@ -876,15 +958,21 @@ class Decision_Window(Window):
 
     def func_1(self):
         print("option 1")
-        print(self.decitions[0])
+        print(self.scripts[0])
+        self.game.event_list.switch(self.scripts[0])
+        self.hide()
 
     def func_2(self):
         print("Option 2")
-        print(self.decitions[1])
+        print(self.scripts[1])
+        self.game.event_list.switch(self.scripts[1])
+        self.hide()
 
     def func_3(self):
         print("Option 3")
-        print(self.decitions[2])
+        print(self.scripts[2])
+        self.game.event_list.switch(self.scripts[2])
+        self.hide()
 
     def show(self):
         self.visible = True
@@ -1248,7 +1336,7 @@ class Trade_Window(Window):
         self.buttons.append(Function_Button(self.game, self, pos=(235, 520), size=(len(self.game.language.TRADE[5])*11+15, 30), color=DARKGREY, text=self.game.language.TRADE[5], textsize=20, textcolor=LIGHTGREY, function="quantity-1"))
         self.buttons.append(Function_Button(self.game, self, pos=(290, 520), size=(len(self.game.language.TRADE[6])*11+15, 30), color=DARKGREY, text=self.game.language.TRADE[6], textsize=20, textcolor=LIGHTGREY, function="quantity+1"))
         self.buttons.append(Function_Button(self.game, self, pos=(340, 520), size=(len(self.game.language.TRADE[7])*11+15, 30), color=DARKGREY, text=self.game.language.TRADE[7], textsize=20, textcolor=LIGHTGREY, function="quantity+10"))
-        self.buttons.append(Function_Button(self.game, self, pos=(340, 600), size=(len(self.game.language.BASIC[7])*11+15, 30), color=DARKGREY, text=self.game.language.BASIC[7], textsize=20, textcolor=LIGHTGREY, function="buy_trade_goods"))
+        self.buttons.append(Function_Button(self.game, self, pos=(255, 570), size=(len(self.game.language.BASIC[7])*11+15, 30), color=DARKGREY, text=self.game.language.BASIC[7], textsize=20, textcolor=LIGHTGREY, function="buy_trade_goods"))
 
         if 1 == 1:
             #draw window
