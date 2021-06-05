@@ -131,7 +131,7 @@ class TiledMap:
                     obj.properties['4_5_tank'],
                     obj.properties['4_6_heli'],
                     obj.properties['4_7_aircraft'],
-                    obj.properties['4_8_rocket_truck'],
+                    obj.properties['4_8_rocket_truck']
                     
                     #22
                     
@@ -184,10 +184,6 @@ class TiledMap:
         #self.grid_list = set(self.grid_list)
 
     def new_owner(self, owner, coord):
-        print("HERE")
-        print(owner)
-        print(self.game.players[owner].color)
-        print(coord[0])
         self.surface2.blit(self.game.players[owner].color, (coord[0] * self.tmxdata.tilewidth + (coord[1]&1) * self.tmxdata.tilewidth / 2, coord[1] * self.tmxdata.tileheight / TILESIZE[0] * TILESIZE[1]))
         
 

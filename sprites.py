@@ -662,7 +662,7 @@ class VILLAGE(SETTLEMENT):
         self.side = self.owner.side
         self.grid = self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height]
         self.grid.building = self
-        self.description = [self.owner.name, self.name, "Pop: " + str(self.population), self.game.language.GUI[0], self.game.language.RESOURCES[2] + ":", self.game.language.RESOURCES[1] + ":","","","","","","",""]
+        self.description = [self.owner.name, self.name, self.settlement_name, "Pop: " + str(self.population), self.game.language.GUI[0], self.game.language.RESOURCES[2] + ":", self.game.language.RESOURCES[1] + ":","","","","","",""]
         #here near resources 
         self.resources_near_building()
 
@@ -692,8 +692,8 @@ class VILLAGE(SETTLEMENT):
                     self.grid_with_res.append(a)
                     self.sum_res[1] += a.resource.value
 
-        self.description[4] = self.game.language.RESOURCES[2] + ": " + str(self.sum_res[0])
-        self.description[5] = self.game.language.RESOURCES[1] + ": " + str(self.sum_res[1])
+        self.description[5] = self.game.language.RESOURCES[2] + ": " + str(self.sum_res[0])
+        self.description[6] = self.game.language.RESOURCES[1] + ": " + str(self.sum_res[1])
         
     def do(self):
         pass
@@ -743,9 +743,9 @@ class VILLAGE(SETTLEMENT):
 
 
     def update(self):
-        self.description = [self.owner.name, self.name, "Pop: " + str(self.population), self.game.language.GUI[0], self.game.language.RESOURCES[2] + ":", self.game.language.RESOURCES[1] + ":","","","","","","",""]
-        self.description[4] = self.game.language.RESOURCES[2] + ": " + str(self.sum_res[0])
-        self.description[5] = self.game.language.RESOURCES[1] + ": " + str(self.sum_res[1])
+        self.description = [self.owner.name, self.name, self.settlement_name, "Pop: " + str(self.population), self.game.language.GUI[0], self.game.language.RESOURCES[2] + ":", self.game.language.RESOURCES[1] + ":","","","","","",""]
+        self.description[5] = self.game.language.RESOURCES[2] + ": " + str(self.sum_res[0])
+        self.description[6] = self.game.language.RESOURCES[1] + ": " + str(self.sum_res[1])
 
 class CITY(SETTLEMENT):
     def __init__(self, game, x, y, owner=0, name="New", nationality=0, population=0, prosperity=0, food=0, textiles=0, furniture=0, electronics=0):
@@ -795,7 +795,7 @@ class CITY(SETTLEMENT):
         self.side = self.owner.side
         self.grid = self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height]
         self.grid.building = self
-        self.description = [self.owner.name, self.name, "Pop: " + str(self.population), "","","","","","","","","",""]
+        self.description = [self.owner.name, self.name, self.settlement_name, "Pop: " + str(self.population), "","","","","","","","",""]
         #here near resources 
     
     def do(self):
@@ -851,7 +851,7 @@ class CITY(SETTLEMENT):
         print("   ")
 
     def update(self):
-        self.description = [self.owner.name, self.name, "Pop: " + str(self.population), self.game.language.GUI[0],"","","","","","","","",""]
+        self.description = [self.owner.name, self.name, self.settlement_name, "Pop: " + str(self.population), self.game.language.GUI[0],"","","","","","","",""]
 
 class BUILDING(pg.sprite.Sprite):
     def __init__(self, game, x, y, owner):
@@ -924,14 +924,14 @@ class HARBOR(BUILDING):
             b = a.lower()
             self.storage[b] = res1[c]
             c += 1
-            print(b)
+            #print(b)
         c = 0
         for a in RES2_LIST:
             b = a.lower()
             if b != 'fuel':
                 self.storage[b] = res2[c]
             c += 1
-            print(b)
+            #print(b)
         
 
         self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
@@ -993,14 +993,14 @@ class AIRPORT(BUILDING):
             b = a.lower()
             self.storage[b] = res1[c]
             c += 1
-            print(b)
+            #print(b)
         c = 0
         for a in RES2_LIST:
             b = a.lower()
             if b != 'fuel':
                 self.storage[b] = res2[c]
             c += 1
-            print(b)
+            #print(b)
         
 
         self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
@@ -1062,14 +1062,14 @@ class WAREHOUSE(BUILDING):
             b = a.lower()
             self.storage[b] = res1[c]
             c += 1
-            print(b)
+            #print(b)
         c = 0
         for a in RES2_LIST:
             b = a.lower()
             if b != 'fuel':
                 self.storage[b] = res2[c]
             c += 1
-            print(b)
+            #print(b)
         
 
         self.window = ld.Building_Window(self, self.game, [300, 200], (700, 500), DARKGREY, "", 16, LIGHTGREY, (35, 10), 2)
@@ -2414,9 +2414,6 @@ class Unit(pg.sprite.Sprite):
         self.owner = self.game.players[owner]
         self.side = self.owner.side
         self.unit_typ = self.game.types[typ]
-
-        print("Typ jednostki")
-        print(typ)
         self.typ = self.unit_typ.typ
         self.unit_name = unit_name
         self.brigade = brigade
@@ -2478,6 +2475,7 @@ class Unit(pg.sprite.Sprite):
         self.max_heavy_ammo += self.apc * 4 + self.tank * 40 + self.heli * 10 + self.aircraft * 10
         self.max_rockets = 0
         self.max_rockets += self.rocket_truck * 40 + self.heli * 8 +self.aircraft * 8
+        self.transporting = {}
 
         self.visible = True
         self.pos = [50, 50]
@@ -2544,27 +2542,28 @@ class Unit(pg.sprite.Sprite):
 
     def concquering(self):
         if self.state["conquest"] == True:
-            a = self.game.map.grids[self.hexid].owner 
-            if self.owner.relations[a][2] == False: #if False, that mean in war
-                self.game.map.grids[self.hexid].owner = self.owner.side
-                self.game.map.new_owner(self.owner.side, roffset_from_cube(-1, self.hex))
-                print("In war")
-                print(self.owner.relations)
-                print("Check if there is building")
-                if self.game.map.grids[self.hexid].building != None:
-                    self.game.map.grids[self.hexid].building.owner = self.owner
-                    self.game.map.grids[self.hexid].building.image.blit(self.owner.image, (44, 10))
-                    if self.game.map.grids[self.hexid].building.window != None:
-                        b = pg.Surface((150,30))
-                        pg.draw.rect(b, self.window.color, (0, 0, 150, 30))
-                        self.game.map.grids[self.hexid].building.window.image.blit(b, (200, 5))
-                        self.game.map.grids[self.hexid].building.window.image.blit(pg.font.Font(FONT_NAME, self.window.textsize).render(self.owner.name, False, self.window.textcolor), (245, 10))
-                        self.game.map.grids[self.hexid].building.window.image.blit(self.owner.image, (220, 0))
-                        self.game.map.grids[self.hexid].building.window.image.blit(self.game.map.grids[self.hexid].building.image, (0, 25))
+            if self.game.map.grids[self.hexid].owner != None:
+                a = self.game.map.grids[self.hexid].owner 
+                if self.owner.relations[a][2] == False: #if False, that mean in war
+                    self.game.map.grids[self.hexid].owner = self.owner.side
+                    self.game.map.new_owner(self.owner.side, roffset_from_cube(-1, self.hex))
+                    print("In war")
+                    print(self.owner.relations)
+                    print("Check if there is building")
+                    if self.game.map.grids[self.hexid].building != None:
+                        self.game.map.grids[self.hexid].building.owner = self.owner
+                        self.game.map.grids[self.hexid].building.image.blit(self.owner.image, (44, 10))
+                        if self.game.map.grids[self.hexid].building.window != None:
+                            b = pg.Surface((150,30))
+                            pg.draw.rect(b, self.window.color, (0, 0, 150, 30))
+                            self.game.map.grids[self.hexid].building.window.image.blit(b, (200, 5))
+                            self.game.map.grids[self.hexid].building.window.image.blit(pg.font.Font(FONT_NAME, self.window.textsize).render(self.owner.name, False, self.window.textcolor), (245, 10))
+                            self.game.map.grids[self.hexid].building.window.image.blit(self.owner.image, (220, 0))
+                            self.game.map.grids[self.hexid].building.window.image.blit(self.game.map.grids[self.hexid].building.image, (0, 25))
 
-            else:
-                print("In peace")
-                print(self.owner.relations)
+                else:
+                    print("In peace")
+                    print(self.owner.relations)
             
     def terrain_cost(self, grid_id):
         global c
@@ -2612,10 +2611,11 @@ class Unit(pg.sprite.Sprite):
         pass
 
     def check_grid(self):
-        if self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height].building != None:
-            print("There is building")
-        else:
-            print("There is clear area to build something.")
+        pass
+        #if self.game.map.grids[self.col + self.row * self.game.map.tmxdata.height].building != None:
+            #print("There is building")
+        #else:
+            #print("There is clear area to build something.")
 
         
 
@@ -2676,15 +2676,15 @@ class Unit(pg.sprite.Sprite):
             self.current = self.came_from[self.current]
         #self.path.append(self.hexid) # optional
         #self.path.reverse() # optional
-        print("Start:")
-        print(self.hexid)
-        print("Path:")
-        print(self.path)
-        print("Full move cost:")
-        for p in self.path:
-            print(self.cost_so_far[p])
-            break
-        print(" ")
+        #print("Start:")
+        #print(self.hexid)
+        #print("Path:")
+        #print(self.path)
+        #print("Full move cost:")
+        #for p in self.path:
+        #    print(self.cost_so_far[p])
+        #    break
+        #print(" ")
 
     def do(self):
         if self.go_to != None:

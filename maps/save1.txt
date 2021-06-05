@@ -1,5 +1,52 @@
-First line of save file
-Another
-And Another
-Line before lastone
-Last line
+First line of save file 
+Line which starts SCENARIO_*, END and between END > < SCENARIO_* will not be readed.
+So "," give a split to dictionary "/" give dict in dict "*" convert string to int
+
+
+
+SCENARIO_INFO
+first line of scenario info
+second
+END
+
+
+
+SCENARIO_EVENTS
+*3,show_new_info,This message is showed via event/which was added in saved file/Success/The End
+END
+
+
+
+X,Y,typ,quantity
+
+SCENARIO_RESOURCES
+*10,*7,oil,*20000
+END
+
+
+
+PosX,PosY,Building_Typ(Village),Owner,Name,Nationality,Pop,Prosper,Food,Wood
+*3,*3,VILLAGE,*1,Nazwa wioski,*1,*40,*3,*100,*50
+
+SCENARIO_BUILDINGS
+*3,*3,VILLAGE,*1,Nazwa wioski,*1,*50,*3,*100,*50                                    
+END
+
+
+
+X,Y,nationality,owner,typ,unit_name,brigade,regiment,battalion,company,men,supply,uniforms,fuel,light_ammo,heavy_ammo,rockets,rifle,art,truck,apc,tank,heli,aircraft,rocket_truck
+*2,*2,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
+
+SCENARIO_UNITS
+*2,*2,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
+*3,*3,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
+*4,*4,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
+*5,*5,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
+*6,*6,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
+*7,*7,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
+*8,*8,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
+*9,*9,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
+*10,*10,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
+*11,*11,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
+*12,*12,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
+END

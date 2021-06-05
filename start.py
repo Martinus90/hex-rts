@@ -2,6 +2,7 @@ import sys
 import math
 
 import pygame as pg
+import inspect
 from os import path
 from hexo import *
 from settings import *
@@ -12,6 +13,7 @@ from languages import *
 
 class Game:
     def __init__(self, player=1):
+        inspect.isclass(NB_Button)
         pg.init()
         pg.font.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -145,7 +147,6 @@ class Game:
                     self.saved_data.append(b)
                 else:
                     self.saved_data.append(a)
-        print(self.saved_data)
 
     def new(self):
         # initialize all variables and do all the setup for a new game
@@ -247,6 +248,134 @@ class Game:
         self.menu2 = self.menu.make_menu()
         self.menu_rect = self.menu2.get_rect()
 
+        #here load all data from save file
+        SCENARIO_INFO = False
+        SCENARIO_EVENTS = False
+        SCENARIO_RESOURCES = False
+        SCENARIO_BUILDINGS = False
+        SCENARIO_UNITS = False
+
+        
+        for line in self.saved_data:
+            n_line = []
+            nn_line = []
+            nnn_line = []
+
+            if SCENARIO_INFO == True:
+                if line != "END":
+                    print(line)
+                if line == "END":
+                    print("")
+                    SCENARIO_INFO = False 
+
+            if SCENARIO_EVENTS == True:
+                if line != "END":
+                    print(line)
+                    n_line = list(line.split(","))
+                    for n in n_line:
+                        if "/" in n:
+                            nn_line.append(list(n.split("/")))
+                        else:
+                            nn_line.append(n)
+                    for nn in nn_line:
+                        print(nn)
+                        if nn[0] == "*":
+                            nnn_line.append(int(nn[1:]))
+                        else:
+                            nnn_line.append(nn)
+                    print(nnn_line)
+                    self.event_list.add_event([nnn_line[0], nnn_line[1], nnn_line[2]])
+                if line == "END":
+                    print("")
+                    SCENARIO_EVENTS = False 
+
+            if SCENARIO_RESOURCES == True:
+                if line != "END":
+                    print(line)
+                    n_line = list(line.split(","))
+                    for n in n_line:
+                        if "/" in n:
+                            nn_line.append(list(n.split("/")))
+                        else:
+                            nn_line.append(n)
+                    for nn in nn_line:
+                        print(nn)
+                        if nn[0] == "*":
+                            nnn_line.append(int(nn[1:]))
+                        else:
+                            nnn_line.append(nn)
+                    print(nnn_line)
+                    lista = []
+                    for nnn in nnn_line:
+                        lista.append(nnn)
+                    self.map.resources.append(lista)
+                if line == "END":
+                    print("")
+                    SCENARIO_RESOURCES = False 
+
+            if SCENARIO_BUILDINGS == True:
+                if line != "END":
+                    print(line)
+                    n_line = list(line.split(","))
+                    for n in n_line:
+                        if "/" in n:
+                            nn_line.append(list(n.split("/")))
+                        else:
+                            nn_line.append(n)
+                    for nn in nn_line:
+                        print(nn)
+                        if nn[0] == "*" or nn == "":
+                            nnn_line.append(int(nn[1:]))
+                        else:
+                            nnn_line.append(nn)
+                    print(nnn_line)
+                    lista = []
+                    for nnn in nnn_line:
+                        lista.append(nnn)
+                    self.map.buildings.append(lista)
+                if line == "END":
+                    print("")
+                    SCENARIO_BUILDINGS = False
+
+            if SCENARIO_UNITS == True:
+                if line != "END":
+                    print(line)
+                    n_line = list(line.split(","))
+                    for n in n_line:
+                        if "/" in n:
+                            nn_line.append(list(n.split("/")))
+                        else:
+                            nn_line.append(n)
+                    for nn in nn_line:
+                        print(nn)
+                        if nn[0] == "*" or nn == "":
+                            nnn_line.append(int(nn[1:]))
+                        else:
+                            nnn_line.append(nn)
+                    print(nnn_line)
+                    lista = []
+                    for nnn in nnn_line:
+                        lista.append(nnn)
+                    self.map.units.append(lista)
+                if line == "END":
+                    print("")
+                    SCENARIO_UNITS = False
+            
+            
+            if line == "SCENARIO_INFO":
+                SCENARIO_INFO = True
+            if line == "SCENARIO_EVENTS":
+                SCENARIO_EVENTS = True
+            if line == "SCENARIO_RESOURCES":
+                SCENARIO_RESOURCES = True
+            if line == "SCENARIO_BUILDINGS":
+                SCENARIO_BUILDINGS = True
+            if line == "SCENARIO_UNITS":
+                SCENARIO_UNITS = True
+            
+
+            
+
         for r in self.map.resources:
             if r[2] == "tree":
                 Tree(self, r[0], r[1], r[3])
@@ -318,8 +447,10 @@ class Game:
         for u in self.map.units:
             Unit(self, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15], u[16], u[17], u[18], u[19], u[20], u[21], u[22], u[23], u[24])
 
-        
         self.camera = Camera(self.map.width, self.map.height)
+
+        
+
 
     def adding_building(self, variable):
         CONSTRUCTION(self, self.selecting.col, self.selecting.row, BUILDING_LIST[variable], self.player.side, 0, 0, 0, 0)
@@ -408,7 +539,7 @@ class Game:
                 self.menu.terrain1[0] = "X: " + str(self.selecting.col) + ", Y: " + str(self.selecting.row)
                 self.menu.terrain2[0] = str(self.selecting.terrain)
                 self.selecting.get_near_resources()
-                print(self.selecting.owner)
+                #print(self.selecting.owner)
 
         for r in self.resources:
             if (r.col == self.mouse_pos.col) and (r.row == self.mouse_pos.row):
@@ -431,9 +562,9 @@ class Game:
                 self.menu.unit5[0] = self.uniting.description[4]
                 self.menu.unit6[0] = self.uniting.description[5]
                 self.menu.unit7[0] = self.uniting.description[6]
-                print("Unit typ:")
-                print(self.uniting.unit_typ.name)
-                print(self.uniting.unit_typ.equipment)
+                #print("Unit typ:")
+                #print(self.uniting.unit_typ.name)
+                #print(self.uniting.unit_typ.equipment)
                 break
             else:
                 self.uniting = None
@@ -451,9 +582,9 @@ class Game:
             #print("Second")
             #print(str(b.row) + " / " + str(self.mouse_pos.row))
             if (b.col == self.mouse_pos.col) and (b.row == self.mouse_pos.row) and (b.owner.player == True):
-                print("Selected")
+                #print("Selected")
                 self.building = b
-                print(self.building)
+                #print(self.building)
                 self.menu.building1[0] = self.building.description[0]
                 self.menu.building2[0] = self.building.description[1]
                 self.menu.building3[0] = self.building.description[2]
@@ -527,6 +658,10 @@ class Game:
             self.menu.building8[0] = self.building.description[7]
             self.menu.building9[0] = self.building.description[8]
             self.menu.building10[0] = self.building.description[9]
+            self.menu.building11[0] = self.building.description[10]
+            self.menu.building12[0] = self.building.description[11]
+            self.menu.building13[0] = self.building.description[12]
+
         if self.uniting != None:
             self.menu.unit1[0] = self.uniting.description[0]
             self.menu.unit2[0] = self.uniting.description[1]
@@ -640,9 +775,9 @@ class Game:
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(str(window.thing.rocket_truck) + " / " + str(window.thing.max_rocket_truck), False, LIGHTGREY), (window.pos[0] + 10, window.pos[1] + 358))
 
 
-                    self.screen.blit(self.uniting.owner.image, (window.pos[0] + 270, window.pos[1] + 30))
+                    self.screen.blit(window.thing.owner.image, (window.pos[0] + 270, window.pos[1] + 30))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.owner.name, False, LIGHTGREY), (window.pos[0] + 300, window.pos[1] + 38))
-                    self.screen.blit(self.uniting.unit_typ.image, (window.pos[0] + 260, window.pos[1] + 56))
+                    self.screen.blit(window.thing.unit_typ.image, (window.pos[0] + 260, window.pos[1] + 56))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.unit_typ.name, False, LIGHTGREY), (window.pos[0] + 300, window.pos[1] + 58))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.print_mobilized(), False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 80))
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(self.language.DESCRIPTION[2] + ": " + str(window.thing.combat_ability) + "/" + str(window.thing.combat_ability_max), False, LIGHTGREY), (window.pos[0] + 270, window.pos[1] + 96))
@@ -759,17 +894,17 @@ class Game:
                 if event.key == pg.K_r:
                     self.players[self.player.side].stability += 1 
                 if event.key == pg.K_t:
-                    print(self.building)
-                    print(self.building.materials)
+                    #print(self.building)
+                    #print(self.building.materials)
                     
-                    print(self.building.cost)
-                    print("Cheat")
+                    #print(self.building.cost)
+                    #print("Cheat")
                     self.building.materials = self.building.cost
-                    print(self.building.materials)
+                    #print(self.building.materials)
                     
                 if event.key == pg.K_m:
                     self.territory_visible = not self.territory_visible
-                    print(self.territory_visible)
+                    #print(self.territory_visible)
                 if (event.key == 61) or (event.key == 270): #plus key
                     if self.speed < 32:
                         self.speed = self.speed * 2
@@ -804,12 +939,12 @@ class Game:
                     if event.button == 1:
                         if self.window_display == False:
                             self.select(True)
-                        elif self.window_display == True:
-                            for window in self.windows:
-                                if window.visible == True:
-                                    for button in window.buttons:
-                                        button.check_col(pg.mouse.get_pos())
-                                        #print(pg.mouse.get_pos())
+                        #elif self.window_display == True:
+                        for window in self.windows:
+                            if window.visible == True:
+                                for button in window.buttons:
+                                    button.check_col(pg.mouse.get_pos())
+                                    #print(pg.mouse.get_pos())
 
                     if event.button == 3:
                         if self.uniting != None:
@@ -824,16 +959,22 @@ class Game:
                         #print(self.selecting.building)
                         if self.uniting: 
                             self.uniting.button.check_col(pg.mouse.get_pos())
-                            print(self.uniting.button.rect)
-                            print(pg.mouse.get_pos())
+                            #print(self.uniting.button.rect)
+                            #print(pg.mouse.get_pos())
                         if self.building: 
                             self.building.button.check_col(pg.mouse.get_pos())
-                            print(self.building.button.rect)
-                            print(pg.mouse.get_pos())
+                            #print(self.building.button.rect)
+                            #print(pg.mouse.get_pos())
 
-                        if self.building == None:
-                            for a in self.menu.buttons:
-                                #print(self.menu.buttons)
+                        #if self.building == None:
+
+                        
+                        for a in self.menu.buttons:
+                            if isinstance(a, NB_Button):
+                                if self.building == None:
+                                    a.check_col(pg.mouse.get_pos())
+                            #print(self.menu.buttons)
+                            else:
                                 a.check_col(pg.mouse.get_pos())
                         
 
