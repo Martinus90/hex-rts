@@ -12,7 +12,7 @@ from loading import *
 from languages import *
 
 class Game:
-    def __init__(self, player=1):
+    def __init__(self, player=1, map_name="", save_name=""):
         inspect.isclass(NB_Button)
         pg.init()
         pg.font.init()
@@ -20,8 +20,9 @@ class Game:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         pg.key.set_repeat(500, 100)
+        self.map_name = map_name
         self.load_data()
-        self.load_save("maps/save1.txt")
+        self.load_save("maps/"+save_name+".txt")
         self.language = Language()
         self.timer = 0
         self.quarter = 0
@@ -45,6 +46,7 @@ class Game:
         self.nations = []
         self.players = []
         self.types = []
+        self.new_info_text = []
         
 
     def load_data(self):
@@ -127,7 +129,7 @@ class Game:
             self.yes_img = pg.image.load(path.join(gui_folder, YES_IMG))
             self.no_img = pg.image.load(path.join(gui_folder, NO_IMG))
 
-        self.map = TiledMap(self, path.join(map_folder, 'default.tmx'))#test / test2 / default
+        self.map = TiledMap(self, path.join(map_folder, self.map_name+'.tmx'))#test / test2 / default
 
         #side 0 is always neutral / side 1 is always player / other side are variable
         #self.side_0 = "Neutral" 
@@ -179,7 +181,7 @@ class Game:
         self.diplomacy = Diplomacy(self)
         self.event_list = Event_List(self, [[5, "event_name", 'here_event_properties'], [7, "event_name2", "here_event_properies2"]])
         self.event_list.add_event([7, "event_name", "Event 3"])
-        self.event_list.add_event([10, "new_decision", ["Kasa","Stab","Kurs"], [["add_money_to_player", self.player.side, 300], ["gain_stability", self.player.side, 1], ["strengthen_the_currency", self.player.side, 0.8]],["Decyzja pozwalająca dodac jakis bonus:","Kasa, doda Ci $300", "Stab, wziekszy stabilnosc", "Kurs, polepszy kurs wymiany"]])
+        #self.event_list.add_event([10, "new_decision", ["Kasa","Stab","Kurs"], [["add_money_to_player", self.player.side, 300], ["gain_stability", self.player.side, 1], ["strengthen_the_currency", self.player.side, 0.8]],["Decyzja pozwalająca dodac jakis bonus:","Kasa, doda Ci $300", "Stab, wziekszy stabilnosc", "Kurs, polepszy kurs wymiany"]])
         self.event_list.add_event([12, "new_decision", ["Kasa","Stab","Kurs"], [["add_money_to_player", self.player.side, 300], ["gain_stability", self.player.side, 1], ["strengthen_the_currency", self.player.side, 0.8]],["Decyzja pozwalająca dodac jakis bonus:","Kasa, doda Ci $300", "Stab, wziekszy stabilnosc", "Kurs, polepszy kurs wymiany"]])
         self.event_list.add_event([4, "show_new_info", ["First line of text", "Second line", "Last third line of the thext.", "The End"]])
 
@@ -250,6 +252,7 @@ class Game:
 
         #here load all data from save file
         SCENARIO_INFO = False
+        SCENARIO_DIPLOMACY = False
         SCENARIO_EVENTS = False
         SCENARIO_RESOURCES = False
         SCENARIO_BUILDINGS = False
@@ -260,17 +263,27 @@ class Game:
             n_line = []
             nn_line = []
             nnn_line = []
+            nnnn_line = []
 
             if SCENARIO_INFO == True:
                 if line != "END":
                     print(line)
+                    self.new_info_text.append(line)
                 if line == "END":
+                    self.event_list.scenario.new_text_to_display(self.new_info_text)
                     print("")
                     SCENARIO_INFO = False 
 
-            if SCENARIO_EVENTS == True:
+            if SCENARIO_DIPLOMACY == True:
                 if line != "END":
                     print(line)
+                if line == "END":
+                    print("")
+                    SCENARIO_DIPLOMACY = False
+
+            if SCENARIO_EVENTS == True:
+                if line != "END":
+                    #print(line)
                     n_line = list(line.split(","))
                     for n in n_line:
                         if "/" in n:
@@ -278,20 +291,65 @@ class Game:
                         else:
                             nn_line.append(n)
                     for nn in nn_line:
-                        print(nn)
-                        if nn[0] == "*":
-                            nnn_line.append(int(nn[1:]))
+                        if type(nn) == list:
+                            f = []
+                            for e in nn:
+                                if "&" in e:
+                                    f.append(list(e.split("&")))
+                                else:
+                                    f.append(e)
+                            nnn_line.append(f)
                         else:
                             nnn_line.append(nn)
-                    print(nnn_line)
-                    self.event_list.add_event([nnn_line[0], nnn_line[1], nnn_line[2]])
+                        
+                    for nnn in nnn_line:
+                        if type(nnn) != list:
+                            if nnn[0] == "*":
+                                nnnn_line.append(int(nnn[1:]))
+                            elif nnn[0] == "^":
+                                nnnn_line.append(float(nnn[1:]))
+                            else:
+                                print(nnn)
+                                nnnn_line.append(nnn)
+                        else:
+                            f = []
+                            for a in nnn:
+                                if a[0] == "*":
+                                    f.append(int(a[1:]))
+                                elif a[0] == "^":
+                                    f.append(float(a[1:]))
+                                else:
+                                    print(a)
+                                    g = []
+                                    if type(a) == list:
+                                        for b in a:
+                                            if b[0] == "*":
+                                                g.append(int(b[1:]))
+                                            elif b[0] == "^":
+                                                g.append(float(b[1:]))
+                                            else:
+                                                print(b)
+                                                g.append(b)
+                                        f.append(g)
+                                    else:
+                                        f.append(a)
+                            nnnn_line.append(f)
+
+                    print(nnnn_line)
+                    print(len(nnnn_line))
+                    if len(nnnn_line) == 3:
+                        self.event_list.add_event([nnnn_line[0], nnnn_line[1], nnnn_line[2]])
+                    elif len(nnnn_line) == 4:
+                        self.event_list.add_event([nnnn_line[0], nnnn_line[1], nnnn_line[2], nnnn_line[3]])
+                    elif len(nnnn_line) == 5:
+                        self.event_list.add_event([nnnn_line[0], nnnn_line[1], nnnn_line[2], nnnn_line[3], nnnn_line[4]])
                 if line == "END":
-                    print("")
+                    #print("")
                     SCENARIO_EVENTS = False 
 
             if SCENARIO_RESOURCES == True:
                 if line != "END":
-                    print(line)
+                    #print(line)
                     n_line = list(line.split(","))
                     for n in n_line:
                         if "/" in n:
@@ -299,23 +357,23 @@ class Game:
                         else:
                             nn_line.append(n)
                     for nn in nn_line:
-                        print(nn)
+                        #print(nn)
                         if nn[0] == "*":
                             nnn_line.append(int(nn[1:]))
                         else:
                             nnn_line.append(nn)
-                    print(nnn_line)
+                    #print(nnn_line)
                     lista = []
                     for nnn in nnn_line:
                         lista.append(nnn)
                     self.map.resources.append(lista)
                 if line == "END":
-                    print("")
+                    #print("")
                     SCENARIO_RESOURCES = False 
 
             if SCENARIO_BUILDINGS == True:
                 if line != "END":
-                    print(line)
+                    #print(line)
                     n_line = list(line.split(","))
                     for n in n_line:
                         if "/" in n:
@@ -323,23 +381,23 @@ class Game:
                         else:
                             nn_line.append(n)
                     for nn in nn_line:
-                        print(nn)
+                        #print(nn)
                         if nn[0] == "*" or nn == "":
                             nnn_line.append(int(nn[1:]))
                         else:
                             nnn_line.append(nn)
-                    print(nnn_line)
+                    #print(nnn_line)
                     lista = []
                     for nnn in nnn_line:
                         lista.append(nnn)
                     self.map.buildings.append(lista)
                 if line == "END":
-                    print("")
+                    #print("")
                     SCENARIO_BUILDINGS = False
 
             if SCENARIO_UNITS == True:
                 if line != "END":
-                    print(line)
+                    #print(line)
                     n_line = list(line.split(","))
                     for n in n_line:
                         if "/" in n:
@@ -347,23 +405,25 @@ class Game:
                         else:
                             nn_line.append(n)
                     for nn in nn_line:
-                        print(nn)
+                        #print(nn)
                         if nn[0] == "*" or nn == "":
                             nnn_line.append(int(nn[1:]))
                         else:
                             nnn_line.append(nn)
-                    print(nnn_line)
+                    #print(nnn_line)
                     lista = []
                     for nnn in nnn_line:
                         lista.append(nnn)
                     self.map.units.append(lista)
                 if line == "END":
-                    print("")
+                    #print("")
                     SCENARIO_UNITS = False
             
             
             if line == "SCENARIO_INFO":
                 SCENARIO_INFO = True
+            if line == "SCENARIO_DIPLOMACY":
+                SCENARIO_DIPLOMACY = True
             if line == "SCENARIO_EVENTS":
                 SCENARIO_EVENTS = True
             if line == "SCENARIO_RESOURCES":
@@ -704,7 +764,8 @@ class Game:
         #print(self.menu.buttons)
         #for b in self.menu.buttons:
         #    self.screen.blit(b.image, b.pos)
-        self.screen.blit(self.menu.buttons[1].image, self.menu.buttons[1].pos)
+        for x in self.menu.buttons:
+            self.screen.blit(x.image, x.pos)
 
 
         for a in range(len(self.players)-1):
@@ -986,7 +1047,7 @@ class Game:
         pass
 
 # create the game object
-g = Game(player=1)
+g = Game(player=1,map_name="default",save_name="save1")
 g.show_start_screen()
 while True:
     g.new()

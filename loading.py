@@ -17,7 +17,8 @@ class Event_List(pg.sprite.Sprite):
         self.check = None
         
         self.window = Decision_Window(self.game, pos=[100,100], size=(500, 500), color=DARKGREY, text="Decision window", textsize=15, textcolor=LIGHTGREY, textpos=(150,10), border_size=3, available=True, decisions=[])
-        self.info = Info_Window(self.game, pos=[100,100], size=(500, 500), color=DARKGREY, text="Info Window", textsize=15, textcolor=LIGHTGREY, textpos=(100,10), border_size=3, display_text=[])
+        self.scenario = Info_Window(self.game, pos=[100,100], size=(500, 500), color=DARKGREY, text="Scenario Window", textsize=15, textcolor=LIGHTGREY, textpos=(150,10), border_size=3, display_text=[], visible=True)
+        self.info = Info_Window(self.game, pos=[100,100], size=(500, 500), color=DARKGREY, text="Info Window", textsize=15, textcolor=LIGHTGREY, textpos=(150,10), border_size=3, display_text=[], visible=False)
         
         #self.frontier.put((0, self.hexid))
 
@@ -41,6 +42,7 @@ class Event_List(pg.sprite.Sprite):
     def show_new_info(self, info):
         self.info.new_text_to_display(info)
         self.info.show()
+
 
     def new_decisions(self, deci, option, text):
         self.window.decisions = []
@@ -106,7 +108,7 @@ class Diplomacy(pg.sprite.Sprite):
         for p in self.game.players:
             for o in self.game.players:
                 if p.nation == o.nation:
-                    r = 104
+                    r = 50
                 else:
                     r = 0
                 #0 side, 1 relations, 2 peace, 3 trade, 4 ally
@@ -127,7 +129,6 @@ class Diplomacy(pg.sprite.Sprite):
                 elif r[1] < -100:
                     r[1] += 2
                 #0 side, 1 relations, 2 peace, 3 trade, 4 ally
-
 
 class Trade(pg.sprite.Sprite):
     def __init__(self, game):
@@ -419,13 +420,16 @@ class Menu(pg.sprite.Sprite):
         self.list.append([self.m_b, self.c_m_b])
 
         self.new_building_window = New_Building_Window(self.game, pos=[100,100], size=(300, 400), color=DARKGREY, text="New Building", textsize=18, textcolor=LIGHTGREY, textpos=(40,10), border_size=3)
-        
         self.new_building_button = NB_Button(self.game, self.new_building_window, pos=[WIDTH - MENU_RIGHT[0]+70, 425], size=(56, 30), color=DARKGREY, text="New", textsize=24, textcolor=LIGHTGREY)
-        self.buttons.append(self.new_building_button)
+        #self.buttons.append(self.new_building_button)
 
+        self.open_scenario_button = OT_Button(self.game.event_list.scenario, self.game, pos=[WIDTH - MENU_RIGHT[0]+20, HEIGHT-95], size=(115, 30), color=DARKGREY, text="Scenario", textsize=24, textcolor=LIGHTGREY)
+        self.buttons.append(self.open_scenario_button)
+        self.open_info_button = OT_Button(self.game.event_list.info, self.game, pos=[WIDTH - MENU_RIGHT[0]+120, HEIGHT-45], size=(65, 30), color=DARKGREY, text="Info", textsize=24, textcolor=LIGHTGREY)
+        self.buttons.append(self.open_info_button)
         
         self.trade_window = Trade_Window(self.game, self.game.trade, pos=[100,100], size=(800, 650), color=DARKGREY, text="Trade", textsize=15, textcolor=LIGHTGREY, textpos=(40,20), border_size=3)
-        self.open_trade_window = OW_Button(self.game, self.trade_window, pos=[WIDTH - MENU_RIGHT[0]+15, HEIGHT-45], size=(78, 30), color=DARKGREY, text="Trade", textsize=24, textcolor=LIGHTGREY)
+        self.open_trade_window = OW_Button(self.game, self.trade_window, pos=[WIDTH - MENU_RIGHT[0]+20, HEIGHT-45], size=(78, 30), color=DARKGREY, text="Trade", textsize=24, textcolor=LIGHTGREY)
         #self.open_trade_window.image = 
         self.buttons.append(self.open_trade_window)
 
@@ -797,7 +801,7 @@ class Window(pg.sprite.Sprite):
         self.rect.y = self.pos[1]
 
 class Info_Window(Window):
-    def __init__(self, game, pos=[100,100], size=(300, 400), color=DARKGREY, text="Text", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3, display_text=["Just random text."]):
+    def __init__(self, game, pos=[100,100], size=(300, 400), color=DARKGREY, text="Text", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3, display_text=["Just random text."], visible=False):
         self.groups = game.menu_windows, game.windows
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -809,7 +813,7 @@ class Info_Window(Window):
         self.textcolor = textcolor
         self.textpos = textpos
         self.border_size = border_size
-        self.visible = False
+        self.visible = visible
         self.game.window_display = self.visible
         self.buttons = []
         self.variables = []
@@ -1669,6 +1673,40 @@ class OB_Button(Button):
 
     def click(self):
         self.building.window.show()
+
+    def update(self):
+        self.rect.x = self.pos[0]
+        self.rect.y = self.pos[1]
+
+class OT_Button(Button):
+    def __init__(self, window, game, pos=[6,6], size=(20, 20), color=DARKGREY, text="X", textsize=10, textcolor=LIGHTGREY):
+        self.groups = game.buttons
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.window = window
+        self.pos = tuple(pos)
+        #self.abs_pos = [0,0]
+        #self.abs_pos[0] = self.pos[0] + self.building.pos[0]
+        #self.abs_pos[1] = self.pos[1] + self.building.pos[1]
+        self.size = size
+        self.color = color
+        self.text = text
+        self.textsize = textsize
+        self.textcolor = textcolor
+        self.visible = True
+        self.image = pg.Surface(self.size)
+        pg.draw.rect(self.image, self.textcolor, (0, 0, size[0], size[1]))
+        pg.draw.rect(self.image, self.color, (0+BUTTON_BORDER_SIZE, 0+BUTTON_BORDER_SIZE, size[0]-BUTTON_BORDER_SIZE*2-1, size[1]-BUTTON_BORDER_SIZE*2-1))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.text, False, self.textcolor), (5,5))
+        self.rect = self.image.get_rect()
+
+
+    def check_col(self, mouse):
+        if self.rect.collidepoint(mouse):
+            self.click()
+
+    def click(self):
+        self.window.show()
 
     def update(self):
         self.rect.x = self.pos[0]

@@ -2542,6 +2542,7 @@ class Unit(pg.sprite.Sprite):
 
     def concquering(self):
         if self.state["conquest"] == True:
+            print(self.game.map.grids[self.hexid].owner)
             if self.game.map.grids[self.hexid].owner != None:
                 a = self.game.map.grids[self.hexid].owner 
                 if self.owner.relations[a][2] == False: #if False, that mean in war
@@ -2560,10 +2561,12 @@ class Unit(pg.sprite.Sprite):
                             self.game.map.grids[self.hexid].building.window.image.blit(pg.font.Font(FONT_NAME, self.window.textsize).render(self.owner.name, False, self.window.textcolor), (245, 10))
                             self.game.map.grids[self.hexid].building.window.image.blit(self.owner.image, (220, 0))
                             self.game.map.grids[self.hexid].building.window.image.blit(self.game.map.grids[self.hexid].building.image, (0, 25))
-
                 else:
                     print("In peace")
                     print(self.owner.relations)
+            else:
+                self.game.map.grids[self.hexid].owner = self.owner.side
+                self.game.map.new_owner(self.owner.side, roffset_from_cube(-1, self.hex))
             
     def terrain_cost(self, grid_id):
         global c
@@ -2941,6 +2944,17 @@ class Unit(pg.sprite.Sprite):
 
     def daily(self):
         pass
+
+    def weekly(self):
+        if self.state['mobilized'] == True:
+            self.owner.money -= self.men
+        else:
+            self.owner.money -= int(self.men / 2)
+        self.owner.money -= self.apc * 10
+        self.owner.money -= self.tank * 20
+        self.owner.money -= self.heli * 50
+        self.owner.money -= self.aircraft * 100
+        self.owner.money -= self.rocket_truck * 10
 
     def update(self): 
         self.hexid = hex_id(OFFSET, self.hex, self.game.map.tmxdata.width)

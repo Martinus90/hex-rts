@@ -1,18 +1,28 @@
 First line of save file 
 Line which starts SCENARIO_*, END and between END > < SCENARIO_* will not be readed.
-So "," give a split to dictionary "/" give dict in dict "*" convert string to int
-
+So "," give a split to dictionary "/" give dict in dict "&" give dict in dict in dict "*" convert string to int "^" convert string to float XD
+[display_text,16,LIGHTGREY,(10, 45 + (a * 20))]
 
 
 SCENARIO_INFO
-first line of scenario info
+first line of scenario info,
 second
+third and others
 END
 
+*1,*2,idk,True
 
+1player,2player,3diplo_typ,4status
+SCENARIO_DIPLOMACY
+END
+
+Przykładowe skrypty:
+*13,show_new_info,This message is showed via event/which was added in saved file/Success/The End
+*3,new_decision,Kasa/Stab/Kurs,add_money_to_player&*1&*300/gain_stability&*1&*1/strengthen_the_currency&*1&^0.8,Decyzja pozwalająca dodac jakis bonus./Kasa doda Ci $300/Stab zwiekszy stabilnosc./Kurs polepszy kurs wymiany.
 
 SCENARIO_EVENTS
-*3,show_new_info,This message is showed via event/which was added in saved file/Success/The End
+*13,show_new_info,This message is showed via event/which was added in saved file/Success/The End
+*3,new_decision,Kasa/Stab/Kurs,add_money_to_player&*1&*300/gain_stability&*1&*1/strengthen_the_currency&*1&^0.8,Decyzja pozwalająca dodac jakis bonus./Kasa doda Ci $300/Stab zwiekszy stabilnosc./Kurs polepszy kurs wymiany.
 END
 
 
