@@ -28,10 +28,14 @@ class Game:
         self.quarter = 0
         self.hour = 0
         self.day = 1
-        self.idn = 0
+        self.start_day = 1
+        self.idn = 1
         self.week = 1
+        self.start_week = 1
         self.season = 0
+        self.start_season = 0
         self.year = 1980
+        self.start_year = 1980
         self.speed = GAME_SPEED
         self.pause = False
         self.selecting = None
@@ -169,16 +173,22 @@ class Game:
 
         self.nations.append(Nation(self, name="Sovenyan"))
         self.nations.append(Nation(self, name="Nebohracy"))
+        self.nations.append(Nation(self, name="Grenaly"))
 
         #first on the list is always neutral, second is player, 3+ are others / to change color just change side
         self.player = Player(self, 0, 0, 1)
-        self.players.append(Contender(self, name="Neutral", nation=0, player=False, side=0, exc_rt=1.0, money=0, global_money=0, reputation=0, stability=2, tax=3))
-        self.players.append(Contender(self, name="Sovenya", nation=0, player=True, side=1, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=2, tax=3))
+        self.players.append(Contender(self, name="Neutral", nation=0, player=False, side=0, exc_rt=1.0, money=0, global_money=2000, reputation=0, stability=2, tax=3))
+        self.players.append(Contender(self, name="Sovenya", nation=0, player=True, side=1, exc_rt=1.0, money=10000, global_money=10000, reputation=0, stability=2, tax=3))
         self.players.append(Contender(self, name="Nebohray", nation=1, player=False, side=2, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=2, tax=3))
-        self.players.append(Contender(self, name="Sovenyan Rebels", nation=0, player=False, side=3.0, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=2, tax=3))
-        self.players.append(Contender(self, name="hj6u654", nation=1, player=False, side=4, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=2, tax=3))
+        self.players.append(Contender(self, name="Sovenyan Rebels", nation=0, player=False, side=10, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=2, tax=3))
+        self.players.append(Contender(self, name="Nebohray Rebels", nation=1, player=False, side=11, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=2, tax=3))
+        self.players.append(Contender(self, name="Grenals", nation=2, player=False, side=3, exc_rt=1.0, money=10000, global_money=0, reputation=0, stability=2, tax=3))
+
+        for a in range(len(self.players)):
+            self.players[a].id_num = a
 
         self.diplomacy = Diplomacy(self)
+        self.diplomacy.window.show_relations()
         self.event_list = Event_List(self, [[5, "event_name", 'here_event_properties'], [7, "event_name2", "here_event_properies2"]])
         self.event_list.add_event([7, "event_name", "Event 3"])
         #self.event_list.add_event([10, "new_decision", ["Kasa","Stab","Kurs"], [["add_money_to_player", self.player.side, 300], ["gain_stability", self.player.side, 1], ["strengthen_the_currency", self.player.side, 0.8]],["Decyzja pozwalająca dodac jakis bonus:","Kasa, doda Ci $300", "Stab, wziekszy stabilnosc", "Kurs, polepszy kurs wymiany"]])
@@ -187,8 +197,10 @@ class Game:
 
         
         self.trade = Trade(self)
-        self.players[1].relations[2][2] = False
-        self.players[2].relations[1][2] = False
+        #self.players[1].relations[2][2] = False
+        #self.players[2].relations[1][2] = False
+        self.diplomacy.relations[1][2][2] = False
+        self.diplomacy.relations[2][1][2] = False
 
             #unit types
         #infantry
@@ -731,6 +743,31 @@ class Game:
             self.menu.unit6[0] = self.uniting.description[5]
             self.menu.unit7[0] = self.uniting.description[6]      
 
+    def conv_idn_to_data(self, id_numb):
+        a = id_numb
+        repeat = True
+        returnig_date = [0,1,0,0]
+        while repeat == True:
+            if a > 364:
+                returnig_date[3] += 1
+                a -= 364
+            else:
+                if a > 91:
+                    returnig_date[2] += 1
+                    a -= 91
+                else:
+                    if a > 7:
+                        returnig_date[1] += 1
+                        a -= 7
+                    else:
+                        returnig_date[0] = a
+                        repeat = False
+        returnig_date[3] = str(self.start_year + returnig_date[3])
+        returnig_date[2] = self.language.SEASONS[returnig_date[2]]
+        returnig_date[1] = self.language.DISPLAY_GUI[2] + str(returnig_date[1])
+        returnig_date[0] = self.language.DISPLAY_GUI[3] + str(returnig_date[0])  
+        return returnig_date[1] + returnig_date[0] + ", " + returnig_date[2] + ", " + returnig_date[3]
+
     def draw(self):
         self.screen.fill(BGCOLOR)
         self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
@@ -917,7 +954,7 @@ class Game:
                 for t in window.texts:
                     self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(t[0], False, t[2]), (window.pos[0] + t[3][0], window.pos[1] + t[3][1]))
                 
-
+        
  
 
         pg.display.flip()

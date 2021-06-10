@@ -2545,11 +2545,11 @@ class Unit(pg.sprite.Sprite):
             print(self.game.map.grids[self.hexid].owner)
             if self.game.map.grids[self.hexid].owner != None:
                 a = self.game.map.grids[self.hexid].owner 
-                if self.owner.relations[a][2] == False: #if False, that mean in war
+                if self.game.diplomacy.relations[a][2] == False: #if False, that mean in war
                     self.game.map.grids[self.hexid].owner = self.owner.side
                     self.game.map.new_owner(self.owner.side, roffset_from_cube(-1, self.hex))
                     print("In war")
-                    print(self.owner.relations)
+                    print(self.game.diplomacy.relations[a][2])
                     print("Check if there is building")
                     if self.game.map.grids[self.hexid].building != None:
                         self.game.map.grids[self.hexid].building.owner = self.owner
@@ -2563,7 +2563,7 @@ class Unit(pg.sprite.Sprite):
                             self.game.map.grids[self.hexid].building.window.image.blit(self.game.map.grids[self.hexid].building.image, (0, 25))
                 else:
                     print("In peace")
-                    print(self.owner.relations)
+                    print(self.game.diplomacy.relations[a][2])
             else:
                 self.game.map.grids[self.hexid].owner = self.owner.side
                 self.game.map.new_owner(self.owner.side, roffset_from_cube(-1, self.hex))

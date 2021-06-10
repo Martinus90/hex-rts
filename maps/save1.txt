@@ -4,17 +4,33 @@ So "," give a split to dictionary "/" give dict in dict "&" give dict in dict in
 [display_text,16,LIGHTGREY,(10, 45 + (a * 20))]
 
 
+
+
+
+
 SCENARIO_INFO
 first line of scenario info,
 second
 third and others
 END
 
-*1,*2,idk,True
 
+
+
+
+
+
+*1,*2,idk,True
 1player,2player,3diplo_typ,4status
+
 SCENARIO_DIPLOMACY
 END
+
+
+
+
+
+
 
 Przykładowe skrypty:
 *13,show_new_info,This message is showed via event/which was added in saved file/Success/The End
@@ -27,6 +43,9 @@ END
 
 
 
+
+
+
 X,Y,typ,quantity
 
 SCENARIO_RESOURCES
@@ -35,12 +54,22 @@ END
 
 
 
+
+
+
+
+
+
 PosX,PosY,Building_Typ(Village),Owner,Name,Nationality,Pop,Prosper,Food,Wood
 *3,*3,VILLAGE,*1,Nazwa wioski,*1,*40,*3,*100,*50
 
 SCENARIO_BUILDINGS
-*3,*3,VILLAGE,*1,Nazwa wioski,*1,*50,*3,*100,*50                                    
+*10,*16,VILLAGE,*2,Nazwa wioski,*1,*50,*3,*100,*50                                    
 END
+
+
+
+
 
 
 
@@ -48,9 +77,6 @@ X,Y,nationality,owner,typ,unit_name,brigade,regiment,battalion,company,men,suppl
 *2,*2,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
 
 SCENARIO_UNITS
-*2,*2,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
-*3,*3,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
-*4,*4,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
 *5,*5,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
 *6,*6,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
 *7,*7,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0

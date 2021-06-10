@@ -17,7 +17,7 @@ class Event_List(pg.sprite.Sprite):
         self.check = None
         
         self.window = Decision_Window(self.game, pos=[100,100], size=(500, 500), color=DARKGREY, text="Decision window", textsize=15, textcolor=LIGHTGREY, textpos=(150,10), border_size=3, available=True, decisions=[])
-        self.scenario = Info_Window(self.game, pos=[100,100], size=(500, 500), color=DARKGREY, text="Scenario Window", textsize=15, textcolor=LIGHTGREY, textpos=(150,10), border_size=3, display_text=[], visible=True)
+        self.scenario = Info_Window(self.game, pos=[100,100], size=(500, 500), color=DARKGREY, text="Scenario Window", textsize=15, textcolor=LIGHTGREY, textpos=(150,10), border_size=3, display_text=[], visible=False)
         self.info = Info_Window(self.game, pos=[100,100], size=(500, 500), color=DARKGREY, text="Info Window", textsize=15, textcolor=LIGHTGREY, textpos=(150,10), border_size=3, display_text=[], visible=False)
         
         #self.frontier.put((0, self.hexid))
@@ -42,7 +42,6 @@ class Event_List(pg.sprite.Sprite):
     def show_new_info(self, info):
         self.info.new_text_to_display(info)
         self.info.show()
-
 
     def new_decisions(self, deci, option, text):
         self.window.decisions = []
@@ -98,36 +97,50 @@ class Event_List(pg.sprite.Sprite):
                 self.queue.put((self.check[0], self.check[1]))
         self.check = None
 
-
-
-
 class Diplomacy(pg.sprite.Sprite):
     def __init__(self, game):
         self.game = game
-        #self.relations = []
+        self.relations = []
         for p in self.game.players:
+            s = []
             for o in self.game.players:
-                if p.nation == o.nation:
-                    r = 50
+                if p == o:
+                    r = 200
+                    t = True
+                    a = True
+                elif p.nation == o.nation:
+                    r = randint(40, 60)
+                    t = False
+                    a = False
                 else:
-                    r = 0
+                    r = randint(-20, 20)
+                    t = False
+                    a = False
                 #0 side, 1 relations, 2 peace, 3 trade, 4 ally
-                p.relations.append([o.side, r, False, False, False])
+                s.append([o.side, r, True, t, a, self.game.idn, self.game.idn, self.game.idn])
+            self.relations.append(s)
+        self.window = Diplomacy_Window(self.game, pos=[100,100], size=(900, 700), color=DARKGREY, text="Diplomacy Window", textsize=15, textcolor=LIGHTGREY, textpos=(150,10), border_size=3, visible=False)
 
     def refresh_players(self):
         self.players = self.game.players 
+        
+
+    def adding_new_player(self):
+        pass
 
     def dayli(self):
-        for p in self.game.players:
-            for r in p.relations:
-                if r[1] > 100:
-                    r[1] -= 2
-                elif r[1] > 50 and r[1] <= 100:
-                    r[1] -= 1
-                elif r[1] < -50 and r[1] >= -100:
-                    r[1] += 1
-                elif r[1] < -100:
-                    r[1] += 2
+        for p in self.relations:#p is each player
+            for r in p:#r is each players relation
+                if r[2] == False:#is at war with
+                    if r[1] > -200:
+                        r[1] -= 1
+                if r[3] == True:#have trade agreement
+                    if r[1] < 0:
+                        r[1] += 1
+                if r[4] == True:
+                    if r[1] < 100:
+                        r[1] += 1
+                
                 #0 side, 1 relations, 2 peace, 3 trade, 4 ally
 
 class Trade(pg.sprite.Sprite):
@@ -258,6 +271,7 @@ class Contender(pg.sprite.Sprite):
         self.nation = self.game.nations[nation]
         self.player = player
         self.side = side
+        self.id_num = 0
         self.exc_rt = exc_rt
         self.money = money
         self.global_money = global_money
@@ -287,6 +301,36 @@ class Contender(pg.sprite.Sprite):
         if self.global_money > quantity:
             self.global_money = self.global_money - quantity
             self.money = self.money + (quantity * self.exc_rt)
+
+    def make_diplo_decision(self, decision, other_player):
+        if decision == "peace":
+            if self.game.idn - self.game.diplomacy.relations[self.id_num][other_player][5] > PEACE_TREATY:#more then 20 days at war
+                self.game.diplomacy.relations[self.id_num][other_player][2] = True
+                self.game.diplomacy.relations[other_player][self.id_num][2] = True
+                self.game.diplomacy.relations[self.id_num][other_player][5] = self.game.idn
+                self.game.diplomacy.relations[other_player][self.id_num][5] = self.game.idn
+
+        if decision == "trade":
+            if self.game.diplomacy.relations[self.id_num][other_player][1] > TRADE_TREATY:#relations more then 50
+                self.game.diplomacy.relations[self.id_num][other_player][3] = True
+                self.game.diplomacy.relations[other_player][self.id_num][3] = True
+                self.game.diplomacy.relations[self.id_num][other_player][6] = self.game.idn
+                self.game.diplomacy.relations[other_player][self.id_num][6] = self.game.idn
+
+        if decision == "alliance":
+            if self.game.diplomacy.relations[self.id_num][other_player][1] > ALLIANCE_TREATY:
+                self.game.diplomacy.relations[self.id_num][other_player][4] = True
+                self.game.diplomacy.relations[other_player][self.id_num][4] = True
+                self.game.diplomacy.relations[self.id_num][other_player][7] = self.game.idn
+                self.game.diplomacy.relations[other_player][self.id_num][7] = self.game.idn
+        
+        if decision == "ask_for_money":
+            if self.game.diplomacy.relations[self.id_num][other_player][1] > GIVE_MONEY_REP:
+                if self.global_money > GIVE_MONEY_SELF:
+                    self.global_money -= 100
+                    self.game.players[other_player].global_money += 100
+                    self.game.diplomacy.relations[self.id_num][other_player][1] -= GIVE_MONEY_DEC_REP
+                    
 
     def do(self):
         pass
@@ -423,6 +467,8 @@ class Menu(pg.sprite.Sprite):
         self.new_building_button = NB_Button(self.game, self.new_building_window, pos=[WIDTH - MENU_RIGHT[0]+70, 425], size=(56, 30), color=DARKGREY, text="New", textsize=24, textcolor=LIGHTGREY)
         #self.buttons.append(self.new_building_button)
 
+        self.open_diplomacy_button = OT_Button(self.game.diplomacy.window, self.game, pos=[WIDTH - MENU_RIGHT[0]+20, HEIGHT-145], size=(135, 30), color=DARKGREY, text="Diplomacy", textsize=24, textcolor=LIGHTGREY)
+        self.buttons.append(self.open_diplomacy_button)
         self.open_scenario_button = OT_Button(self.game.event_list.scenario, self.game, pos=[WIDTH - MENU_RIGHT[0]+20, HEIGHT-95], size=(115, 30), color=DARKGREY, text="Scenario", textsize=24, textcolor=LIGHTGREY)
         self.buttons.append(self.open_scenario_button)
         self.open_info_button = OT_Button(self.game.event_list.info, self.game, pos=[WIDTH - MENU_RIGHT[0]+120, HEIGHT-45], size=(65, 30), color=DARKGREY, text="Info", textsize=24, textcolor=LIGHTGREY)
@@ -842,6 +888,251 @@ class Info_Window(Window):
     
     def show(self):
         #self.pause = True
+        self.visible = True
+        self.game.window_display = True
+
+    def hide(self):
+        self.visible = False
+        self.game.window_display = False
+
+    def update(self):
+        self.rect.x = self.pos[0]
+        self.rect.y = self.pos[1]
+
+class Diplomacy_Window(Window):
+    def __init__(self, game, pos=[100,100], size=(300, 400), color=DARKGREY, text="Text", textsize=15, textcolor=LIGHTGREY, textpos=(50,10), border_size=3, visible=False):
+        self.groups = game.menu_windows, game.windows
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.pos = pos
+        self.size = size
+        self.color = color
+        self.text = text
+        self.textsize = textsize
+        self.textcolor = textcolor
+        self.textpos = textpos
+        self.border_size = border_size
+        self.visible = visible
+        self.game.window_display = self.visible
+        self.buttons = []
+        self.variables = []
+        self.resources = []
+        self.texts = []
+
+        self.status_player = 0
+        self.number_of_players = 0
+
+
+        self.texts.append([self.game.language.DIPLOMACY[0], 16, LIGHTGREY, (10, 45)])
+        self.texts.append([self.game.players[self.status_player].name, 16, LIGHTGREY, (250, 45)])
+        for a in range(len(self.game.players)):
+            self.texts.append(["side", 16, LIGHTGREY, (55, 250 + (a * 20))])
+            self.texts.append(["relations", 16, LIGHTGREY, (200, 250 + (a * 20))])
+            self.texts.append(["peace", 16, LIGHTGREY, (270, 250 + (a * 20))])
+            self.texts.append(["trade", 16, LIGHTGREY, (350, 250 + (a * 20))])
+            self.texts.append(["ally", 16, LIGHTGREY, (430, 250 + (a * 20))])
+
+        self.texts.append([self.game.language.DIPLOMACY[1], 16, LIGHTGREY, (10, 85)])
+        self.texts.append([self.game.language.DIPLOMACY[2], 16, LIGHTGREY, (10, 125)])
+        self.texts.append([self.game.language.DIPLOMACY[3], 16, LIGHTGREY, (10, 165)])
+        self.texts.append([self.game.language.DIPLOMACY[4], 16, LIGHTGREY, (10, 205)])
+        self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (250, 85)])
+        self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (250, 125)])
+        self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (250, 165)])
+        self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (250, 205)])
+        self.texts.append([self.game.language.DIPLOMACY[5], 16, LIGHTGREY, (420, 85)])
+        self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (420, 125)])
+        self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (420, 165)])
+        self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (420, 205)])
+
+        
+        #draw window
+
+        self.image = pg.Surface(self.size)
+        pg.draw.rect(self.image, self.textcolor, (0, 0, size[0], size[1]))
+        pg.draw.rect(self.image, self.color, (0+self.border_size, 0+self.border_size, size[0]-self.border_size*2-1, size[1]-self.border_size*2-1))
+        self.image.blit(pg.font.Font(FONT_NAME, self.textsize).render(self.text, False, self.textcolor), self.textpos)
+
+        #draw buttons
+        self.buttons.append(CW_Button(self.game, self, pos=[10,10]))
+        self.buttons.append(Function_Button(self.game, self, pos=(420, 20), size=(60, 30), color=DARKGREY, text=self.game.language.BASIC[4], textsize=20, textcolor=LIGHTGREY, function="prev"))
+        self.buttons.append(Function_Button(self.game, self, pos=(520, 20), size=(60, 30), color=DARKGREY, text=self.game.language.BASIC[5], textsize=20, textcolor=LIGHTGREY, function="next"))
+        self.buttons.append(Function_Button(self.game, self, pos=(320, 115), size=(80, 30), color=DARKGREY, text=self.game.language.BASIC[13], textsize=20, textcolor=LIGHTGREY, function="peace"))
+        self.buttons.append(Function_Button(self.game, self, pos=(320, 155), size=(80, 30), color=DARKGREY, text=self.game.language.BASIC[13], textsize=20, textcolor=LIGHTGREY, function="trade"))
+        self.buttons.append(Function_Button(self.game, self, pos=(320, 195), size=(80, 30), color=DARKGREY, text=self.game.language.BASIC[13], textsize=20, textcolor=LIGHTGREY, function="alliance"))
+        self.buttons.append(Function_Button(self.game, self, pos=(700, 75), size=(120, 30), color=DARKGREY, text=self.game.language.BASIC[14], textsize=20, textcolor=LIGHTGREY, function="give_money"))
+        self.buttons.append(Function_Button(self.game, self, pos=(700, 115), size=(120, 30), color=DARKGREY, text=self.game.language.BASIC[15], textsize=20, textcolor=LIGHTGREY, function="ask_for_money"))
+
+
+        self.rect = self.image.get_rect()
+        self.rectangle = pg.Surface(self.size)
+        self.show_flags_and_names()
+        
+
+    def print_t_f(self, var):
+        if var == True:
+            return self.game.language.BASIC[0]
+        else:
+            return self.game.language.BASIC[1]
+
+    def function_list(self, function=None):
+        if function == "prev":
+            self.prev()
+        elif function == "next":
+            self.next()
+        elif function == "peace":
+            self.peace()
+        elif function == "trade":
+            self.trade()
+        elif function == "alliance":
+            self.alliance()
+        elif function == "ask_for_money":
+            self.ask_for_money()
+        elif function == "give_money":
+            self.give_money()
+        else:
+            pass
+    
+    def update_dip_info(self):
+        self.texts[36][0] = str(self.game.diplomacy.relations[self.status_player][self.game.player.side][1])
+        self.texts[37][0] = self.print_t_f(self.game.diplomacy.relations[self.status_player][self.game.player.side][2])
+        self.texts[38][0] = self.print_t_f(self.game.diplomacy.relations[self.status_player][self.game.player.side][3])
+        self.texts[39][0] = self.print_t_f(self.game.diplomacy.relations[self.status_player][self.game.player.side][4])
+        self.texts[41][0] = self.game.conv_idn_to_data(self.game.diplomacy.relations[self.status_player][self.game.player.side][5])
+        self.texts[42][0] = self.game.conv_idn_to_data(self.game.diplomacy.relations[self.status_player][self.game.player.side][6])
+        self.texts[43][0] = self.game.conv_idn_to_data(self.game.diplomacy.relations[self.status_player][self.game.player.side][7])
+
+    def prev(self):
+        self.check_number_of_players()
+        self.status_player -= 1
+        if self.status_player < 0:
+            self.status_player = self.number_of_players - 1
+        self.texts[1][0] = self.game.players[self.status_player].name
+        self.show_relations()  
+        self.update_dip_info()
+        print(self.game.conv_idn_to_data(self.game.idn))
+
+    def next(self):
+        self.check_number_of_players()
+        self.status_player += 1
+        if self.status_player >= self.number_of_players:
+            self.status_player = 0
+        self.texts[1][0] = self.game.players[self.status_player].name
+        self.show_relations()
+        self.update_dip_info()
+        print(self.game.conv_idn_to_data(self.game.idn))
+
+    def peace(self):
+        if self.status_player != self.game.player.side:
+            if self.game.diplomacy.relations[self.status_player][self.game.player.side][2] == True:
+                self.game.diplomacy.relations[self.status_player][self.game.player.side][2] = False
+                self.game.diplomacy.relations[self.status_player][self.game.player.side][1] -= 50
+                self.game.diplomacy.relations[self.status_player][self.game.player.side][5] = self.game.idn
+                self.game.diplomacy.relations[self.game.player.side][self.status_player][2] = False
+                self.game.diplomacy.relations[self.game.player.side][self.status_player][1] -= 50
+                self.game.diplomacy.relations[self.game.player.side][self.status_player][1] -= self.game.idn
+                self.trade()
+                self.alliance()
+            else:
+                self.game.players[self.status_player].make_diplo_decision('peace', self.game.player.side)
+            self.show_relations()
+            self.update_dip_info()
+
+    def trade(self):
+        if self.status_player != self.game.player.side:
+            if self.game.diplomacy.relations[self.status_player][self.game.player.side][2] == True:
+                if self.game.diplomacy.relations[self.status_player][self.game.player.side][3] == True:
+                    self.game.diplomacy.relations[self.status_player][self.game.player.side][3] = False
+                    self.game.diplomacy.relations[self.status_player][self.game.player.side][1] -= 50
+                    self.game.diplomacy.relations[self.status_player][self.game.player.side][6] = self.game.idn
+                    self.game.diplomacy.relations[self.game.player.side][self.status_player][3] = False
+                    self.game.diplomacy.relations[self.game.player.side][self.status_player][1] -= 50
+                    self.game.diplomacy.relations[self.game.player.side][self.status_player][6] = self.game.idn
+                else:
+                    self.game.players[self.status_player].make_diplo_decision('trade', self.game.player.side)
+                self.show_relations()
+                self.update_dip_info()
+                print("Trade function")
+            else:
+                if self.game.diplomacy.relations[self.status_player][self.game.player.side][3] == True:
+                    self.game.diplomacy.relations[self.status_player][self.game.player.side][3] = False
+                    self.game.diplomacy.relations[self.status_player][self.game.player.side][1] -= 50
+                    self.game.diplomacy.relations[self.status_player][self.game.player.side][6] = self.game.idn
+                    self.game.diplomacy.relations[self.game.player.side][self.status_player][3] = False
+                    self.game.diplomacy.relations[self.game.player.side][self.status_player][1] -= 50
+                    self.game.diplomacy.relations[self.game.player.side][self.status_player][6] = self.game.idn
+
+    def alliance(self):
+        if self.status_player != self.game.player.side:
+            if self.game.diplomacy.relations[self.status_player][self.game.player.side][2] == True:
+                if self.game.diplomacy.relations[self.status_player][self.game.player.side][4] == True:
+                    self.game.diplomacy.relations[self.status_player][self.game.player.side][4] = False
+                    self.game.diplomacy.relations[self.status_player][self.game.player.side][1] -= 50
+                    self.game.diplomacy.relations[self.status_player][self.game.player.side][7] = self.game.idn
+                    self.game.diplomacy.relations[self.game.player.side][self.status_player][4] = False
+                    self.game.diplomacy.relations[self.game.player.side][self.status_player][1] -= 50
+                    self.game.diplomacy.relations[self.game.player.side][self.status_player][7] = self.game.idn
+                else:
+                    self.game.players[self.status_player].make_diplo_decision('alliance', self.game.player.side)
+                self.show_relations()
+                self.update_dip_info()
+                print("Alliance function")
+            else:
+                if self.game.diplomacy.relations[self.status_player][self.game.player.side][4] == True:
+                    self.game.diplomacy.relations[self.status_player][self.game.player.side][4] = False
+                    self.game.diplomacy.relations[self.status_player][self.game.player.side][1] -= 50
+                    self.game.diplomacy.relations[self.status_player][self.game.player.side][7] = self.game.idn
+                    self.game.diplomacy.relations[self.game.player.side][self.status_player][4] = False
+                    self.game.diplomacy.relations[self.game.player.side][self.status_player][1] -= 50
+                    self.game.diplomacy.relations[self.game.player.side][self.status_player][7] = self.game.idn
+
+    def ask_for_money(self):
+        self.game.players[self.status_player].make_diplo_decision('ask_for_money', self.game.player.side)
+        self.show_relations()
+        self.update_dip_info()
+
+    def give_money(self):
+        if self.game.players[self.game.player.side].global_money > 100:
+            self.game.players[self.game.player.side].global_money -= 100
+            self.game.players[self.status_player].global_money += 100
+            self.game.diplomacy.relations[self.status_player][self.game.player.side][1] += 10
+            self.show_relations()
+            self.update_dip_info()
+
+    def show_flags_and_names(self):
+        self.check_number_of_players()
+        for a in range(self.number_of_players):
+            self.image.blit(self.game.players[a].image, (20, 240 + (a * 20)))
+            #self.texts.append([self.game.players[a].name, 16, LIGHTGREY, (50, 68 + (a * 20))])
+
+    def show_relations(self):
+        self.check_number_of_players()
+        b = 0
+        print("HERE")
+        print(len(self.texts))
+        print(self.number_of_players)
+        for a in range(self.number_of_players):
+            if self.status_player != a:
+                self.texts[2+b][0] = self.game.players[a].name
+                self.texts[3+b][0] = str(self.game.diplomacy.relations[self.status_player][a][1])
+                self.texts[4+b][0] = self.print_t_f(self.game.diplomacy.relations[self.status_player][a][2])
+                self.texts[5+b][0] = self.print_t_f(self.game.diplomacy.relations[self.status_player][a][3])
+                self.texts[6+b][0] = self.print_t_f(self.game.diplomacy.relations[self.status_player][a][4])
+            else:
+                self.texts[2+b][0] = self.game.language.BASIC[11]
+                self.texts[3+b][0] = self.game.language.BASIC[12]
+                self.texts[4+b][0] = self.game.language.BASIC[12]
+                self.texts[5+b][0] = self.game.language.BASIC[12]
+                self.texts[6+b][0] = self.game.language.BASIC[12]
+            b += 5
+
+
+    def check_number_of_players(self):
+        self.number_of_players = len(self.game.players)
+
+    def show(self):
+        self.show_relations()
+        self.update_dip_info()
         self.visible = True
         self.game.window_display = True
 
