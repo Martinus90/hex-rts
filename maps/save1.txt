@@ -9,9 +9,13 @@ So "," give a split to dictionary "/" give dict in dict "&" give dict in dict in
 
 
 SCENARIO_INFO
-first line of scenario info,
-second
-third and others
+After a period of political and economic crisis in the 
+1970s, constituent republics of the Socialist Federal 
+Republic of Novoslavia split apart, but the unresolved 
+issues caused bitter inter-ethnic Novoslav wars. 
+The wars primarily affected Sovenia and Nebohray, 
+neighbouring parts of Grenals and, some years later,
+Kosovo.
 END
 
 

@@ -164,7 +164,7 @@
     <property name="4_8_rocket_truck" type="int" value="0"/>
    </properties>
   </object>
-  <object id="23" name="unit" x="658.595" y="788.974" width="23.8659" height="23.8659">
+  <object id="23" name="unit" x="628.595" y="738.974" width="23.8659" height="23.8659">
    <properties>
     <property name="1_1_nationality" type="int" value="1"/>
     <property name="1_1_owner" type="int" value="2"/>
