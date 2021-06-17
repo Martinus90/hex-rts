@@ -7,7 +7,18 @@ from queue import PriorityQueue
 
 
 class Player(pg.sprite.Sprite):
+    """
+    Player class. Contain his side (position of player in players list in game)
+    """
     def __init__(self, game, x, y, side):
+        """
+        Initalise of player
+
+        :param game: refer to game main object
+        :param x: x position of camera
+        :param y: y position of camera
+        :param side: position of player in game contender list
+        """
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -19,8 +30,13 @@ class Player(pg.sprite.Sprite):
         self.side = side
 
     def move(self, dx=0, dy=0):
-        self.x += dx  # * TILESIZE[0]
-        self.y += dy  # * TILESIZE[1]
+        """
+        Camera move function
+        :param dx: move in x / horizontally
+        :param dy: move in y / vertically
+        """
+        self.x += dx # * TILESIZE[0]
+        self.y += dy # * TILESIZE[1]
 
     def update(self):
         # self.get_keys()
@@ -32,7 +48,20 @@ class Player(pg.sprite.Sprite):
 
 
 class Grid(pg.sprite.Sprite):
+    """
+    Basic tile in game
+    """
     def __init__(self, game, x, y, terrain, idnr, gid, owner=None):
+        """
+        Initialising of new tile
+        :param game: refer to game main object
+        :param x: x coordinate of tile
+        :param y: y coordinate of tile
+        :param terrain: terrain typ in tile
+        :param idnr: identification number of tile
+        :param gid: graphic id
+        :param owner: owner of tile
+        """
         self.groups = game.grids
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -55,9 +84,10 @@ class Grid(pg.sprite.Sprite):
         self.q, self.r, self.s = self.hex
 
     def get_neighbors(self, map):
-        # print("Hex")
-        # print(self.id)
-        # print("neighbors:")
+        """
+        Function used after loading full map, and all tiles.
+        Use to put all tile neighbor in tile neighbors list
+        """
         for i in range(6):
             if hex_neighbor(self.hex, i) in map.grid_list:
                 new_neighbor = hex_neighbor(self.hex, i)
@@ -67,20 +97,39 @@ class Grid(pg.sprite.Sprite):
                 pass
 
     def get_near_resources(self):
+        """
+        Function used to get info of resources in nearby tiles
+        """
         self.near_resources = []
         for n in self.neighbors:
             if n.resource != None:
                 self.near_resources.append(n.resource)
 
     def get_hex(self):
+        """
+        Function return Hex of grid/tile
+        """
         return self.hex
 
     def get_pos(self):
+        """
+        Function return X and Y position of grid/tile
+        """
         return self.x, self.y
 
 
 class Resource(pg.sprite.Sprite):
+    """
+    Base class, used to make other resources
+    """
     def __init__(self, game, x, y, value):
+        """
+        Init
+        :param game: refer to game main object
+        :param x: x pos
+        :param y: y pos
+        :param value: quantity of resource
+        """
         self.groups = game.all_sprites, game.resources
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -104,15 +153,27 @@ class Resource(pg.sprite.Sprite):
         self.rect.y = self.y * TILESIZE[1]
 
     def do(self):
+        """
+        Periodic function, used in lower "unit" of time
+        """
         pass
 
     def daily(self):
+        """
+        Periodic function, used dayli
+        """
         pass
 
     def weekly(self):
+        """
+        Periodic function, used weekly
+        """
         pass
 
     def seasonly(self):
+        """
+        Periodic function, used seasonly
+        """
         pass
 
 
@@ -477,6 +538,9 @@ class Water(Resource):
 
 
 class CONSTRUCTION(pg.sprite.Sprite):
+    """
+
+    """
     def __init__(self, game, x, y, what, owner, wood=0, cement=0, steel=0, progress=0):
         self.groups = game.all_sprites, game.buildings  # , game.grids[]
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -501,6 +565,7 @@ class CONSTRUCTION(pg.sprite.Sprite):
         self.orders = []
         self.window = None
 
+        self.upkeep = 10
         self.side = self.owner.side
         self.grid = self.game.map.grids[
             self.col + self.row * self.game.map.tmxdata.height
@@ -587,7 +652,7 @@ class CONSTRUCTION(pg.sprite.Sprite):
             self.game.build(self)
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def seasonly(self):
         pass
@@ -659,6 +724,7 @@ class SETTLEMENT(pg.sprite.Sprite):
         self.storage = {}
         self.window = None
 
+        self.upkeep = 10
         self.side = self.owner.side
         self.grid = self.game.map.grids[
             self.col + self.row * self.game.map.tmxdata.height
@@ -677,6 +743,8 @@ class SETTLEMENT(pg.sprite.Sprite):
         pass
 
     def weekly(self):
+        self.owner.money -= self.upkeep
+
         self.owner.money += self.population * self.owner.tax
 
     def seasonly(self):
@@ -722,6 +790,7 @@ class VILLAGE(SETTLEMENT):
         self.grid_with_res = []
         self.sum_res = []
 
+        self.upkeep = 10
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -876,6 +945,8 @@ class VILLAGE(SETTLEMENT):
                 self.prosperity -= 1
 
     def weekly(self):
+        self.owner.money -= self.upkeep
+
         self.owner.money += self.population * 1
         self.population += int(self.population * (self.prosperity - 1) / 100)
         if self.population > 100:
@@ -957,6 +1028,7 @@ class CITY(SETTLEMENT):
         self.grid_with_res = []
         self.sum_res = []
 
+        self.upkeep = 20
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -1034,6 +1106,8 @@ class CITY(SETTLEMENT):
                 self.prosperity -= 1
 
     def weekly(self):
+        self.owner.money -= self.upkeep
+
         self.owner.money += self.population * self.owner.tax
 
         self.population += int(
@@ -1105,6 +1179,7 @@ class BUILDING(pg.sprite.Sprite):
         self.storage = {}
         self.orders = []
 
+        self.upkeep = 25
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -1169,7 +1244,7 @@ class BUILDING(pg.sprite.Sprite):
         pass
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def seasonly(self):
         pass
@@ -1257,6 +1332,7 @@ class HARBOR(BUILDING):
             c += 1
             # print(b)
 
+        self.upkeep = 25
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -1323,7 +1399,7 @@ class HARBOR(BUILDING):
         pass
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def update(self):
         pass
@@ -1394,6 +1470,7 @@ class AIRPORT(BUILDING):
             c += 1
             # print(b)
 
+        self.upkeep = 100
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -1460,7 +1537,7 @@ class AIRPORT(BUILDING):
         pass
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def update(self):
         pass
@@ -1531,6 +1608,7 @@ class WAREHOUSE(BUILDING):
             c += 1
             # print(b)
 
+        self.upkeep = 25
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -1597,7 +1675,7 @@ class WAREHOUSE(BUILDING):
         pass
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def update(self):
         pass
@@ -1622,6 +1700,7 @@ class BARRACK(BUILDING):
         self.rect = self.image.get_rect()
         self.storage = {"cadets": cadets, "graduates": graduates}
 
+        self.upkeep = 25
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -1718,7 +1797,7 @@ class BARRACK(BUILDING):
         pass
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def update(self):
         pass
@@ -1770,6 +1849,7 @@ class MINE(BUILDING):
         self.grid_with_res = []
         self.sum_res = 0
 
+        self.upkeep = 25
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -1987,7 +2067,7 @@ class MINE(BUILDING):
         pass
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def update(self):
         pass
@@ -2019,6 +2099,7 @@ class SMELTER(BUILDING):
             "aluminum": aluminum,
         }
 
+        self.upkeep = 25
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -2165,7 +2246,7 @@ class SMELTER(BUILDING):
         pass
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def update(self):
         pass
@@ -2191,6 +2272,7 @@ class OIL_WELL(BUILDING):
         self.grid_with_res = []
         self.sum_res = 0
 
+        self.upkeep = 25
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -2319,10 +2401,9 @@ class OIL_WELL(BUILDING):
 
     def daily(self):
         pass
-        # (round(self.men * 3 / 20, 2))
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def update(self):
         self.description = [
@@ -2367,6 +2448,7 @@ class RAFINERY(BUILDING):
             "coal": coal,
         }
 
+        self.upkeep = 25
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -2513,7 +2595,7 @@ class RAFINERY(BUILDING):
         pass
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def update(self):
         pass
@@ -2538,6 +2620,7 @@ class POWER_PLANT(BUILDING):
         self.storage = {"oil": oil, "coal": coal}
         self.orders = []
 
+        self.upkeep = 50
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -2657,7 +2740,7 @@ class POWER_PLANT(BUILDING):
         pass
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def update(self):
         pass
@@ -2709,6 +2792,7 @@ class LIGHT_INDUSTRY_PLANT(BUILDING):
             "uniforms": uniforms,
         }
 
+        self.upkeep = 25
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -2879,7 +2963,7 @@ class LIGHT_INDUSTRY_PLANT(BUILDING):
         pass
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def update(self):
         pass
@@ -2924,6 +3008,7 @@ class HEAVY_INDUSTRY_PLANT(BUILDING):
             "rifle": rifle,
         }
 
+        self.upkeep = 50
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -3119,7 +3204,7 @@ class HEAVY_INDUSTRY_PLANT(BUILDING):
         pass
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def update(self):
         pass
@@ -3167,6 +3252,7 @@ class CHEMICAL_PLANT(BUILDING):
             "fertilizer": fertilizer,
         }
 
+        self.upkeep = 50
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -3334,7 +3420,7 @@ class CHEMICAL_PLANT(BUILDING):
         pass
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def update(self):
         pass
@@ -3379,6 +3465,7 @@ class HIGH_TECH_PLANT(BUILDING):
             "electronics": electronics,
         }
 
+        self.upkeep = 100
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -3543,7 +3630,7 @@ class HIGH_TECH_PLANT(BUILDING):
         pass
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def update(self):
         pass
@@ -3590,6 +3677,7 @@ class MECHANICAL_PLANT(BUILDING):
             "apc": apc,
         }
 
+        self.upkeep = 50
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -3774,7 +3862,7 @@ class MECHANICAL_PLANT(BUILDING):
         pass
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def update(self):
         pass
@@ -3821,6 +3909,7 @@ class ARMAMENT_PLANT(BUILDING):
             "tank": tank,
         }
 
+        self.upkeep = 50
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -4004,7 +4093,7 @@ class ARMAMENT_PLANT(BUILDING):
         pass
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def update(self):
         pass
@@ -4051,6 +4140,7 @@ class AVIATION_PLANT(BUILDING):
             "aircraft": aircraft,
         }
 
+        self.upkeep = 50
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -4240,7 +4330,7 @@ class AVIATION_PLANT(BUILDING):
         pass
 
     def weekly(self):
-        pass
+        self.owner.money -= self.upkeep
 
     def update(self):
         pass
@@ -4316,6 +4406,7 @@ class Unit(pg.sprite.Sprite):
         self.tiredness = 0
         self.tiredness_max = 20
         self.fuel_usage = 0
+        self.weekly_cost = 0
         self.task = self.game.language.COMMANDS[0]
 
         self.men = men
@@ -4869,6 +4960,7 @@ class Unit(pg.sprite.Sprite):
                                 self.rocket_truck += e
 
                     self.fuel_usage_calc()
+                    self.calculate_cost()
 
     def refill_cr(self):
         if self.game.map.grids[self.hexid].building != None:
@@ -4895,7 +4987,7 @@ class Unit(pg.sprite.Sprite):
                             if self.experience >= 1:
                                 self.experience -= 1
                                 self.experience = round(self.experience, 2)
-
+                    self.calculate_cost()
                     print(".....")
                     print(a.population)
                     print(self.men)
@@ -4936,15 +5028,21 @@ class Unit(pg.sprite.Sprite):
         pass
 
     def weekly(self):
+        self.calculate_cost()
+        self.owner.money -= self.weekly_cost
+
+    def calculate_cost(self):
+        self.weekly_cost = 0
         if self.state["mobilized"] == True:
-            self.owner.money -= self.men
+            self.weekly_cost += self.men
         else:
-            self.owner.money -= int(self.men / 2)
-        self.owner.money -= self.apc * 10
-        self.owner.money -= self.tank * 20
-        self.owner.money -= self.heli * 50
-        self.owner.money -= self.aircraft * 100
-        self.owner.money -= self.rocket_truck * 10
+            self.weekly_cost += int(self.men / 2)
+        self.weekly_cost += self.truck * UPKEEP_TRUCK
+        self.weekly_cost += self.apc * UPKEEP_APC
+        self.weekly_cost += self.tank * UPKEEP_TANK
+        self.weekly_cost += self.heli * UPKEEP_HELI
+        self.weekly_cost += self.aircraft * UPKEEP_AIRCRAFT
+        self.weekly_cost += self.rocket_truck * UPKEEP_ROCKET_TRUCK
 
     def update(self):
         self.hexid = hex_id(OFFSET, self.hex, self.game.map.tmxdata.width)

@@ -8,6 +8,9 @@ import math
 
 
 class Map:
+    """
+    IDK
+    """
     def __init__(self, filename):
         self.data = []
         with open(filename, "rt") as f:
@@ -21,7 +24,16 @@ class Map:
 
 
 class TiledMap:
+    """
+    Map class, loading map: -tiles, -units, -resources, -buildings
+    """
     def __init__(self, game, filename):
+        """
+        Construct of map
+
+        :param game: refer to main game
+        :param filename: map name
+        """
         tm = load_pygame(
             filename, pixelalpha=True, load_all_tiles=True, allow_duplicate_names=True
         )
@@ -47,6 +59,9 @@ class TiledMap:
         self.oil_filds = []
 
     def render(self, surface):
+        """
+        Load and render map graphic, load data from map file (units, res, buildings)
+        """
         ti = self.tmxdata.get_tile_image_by_gid
         mg = self.tmxdata.map_gid
         re = self.tmxdata.register_gid
@@ -551,6 +566,12 @@ class TiledMap:
         # self.grid_list = set(self.grid_list)
 
     def new_owner(self, owner, coord):
+        """
+        Function uset to generate new tiles ownership
+
+        :param owner: new owner
+        :param coord: coordinate of tile. They are convertet do tile id
+        """
         self.surface2.blit(
             self.game.players[owner].color,
             (
@@ -561,6 +582,9 @@ class TiledMap:
         )
 
     def get_terrain(self, a):
+        """
+        Function return corect tile typ name
+        """
         b = ""
         if a in TERRAIN_GRASS:
             b = self.game.language.TERRAIN[0]
@@ -579,6 +603,9 @@ class TiledMap:
         return b
 
     def make_map(self):
+        """
+        Function used to generate tile map surface
+        """
         temp_surface = pg.Surface((self.width, self.height))
         self.render(temp_surface)
         return temp_surface
@@ -591,6 +618,9 @@ class TiledMap:
 
 
 class Camera:
+    """
+    Object contain position of camera. This position is used later to display map
+    """
     def __init__(self, width, height):
         self.camera = pg.Rect(0, 0, width, height)
         self.width = width

@@ -146,6 +146,20 @@ class Politics(pg.sprite.Sprite):
                 if r[3] == True:
                     gr_change += 1
             self.game.players[d].reputation_change(gr_change)
+
+        for p in self.game.players:
+            pass
+
+        for b in self.game.buildings:
+            pass
+        #tax_from_pop=0,
+        #export=0,
+        #import=0,
+        #upkeep_of_buildings=0,
+        #salary=0,
+        #weekly_change=0
+
+
         self.update_window_value()
 
                 
@@ -400,7 +414,7 @@ class Contender(pg.sprite.Sprite):
         reputation=0,
         stability=0,
         tax=3,
-        reserve=0
+        reserve=0,
     ):
         self.game = game
         self.alive = True
@@ -424,6 +438,12 @@ class Contender(pg.sprite.Sprite):
         self.population = 0
         self.citizens = 0
         self.soldiers = 0
+        self.tax_from_pop = 0
+        self.export_goods = 0
+        self.import_goods = 0
+        self.upkeep_of_buildings = 0
+        self.salary = 0
+        self.weekly_change = 0
 
         self.image = pg.Surface((64, 64))
         self.image.fill(VIOLET)
@@ -455,6 +475,11 @@ class Contender(pg.sprite.Sprite):
         self.population = 0
         self.citizens = 0
         self.soldiers = 0
+        self.tax_from_pop = 0
+        self.upkeep_of_buildings = 0
+        self.salary = 0
+        self.weekly_change = 0
+
         for b in self.game.buildings:
             if b.owner.side == self.side:
                 self.structures += 1
@@ -463,14 +488,26 @@ class Contender(pg.sprite.Sprite):
                     self.population += b.population
                     if b.nationality == self.nation:
                         self.citizens += b.population
+                    self.tax_from_pop += int(b.population * b.owner.tax)
                 elif b.name == self.game.language.BUILDINGS1[1]:
                     self.villages += 1
                     self.population += b.population
                     if b.nationality == self.nation:
                         self.citizens += b.population
+                    self.tax_from_pop += int(b.population * b.owner.tax)
+
+                self.upkeep_of_buildings += b.upkeep
         for u in self.game.units:
+            u.calculate_cost()
             if u.owner.side == self.side:
                 self.soldiers += u.men
+                self.salary += u.weekly_cost
+
+        self.weekly_change += self.tax_from_pop
+        self.weekly_change += self.export_goods
+        self.weekly_change -= self.import_goods
+        self.weekly_change -= self.upkeep_of_buildings
+        self.weekly_change -= self.salary
     
     def reputation_change(self, change):
         self.reputation += change
@@ -546,7 +583,7 @@ class Contender(pg.sprite.Sprite):
                     ] -= GIVE_MONEY_DEC_REP
 
     def daily(self):
-        pass
+        self.recalculate_all()
 
     def hourly(self):
         self.electricity = False
@@ -555,6 +592,11 @@ class Contender(pg.sprite.Sprite):
                 if a.name == self.game.language.BUILDINGS1[11]:
                     if a.working == True:
                         self.electricity = True
+
+    def weekly(self):
+        self.export_goods=0
+        self.import_goods=0
+        self.recalculate_all()
 
     def update(self):
         pass
@@ -1451,6 +1493,19 @@ class Politics_Window(Window):
         self.texts.append([self.game.language.POLITICS[11], 16, LIGHTGREY, (10, 245)])
         self.texts.append([str(self.game.players[self.game.player.side].reserve), 16, LIGHTGREY, (190, 245)])
 
+        self.texts.append([self.game.language.POLITICS[13], 16, LIGHTGREY, (10, 285)])
+        self.texts.append([str(self.game.players[self.game.player.side].tax_from_pop), 16, LIGHTGREY, (190, 285)])
+        self.texts.append([self.game.language.POLITICS[14], 16, LIGHTGREY, (10, 305)])
+        self.texts.append([str(self.game.players[self.game.player.side].export_goods), 16, LIGHTGREY, (190, 305)])
+        self.texts.append([self.game.language.POLITICS[15], 16, LIGHTGREY, (10, 325)])
+        self.texts.append([str(self.game.players[self.game.player.side].import_goods), 16, LIGHTGREY, (190, 325)])
+        self.texts.append([self.game.language.POLITICS[16], 16, LIGHTGREY, (10, 345)])
+        self.texts.append([str(self.game.players[self.game.player.side].upkeep_of_buildings), 16, LIGHTGREY, (190, 345)])
+        self.texts.append([self.game.language.POLITICS[17], 16, LIGHTGREY, (10, 365)])
+        self.texts.append([str(self.game.players[self.game.player.side].salary), 16, LIGHTGREY, (190, 365)])
+        self.texts.append([self.game.language.POLITICS[18], 16, LIGHTGREY, (10, 385)])
+        self.texts.append([str(self.game.players[self.game.player.side].weekly_change), 16, LIGHTGREY, (190, 385)])
+
 
         # draw buttons
         self.buttons.append(CW_Button(self.game, self, pos=[10, 10]))
@@ -1536,6 +1591,14 @@ class Politics_Window(Window):
         self.texts[17][0] = str(self.game.players[self.game.player.side].soldiers)
         self.texts[19][0] = str(self.game.players[self.game.player.side].reserve)
 
+        self.texts[21][0] = str(self.game.players[self.game.player.side].tax_from_pop)
+        self.texts[23][0] = str(self.game.players[self.game.player.side].export_goods)
+        self.texts[25][0] = str(self.game.players[self.game.player.side].import_goods)
+        self.texts[27][0] = str(self.game.players[self.game.player.side].upkeep_of_buildings)
+        self.texts[29][0] = str(self.game.players[self.game.player.side].salary)
+        self.texts[31][0] = str(self.game.players[self.game.player.side].weekly_change)
+
+        
     def show(self):
         self.visible = True
         self.game.window_display = True
@@ -1794,6 +1857,7 @@ class Diplomacy_Window(Window):
                 self.game.diplomacy.relations[self.game.player.side][
                     self.status_player
                 ][1] -= self.game.idn
+                self.game.players[self.game.player.side].reputation -= LOSE_REP_WAR
                 self.trade()
                 self.alliance()
             else:
@@ -1835,6 +1899,7 @@ class Diplomacy_Window(Window):
                     self.game.diplomacy.relations[self.game.player.side][
                         self.status_player
                     ][6] = self.game.idn
+                    self.game.players[self.game.player.side].reputation -= LOSE_REP_TRADE
                 else:
                     self.game.players[self.status_player].make_diplo_decision(
                         "trade", self.game.player.side
@@ -1866,6 +1931,7 @@ class Diplomacy_Window(Window):
                     self.game.diplomacy.relations[self.game.player.side][
                         self.status_player
                     ][6] = self.game.idn
+                    self.game.players[self.game.player.side].reputation -= LOSE_REP_TRADE
 
     def alliance(self):
         if self.status_player != self.game.player.side:
@@ -1873,7 +1939,7 @@ class Diplomacy_Window(Window):
                 self.game.diplomacy.relations[self.status_player][
                     self.game.player.side
                 ][2]
-                == True
+                == True #if countries are in peace
             ):
                 if (
                     self.game.diplomacy.relations[self.status_player][
@@ -1899,6 +1965,7 @@ class Diplomacy_Window(Window):
                     self.game.diplomacy.relations[self.game.player.side][
                         self.status_player
                     ][7] = self.game.idn
+                    self.game.players[self.game.player.side].reputation -= LOSE_REP_ALLY
                 else:
                     self.game.players[self.status_player].make_diplo_decision(
                         "alliance", self.game.player.side
@@ -1930,6 +1997,7 @@ class Diplomacy_Window(Window):
                     self.game.diplomacy.relations[self.game.player.side][
                         self.status_player
                     ][7] = self.game.idn
+                    self.game.players[self.game.player.side].reputation -= LOSE_REP_ALLY
 
     def ask_for_money(self):
         self.game.players[self.status_player].make_diplo_decision(
@@ -2601,6 +2669,7 @@ class Unit_Window(pg.sprite.Sprite):
         pass
 
     def show(self):
+        self.thing.calculate_cost()
         self.visible = True
         self.game.window_display = True
 

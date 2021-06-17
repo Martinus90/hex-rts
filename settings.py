@@ -1,4 +1,7 @@
-def ctts(tuple):  # changing color in tuple to color in # + 6 digits
+def ctts(tuple):
+    """
+    Changing color in tuple to color in # + 6 digits
+    """
     global a
     a = "#"
     for b in range(len(tuple)):
@@ -9,7 +12,10 @@ def ctts(tuple):  # changing color in tuple to color in # + 6 digits
     return a
 
 
-def mergeDict(dict1, dict2):  # adding two dictionary
+def mergeDict(dict1, dict2):
+    """
+    Adding two dictionary
+    """
     dict3 = {**dict1, **dict2}
     for key, value in dict3.items():
         if key in dict1 and key in dict2:
@@ -489,6 +495,17 @@ GIVE_MONEY_DEC_REP = 30
 CONSCRIPT_CITY_POP = 10
 CONSCRIPT_VILL_POP = 5
 CONSCRIPT_STAB_RED = 1
+
+LOSE_REP_WAR = 10
+LOSE_REP_TRADE = 5
+LOSE_REP_ALLY = 10
+
+UPKEEP_TRUCK = 10
+UPKEEP_APC = 20
+UPKEEP_TANK = 50
+UPKEEP_HELI = 200
+UPKEEP_AIRCRAFT = 500
+UPKEEP_ROCKET_TRUCK = 10
 
 # Technologies Cost
 # empty for now

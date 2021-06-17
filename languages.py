@@ -176,6 +176,7 @@ class Language:
                 "Patroling",
                 "Engage",
                 "Conquest",
+                "Upkeep cost: "
             ]
             self.GUI = [
                 "Nearby resources: ",
@@ -230,7 +231,14 @@ class Language:
                 "Decrease",
                 "Increase",
                 "Reserve",
-                "Conscription"
+                "Conscription",
+                "Taxes from pop.: ",
+                "Export:",
+                "Import: ",
+                "Upkeep of buildings: ",
+                "Salary: ",
+                "Weekly change: ",
+
             ]
 
         elif LANGUAGE == "PL":
@@ -405,6 +413,7 @@ class Language:
                 "Patroluj",
                 "Bojowy",
                 "Podbuj",
+                "Koszt utrzymania: "
             ]
             self.GUI = [
                 "Pobliskie zasoby: ",
@@ -446,19 +455,27 @@ class Language:
                 "Ostatnia zmiana: ",
             ]
             self.POLITICS = [
-                "Poziom opodatkowania:",
-                "Stabilitność:",
-                "Reputacja globalna:",
+                "Poziom opodatkowania: ",
+                "Stabilitność: ",
+                "Reputacja globalna: ",
                 "Liczba miast:",
                 "Liczba wiosek",
-                "Liczba struktur:",
-                "Populacja:",
-                "Obywatele:",
-                "Wojsko:",
+                "Liczba struktur: ",
+                "Populacja: ",
+                "Obywatele: ",
+                "Wojsko: ",
                 "Zmniejsz",
                 "Zwiększ",
                 "Rezerwa",
-                "Pobór"
+                "Pobór",
+                "Podatki od mieszkańców: ",
+                "Eksport: ",
+                "Import: ",
+                "Utrzymanie budynków: ",
+                "Zołd: ",
+                "Tygodniowa zmiana: ",
+                
+
             ]
 
         self.PERSON_NAME1 = [

@@ -14,7 +14,28 @@ from languages import *
 
 
 class Game:
+    """
+    Main game class
+    """
     def __init__(self, player=1, map_name="", save_name=""):
+        """
+        Construct of new game
+
+        :param screen: Main game screen, take value WIDTH and HEIGHT from settings.py
+        :param clock: Initiation in-game clock
+        :param map_name: Map name
+        :param language: Initialization of game language via Language.py file
+        :param variables: Setting all starting variables
+        :param pause: In-game pause
+        :param all "-ing": Variables containing current selected object
+        :param window_display: If true then selecting is unavailable
+        :param drag*: Variable used to move windows
+        :param territory_visible: Display "owner" layer 
+        :param nations: list with all nations
+        :param players: list with all contenders
+        :param types: list with all units types
+        :param new_info_text: list with new info text to display
+        """
         inspect.isclass(NB_Button)
         pg.init()
         pg.font.init()
@@ -55,6 +76,18 @@ class Game:
         self.new_info_text = []
 
     def load_data(self):
+        """
+        Loading data function 
+
+        :param game_folder: main folder path
+        :param img_folder: image folder path
+        :param gui_folder: graphical user interface folder path
+        :param map_folder: map folder path
+        :param myfont: contain game font
+        :param layout: contain layout of hexagonal grid select position
+        :param other var: loading all data
+        :param map: loading game map
+        """
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder, "images")
         gui_folder = path.join(game_folder, "gui")
@@ -166,6 +199,12 @@ class Game:
         # self.side_2 = "Enemy"
 
     def load_save(self, save_file):
+        """
+        Loading data from save.txt
+
+        :param save_file: name of file
+        :param saved_data: containg all lines of save_file
+        """
         self.save_file = save_file
         self.saved_data = []
         with open(self.save_file, "r") as reader:
@@ -180,7 +219,21 @@ class Game:
                     self.saved_data.append(a)
 
     def new(self):
-        # initialize all variables and do all the setup for a new game
+        """
+        Creating new game
+
+        :param all_sprites: this and other; used to initialize sprites groups
+        :param texts: contain all menu text variables
+        :param nations: adding all nations / class from loading.py
+        :param players: adding all players / class Contender from loading.py
+        :param diplomacy: adding game diplomacy / class from loading.py
+        :param politics: adding game politics / class from loading.py
+        :param event_list: adding game events / class from loading.py
+        :param trade: adding game trade / class from loading.py
+        
+        Initialize few loops to convert "list" to 
+        "object" like resource, building, unit
+        """
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         self.grids = pg.sprite.Group()
@@ -227,8 +280,8 @@ class Game:
                 player=True,
                 side=1,
                 exc_rt=10.0,
-                money=10000,
-                global_money=10000,
+                money=0,
+                global_money=0,
                 reputation=0,
                 stability=2,
                 tax=3,
@@ -329,7 +382,6 @@ class Game:
             ],
         )
         self.event_list.add_event([7, "event_name", "Event 3"])
-        #self.event_list.add_event([10, "new_decision", ["Kasa","Stab","Kurs"], [["add_money_to_player", self.player.side, 300], ["gain_stability", self.player.side, 1], ["strengthen_the_currency", self.player.side, 0.8]],["Decyzja pozwalająca dodac jakis bonus:","Kasa, doda Ci $300", "Stab, wziekszy stabilnosc", "Kurs, polepszy kurs wymiany"]])
         self.event_list.add_event(
             [
                 12,
@@ -362,12 +414,7 @@ class Game:
         )
 
         self.trade = Trade(self)
-        # self.players[1].relations[2][2] = False
-        # self.players[2].relations[1][2] = False
-        self.diplomacy.relations[1][2][2] = False
-        self.diplomacy.relations[2][1][2] = False
-        self.diplomacy.relations[1][0][4] = True
-        self.diplomacy.relations[0][1][4] = True
+
 
         # unit types
         # infantry
@@ -768,7 +815,25 @@ class Game:
 
             if SCENARIO_DIPLOMACY == True:
                 if line != "END":
-                    print(line)
+                    # print(line)
+                    n_line = list(line.split(","))
+                    for n in n_line:
+                        if "/" in n:
+                            nn_line.append(list(n.split("/")))
+                        else:
+                            nn_line.append(n)
+                    for nn in nn_line:
+                        # print(nn)
+                        if nn[0] == "*":
+                            nnn_line.append(int(nn[1:]))
+                        else:
+                            if nn == "False":
+                                nnn_line.append(False)
+                            elif nn == "True":
+                                nnn_line.append(True)
+                            else:
+                                nnn_line.append(nn)
+                    self.diplomacy.relations[nnn_line[0]][nnn_line[1]][nnn_line[2]] = nnn_line[3]
                 if line == "END":
                     print("")
                     SCENARIO_DIPLOMACY = False
@@ -968,20 +1033,7 @@ class Game:
             elif b[2] == "VILLAGE":
                 VILLAGE(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9])
             elif b[2] == "CITY":
-                CITY(
-                    self,
-                    b[0],
-                    b[1],
-                    b[3],
-                    b[4],
-                    b[5],
-                    b[6],
-                    b[7],
-                    b[8],
-                    b[9],
-                    b[10],
-                    b[11],
-                )
+                CITY(self,b[0],b[1],b[3],b[4],b[5],b[6],b[7],b[8],b[9],b[10],b[11])
             elif b[2] == "HARBOR":
                 HARBOR(self, b[0], b[1], b[3], b[4], b[5])
             elif b[2] == "AIRPORT":
@@ -990,7 +1042,6 @@ class Game:
                 WAREHOUSE(self, b[0], b[1], b[3], b[4], b[5])
             elif b[2] == "BARRACK":
                 BARRACK(self, b[0], b[1], b[3], b[4], b[5])
-
             elif b[2] == "MINE":
                 MINE(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9])
             elif b[2] == "SMELTER":
@@ -1002,45 +1053,15 @@ class Game:
             elif b[2] == "POWER_PLANT":
                 POWER_PLANT(self, b[0], b[1], b[3], b[4], b[5])
             elif b[2] == "LIGHT_INDUSTRY_PLANT":
-                LIGHT_INDUSTRY_PLANT(
-                    self,
-                    b[0],
-                    b[1],
-                    b[3],
-                    b[4],
-                    b[5],
-                    b[6],
-                    b[7],
-                    b[8],
-                    b[9],
-                    b[10],
-                    b[11],
-                )
+                LIGHT_INDUSTRY_PLANT(self,b[0],b[1],b[3],b[4],b[5],b[6],b[7],b[8],b[9],b[10],b[11])
             elif b[2] == "HEAVY_INDUSTRY_PLANT":
-                HEAVY_INDUSTRY_PLANT(
-                    self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10]
-                )
+                HEAVY_INDUSTRY_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10])
             elif b[2] == "CHEMICAL_PLANT":
                 CHEMICAL_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
             elif b[2] == "HIGH_TECH_PLANT":
-                HIGH_TECH_PLANT(
-                    self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10]
-                )
+                HIGH_TECH_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10])
             elif b[2] == "MECHANICAL_PLANT":
-                MECHANICAL_PLANT(
-                    self,
-                    b[0],
-                    b[1],
-                    b[3],
-                    b[4],
-                    b[5],
-                    b[6],
-                    b[7],
-                    b[8],
-                    b[9],
-                    b[10],
-                    b[11],
-                )
+                MECHANICAL_PLANT(self,b[0],b[1],b[3],b[4],b[5],b[6],b[7],b[8],b[9],b[10],b[11])
             elif b[2] == "ARMAMENT_PLANT":
                 ARMAMENT_PLANT(
                     self,
@@ -1073,35 +1094,9 @@ class Game:
                 )
 
         for u in self.map.units:
-            Unit(
-                self,
-                u[0],
-                u[1],
-                u[2],
-                u[3],
-                u[4],
-                u[5],
-                u[6],
-                u[7],
-                u[8],
-                u[9],
-                u[10],
-                u[11],
-                u[12],
-                u[13],
-                u[14],
-                u[15],
-                u[16],
-                u[17],
-                u[18],
-                u[19],
-                u[20],
-                u[21],
-                u[22],
-                u[23],
-                u[24],
-            )
-
+            Unit(self,u[0],u[1],u[2],u[3],u[4],u[5],u[6],u[7],u[8],u[9],
+                u[10],u[11],u[12],u[13],u[14],u[15],u[16],u[17],u[18],
+                u[19],u[20],u[21],u[22],u[23],u[24])
 
         for b in range(len(self.players)):
             self.players[b].recalculate_all()
@@ -1109,6 +1104,11 @@ class Game:
         self.camera = Camera(self.map.width, self.map.height)
 
     def adding_building(self, variable):
+        """
+        Function that add construction, placed by player
+        :param variable: int refer to position in list, which contain all correct buildings class names
+        :param zeros: new construction at begining have zero needed recources
+        """
         CONSTRUCTION(
             self,
             self.selecting.col,
@@ -1122,12 +1122,23 @@ class Game:
         )
 
     def build(self, construction):
+        """
+        Need to do
+
+        Function initialized by CONSTRUCTION what is finished
+        del CONSTRUCTION and place building
+        """
         if construction.what == OIL_WELL:
             a = construction
             del construction
             OIL_WELL(self, a.x, a.y, a.owner)
 
     def time(self):
+        """
+        Function with in-game data and time
+        convert hour "24" to "0" and other
+        also call all units, buildings ... dayil / weekly ... funcitons
+        """
         if self.timer > 1:  # def 1
             self.timer -= 1
             self.quarter += 1
@@ -1156,14 +1167,15 @@ class Game:
                 + (self.season * 91)
                 + ((self.year - 1980) * 364)
             )
-            for cont in self.players:
-                cont.daily()
+            
             for res in self.resources:
                 res.daily()
             for building in self.buildings:
                 building.daily()
             for unit in self.units:
                 unit.daily()
+            for cont in self.players:
+                cont.daily()
             self.politics.dayli()
             self.diplomacy.dayli()
             self.menu.trade_window.dayli()
@@ -1174,6 +1186,10 @@ class Game:
             self.week += 1
             for building in self.buildings:
                 building.weekly()
+            for unit in self.units:
+                unit.weekly()
+            for player in self.players:
+                player.weekly()
         if self.week > 13:  # 13
             self.week -= 13
             self.season += 1
@@ -1186,6 +1202,9 @@ class Game:
             self.year += 1
 
     def mouse(self):
+        """
+        Fuction give new mouse real and grid position
+        """
         # if pg.mouse.get_pos() >=
         nowy2 = hex_round(
             pixel_to_hex(
@@ -1197,6 +1216,9 @@ class Game:
         self.mouse_pos = roffset_from_cube(-1, nowy2)
 
     def run(self):
+        """
+        In game loop, call function update, events, draw
+        """
         # game loop - set self.playing = False to end the game
         self.playing = True
         while self.playing:
@@ -1208,6 +1230,10 @@ class Game:
             self.draw()
 
     def select(self, select_new):
+        """
+        Function called after mouse click.
+        Select grid, resource, unit, building
+        """
         for grid in self.map.grids:
             if (grid.col == self.mouse_pos.col) and (grid.row == self.mouse_pos.row):
                 self.selecting = grid
@@ -1216,7 +1242,6 @@ class Game:
                 )
                 self.menu.terrain2[0] = str(self.selecting.terrain)
                 self.selecting.get_near_resources()
-                print(self.selecting.owner)
 
         for r in self.resources:
             if (r.col == self.mouse_pos.col) and (r.row == self.mouse_pos.row):
@@ -1303,6 +1328,9 @@ class Game:
                 self.menu.building13[0] = ""
 
     def deselect(self):
+        """
+        Deselect grid, resource, unit, building
+        """
         self.selecting = None
         self.resourcing = None
         self.uniting = None
@@ -1318,10 +1346,17 @@ class Game:
         self.menu.building3[0] = ""
 
     def quit(self):
+        """
+        Quit game
+        """
         # pg.quit()
         sys.exit()
 
     def update(self):
+        """
+        Function update all variables, and call objects update functions
+        Also update menu texts
+        """
         # update portion of the game loop
         self.all_sprites.update()
         self.camera.update(self.player)
@@ -1360,6 +1395,9 @@ class Game:
             self.menu.unit7[0] = self.uniting.description[6]
 
     def conv_idn_to_data(self, id_numb):
+        """
+        Functions convert int to specific game date
+        """
         a = id_numb
         repeat = True
         returnig_date = [0, 1, 0, 0]
@@ -1392,6 +1430,9 @@ class Game:
         )
 
     def draw(self):
+        """
+        Function that draw all sprites on game screen
+        """
         self.screen.fill(BGCOLOR)
         self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
         if self.territory_visible == True:
@@ -1661,6 +1702,18 @@ class Game:
                         ),
                         (window.pos[0] + 10, window.pos[1] + 358),
                     )
+                    self.screen.blit(
+                        pg.font.Font(FONT_NAME, FONT_SIZE).render(
+                            self.language.DESCRIPTION[12]
+                            + str(window.thing.weekly_cost),
+                            False,
+                            LIGHTGREY,
+                        ),
+                        (window.pos[0] + 10, window.pos[1] + 378),
+                    )
+
+
+
 
                     self.screen.blit(
                         window.thing.owner.image,
@@ -1913,6 +1966,9 @@ class Game:
         pg.display.flip()
 
     def events(self):
+        """
+        All game events like mouse move and click, press keyboard keys
+        """
         # pg.display.set_caption(str(self.timer))
         self.menu.position[0] = (
             str(self.language.DISPLAY_GUI[0])
@@ -1959,6 +2015,11 @@ class Game:
                     self.player.move(dy=-1)
                 if event.key == pg.K_DOWN or event.key == pg.K_s:
                     self.player.move(dy=1)
+                if event.key == pg.K_r:
+                    for a in self.units:
+                        print(a)
+                        a.calculate_cost()
+                        print(a.weekly_cost)
                 if event.key == pg.K_e:
                     self.player.x = 12
                     self.player.y = 12
@@ -2059,9 +2120,7 @@ class Game:
                         # if self.building == None:
                 if self.building == None and self.selecting != None:
                     if self.selecting.owner == self.player.side:
-                        self.menu.new_building_button.check_col(pg.mouse.get_pos())
-
-                        
+                        self.menu.new_building_button.check_col(pg.mouse.get_pos())           
 
     def show_start_screen(self):
         pass
