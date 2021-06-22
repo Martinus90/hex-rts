@@ -41,12 +41,14 @@ END
 
 
 Przykładowe skrypty:
-*13,show_new_info,This message is showed via event/which was added in saved file/Success/The End
-*3,new_decision,Kasa/Stab/Kurs,add_money_to_player&*1&*300/gain_stability&*1&*1/strengthen_the_currency&*1&^0.8,Decyzja pozwalająca dodac jakis bonus./Kasa doda Ci $300/Stab zwiekszy stabilnosc./Kurs polepszy kurs wymiany.
+*2,show_new_info,Firts text/which was added in saved file/Success/The End
+*3,new_decision,Kasa/Stab/Kurs,add_money_to_player&*1&*300/gain_stability&*1&*10/strengthen_the_currency&*1&^0.8,Decyzja pozwalająca dodac jakis bonus./Kasa doda Ci $300/Stab zwiekszy stabilnosc./Kurs polepszy kurs wymiany.
+*2,get_control_over_grids,*3,*152/*173/*174/*153/*154/*194/*193/*192/*172/*152/*175/*133/*132/*151/*131/*150/*171/*172/*191/*212/*213/*231/*232/*233/*252/*253,True
 
 SCENARIO_EVENTS
-*13,show_new_info,This message is showed via event/which was added in saved file/Success/The End
-*3,new_decision,Kasa/Stab/Kurs,add_money_to_player&*1&*300/gain_stability&*1&*1/strengthen_the_currency&*1&^0.8,Decyzja pozwalająca dodac jakis bonus./Kasa doda Ci $300/Stab zwiekszy stabilnosc./Kurs polepszy kurs wymiany.
+*2,show_new_info,Rebel Uprising/Rebel scum start rebelling against you./You need to act quickly./Conquer enemy territory and defeat their army.
+*3,new_decision,Kasa/Stab/Kurs,add_money_to_player&*1&*300/gain_stability&*1&*10/strengthen_the_currency&*1&^0.8,Decyzja pozwalająca dodac jakis bonus./Kasa doda Ci $300/Stab zwiekszy stabilnosc./Kurs polepszy kurs wymiany.
+*2,get_control_over_grids,*1,*152/*173/*174/*153/*154/*194/*193/*192/*172/*152/*175/*133/*132/*151/*131/*150/*171/*172/*191/*212/*213/*231/*232/*233/*252/*253,True
 END
 
 
@@ -69,10 +71,10 @@ END
 
 
 PosX,PosY,Building_Typ(Village),Owner,Name,Nationality,Pop,Prosper,Food,Wood
-*3,*3,VILLAGE,*1,Nazwa wioski,*1,*40,*3,*100,*50
+*3,*3,VILLAGE,*1,Nazwa wioski,*1,*40,*3,*100,*50,*20
 
 SCENARIO_BUILDINGS
-*10,*16,VILLAGE,*2,Nazwa wioski,*1,*50,*3,*100,*50                                    
+*10,*16,VILLAGE,*2,Nazwa wioski,*1,*50,*3,*100,*50,*20                                    
 END
 
 
@@ -85,4 +87,7 @@ X,Y,nationality,owner,typ,unit_name,brigade,regiment,battalion,company,men,suppl
 *2,*2,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
 
 SCENARIO_UNITS
+*12,*13,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
+*12,*11,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
+*12,*12,*1,*1,*0,Volunteers,*1,*1,*2,*1,*50,*50,*50,*0,*100,*0,*0,*20,*0,*0,*0,*0,*0,*0,*0
 END

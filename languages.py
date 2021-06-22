@@ -191,6 +191,8 @@ class Language:
                 "total orders:",
                 "Electricity:",
                 "Fuel usage:",
+                "Starving:",
+                "Run Away:"
             ]
             self.TRADE = [
                 "Trade building:",
@@ -237,8 +239,21 @@ class Language:
                 "Import: ",
                 "Upkeep of buildings: ",
                 "Salary: ",
-                "Weekly change: ",
+                "Weekly change: "
+            ]
+            self.INFO_TEXTS = [
+                "You bought ",
+                "Quantity ",
+                "Goods will be transported to ",
+                "Shipping days ",
 
+                "War with ",
+                "Relations decrease ",
+
+                "agree to sign peace treaty.",
+                "agree to sign trade agreement.",
+                "agree to sign alliance pact.",
+                "agree to send money."
             ]
 
         elif LANGUAGE == "PL":
@@ -427,6 +442,9 @@ class Language:
                 "Zlecenie/czas",
                 "lacznie zlecen:",
                 "Elektrycznosc:",
+                "Z. Paliwa:"
+                "Brak zaop.:",
+                "Ucieka:"
             ]
             self.TRADE = [
                 "Budynek wymiany:",
@@ -473,9 +491,16 @@ class Language:
                 "Import: ",
                 "Utrzymanie budynków: ",
                 "Zołd: ",
-                "Tygodniowa zmiana: ",
-                
+                "Tygodniowa zmiana: "
+            ]
+            self.INFO_TEXTS = [
+                "Kupiles ",
+                "Ilosc ",
+                "Dobra zostana dostarczone do ",
+                "Dni do dostawy",
 
+                "Stan wojny z ",
+                "Relacje obnizone o ",
             ]
 
         self.PERSON_NAME1 = [

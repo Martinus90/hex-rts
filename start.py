@@ -268,7 +268,7 @@ class Game:
                 global_money=2000,
                 reputation=0,
                 stability=2,
-                tax=3,
+                tax=10,
                 reserve=100,
             )
         )
@@ -281,10 +281,10 @@ class Game:
                 side=1,
                 exc_rt=10.0,
                 money=0,
-                global_money=0,
+                global_money=10000,
                 reputation=0,
                 stability=2,
-                tax=3,
+                tax=10,
                 reserve=100,
             )
         )
@@ -382,27 +382,12 @@ class Game:
             ],
         )
         self.event_list.add_event([7, "event_name", "Event 3"])
+        #self.event_list.add_event([2, "get_control_over_grids", 1, [20, 21]])
+
+
         self.event_list.add_event(
             [
-                12,
-                "new_decision",
-                ["Kasa", "Stab", "Kurs"],
-                [
-                    ["add_money_to_player", self.player.side, 300],
-                    ["gain_stability", self.player.side, 1],
-                    ["strengthen_the_currency", self.player.side, 0.8],
-                ],
-                [
-                    "Decyzja pozwalająca dodac jakis bonus:",
-                    "Kasa, doda Ci $300",
-                    "Stab, wziekszy stabilnosc",
-                    "Kurs, polepszy kurs wymiany",
-                ],
-            ]
-        )
-        self.event_list.add_event(
-            [
-                4,
+                2,
                 "show_new_info",
                 [
                     "First line of text",
@@ -1031,9 +1016,9 @@ class Game:
             if b[2] == "CONSTRUCTION":
                 CONSTRUCTION(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
             elif b[2] == "VILLAGE":
-                VILLAGE(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9])
+                VILLAGE(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10])
             elif b[2] == "CITY":
-                CITY(self,b[0],b[1],b[3],b[4],b[5],b[6],b[7],b[8],b[9],b[10],b[11])
+                CITY(self,b[0],b[1],b[3],b[4],b[5],b[6],b[7],b[8],b[9],b[10],b[11],b[12])
             elif b[2] == "HARBOR":
                 HARBOR(self, b[0], b[1], b[3], b[4], b[5])
             elif b[2] == "AIRPORT":
@@ -1190,6 +1175,8 @@ class Game:
                 unit.weekly()
             for player in self.players:
                 player.weekly()
+            self.politics.update_window_value()
+            self.diplomacy.update_window_value()
         if self.week > 13:  # 13
             self.week -= 13
             self.season += 1
@@ -1237,6 +1224,7 @@ class Game:
         for grid in self.map.grids:
             if (grid.col == self.mouse_pos.col) and (grid.row == self.mouse_pos.row):
                 self.selecting = grid
+                print(grid.id)
                 self.menu.terrain1[0] = (
                     "X: " + str(self.selecting.col) + ", Y: " + str(self.selecting.row)
                 )
@@ -1714,7 +1702,6 @@ class Game:
 
 
 
-
                     self.screen.blit(
                         window.thing.owner.image,
                         (window.pos[0] + 270, window.pos[1] + 30),
@@ -1787,6 +1774,19 @@ class Game:
                             str(window.thing.fuel_usage), False, YELLOW
                         ),
                         (window.pos[0] + 510, window.pos[1] + 40),
+                    )
+
+                    self.screen.blit(
+                        pg.font.Font(FONT_NAME, FONT_SIZE).render(
+                            self.language.GUI[12] + " " + return_bool(window.thing.conditions["starving"]), False, LIGHTGREY
+                        ),
+                        (window.pos[0] + 510, window.pos[1] + 220),
+                    )
+                    self.screen.blit(
+                        pg.font.Font(FONT_NAME, FONT_SIZE).render(
+                            self.language.GUI[13] + " " + return_bool(window.thing.conditions["run_away"]), False, LIGHTGREY
+                        ),
+                        (window.pos[0] + 510, window.pos[1] + 240),
                     )
 
         for window in self.building_windows:

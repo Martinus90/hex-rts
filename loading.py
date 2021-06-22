@@ -2,6 +2,7 @@ import pygame as pg
 from settings import *
 from languages import *
 from sprites import *
+from hexo import *
 from random import randint
 from random import choice
 import matplotlib.pyplot as plt
@@ -59,11 +60,34 @@ class Event_List(pg.sprite.Sprite):
         self.game.players[player].global_money += quantity
 
     def gain_stability(self, player, gain):
-        self.game.players[player].stability -= gain
+        self.game.players[player].stability += gain
+        if self.game.players[player].stability > 100:
+            self.game.players[player].stability = 100
+        elif self.game.players[player].stability < -100:
+            self.game.players[player].stability = -100
 
     def strengthen_the_currency(self, player, value):
         self.game.players[player].exc_rt = self.game.players[player].exc_rt * value
         self.game.players[player].exc_rt = round(self.game.players[player].exc_rt, 4)
+
+    def get_control_over_grids(self, player, grid_list, units):
+        for grid in self.game.map.grids:    #[self.hexid].owner
+            if grid.id in grid_list:
+                #grid.owner = self.game.players[player]
+                grid.owner = player
+                self.game.map.new_owner(
+                    player, roffset_from_cube(-1, grid.hex))
+                if grid.building != None:
+                    if grid.building == self.game.building:
+                        self.game.deselect()
+                    grid.building.change_owner(player) #self.game.players[player]
+                    
+
+        for unit in self.game.units:
+            if units == "True" and unit.hexid in grid_list:
+                if unit == self.game.uniting:
+                    self.game.deselect()
+                unit.change_owner(player)
 
     def show_new_info(self, info):
         self.info.new_text_to_display(info)
@@ -92,6 +116,8 @@ class Event_List(pg.sprite.Sprite):
             self.gain_stability(var[1], var[2])
         elif var[0] == "strengthen_the_currency":
             self.strengthen_the_currency(var[1], var[2])
+        elif var[0] == "get_control_over_grids":
+            self.get_control_over_grids(var[1], var[2], var[3])
 
     def open_decision_window(self):
         self.window.show()
@@ -112,6 +138,9 @@ class Event_List(pg.sprite.Sprite):
                 elif c[1] == "show_new_info":
                     print("Info")
                     self.show_new_info(c[2])
+                elif c[1] == "get_control_over_grids":
+                    print("Get control over grid")
+                    self.get_control_over_grids(c[2], c[3], c[4])
 
                 self.check = None
                 self.dayli()
@@ -488,14 +517,17 @@ class Contender(pg.sprite.Sprite):
                     self.population += b.population
                     if b.nationality == self.nation:
                         self.citizens += b.population
-                    self.tax_from_pop += int(b.population * b.owner.tax)
+                    self.tax_from_pop += round(b.population * b.owner.tax / 10, 2)
                 elif b.name == self.game.language.BUILDINGS1[1]:
                     self.villages += 1
                     self.population += b.population
                     if b.nationality == self.nation:
                         self.citizens += b.population
-                    self.tax_from_pop += int(b.population * b.owner.tax)
-
+                    self.tax_from_pop += round(b.population * b.owner.tax / 10, 2)
+                
+                print(b.name)
+                print(b.owner.name)
+                print(b.upkeep)
                 self.upkeep_of_buildings += b.upkeep
         for u in self.game.units:
             u.calculate_cost()
@@ -542,6 +574,10 @@ class Contender(pg.sprite.Sprite):
                     5
                 ] = self.game.idn
 
+                t = []
+                t.append(self.name + " " + self.game.language.INFO_TEXTS[6])
+                self.game.event_list.show_new_info(t)
+
         if decision == "trade":
             if (
                 self.game.diplomacy.relations[self.id_num][other_player][1]
@@ -555,6 +591,10 @@ class Contender(pg.sprite.Sprite):
                 self.game.diplomacy.relations[other_player][self.id_num][
                     6
                 ] = self.game.idn
+
+                t = []
+                t.append(self.name + " " + self.game.language.INFO_TEXTS[7])
+                self.game.event_list.show_new_info(t)
 
         if decision == "alliance":
             if (
@@ -570,6 +610,10 @@ class Contender(pg.sprite.Sprite):
                     7
                 ] = self.game.idn
 
+                t = []
+                t.append(self.name + " " + self.game.language.INFO_TEXTS[8])
+                self.game.event_list.show_new_info(t)
+
         if decision == "ask_for_money":
             if (
                 self.game.diplomacy.relations[self.id_num][other_player][1]
@@ -581,8 +625,13 @@ class Contender(pg.sprite.Sprite):
                     self.game.diplomacy.relations[self.id_num][other_player][
                         1
                     ] -= GIVE_MONEY_DEC_REP
+                    t = []
+                    t.append(self.name + " " + self.game.language.INFO_TEXTS[8])
+                    self.game.event_list.show_new_info(t)
 
     def daily(self):
+        if self.stability < 100:
+            self.stability += 1
         self.recalculate_all()
 
     def hourly(self):
@@ -1597,6 +1646,10 @@ class Politics_Window(Window):
         self.texts[27][0] = str(self.game.players[self.game.player.side].upkeep_of_buildings)
         self.texts[29][0] = str(self.game.players[self.game.player.side].salary)
         self.texts[31][0] = str(self.game.players[self.game.player.side].weekly_change)
+        if self.game.players[self.game.player.side].weekly_change >= 0:
+            self.texts[31][2] = DARKGREEN
+        else:
+            self.texts[31][2] = DARKRED
 
         
     def show(self):
@@ -1839,27 +1892,40 @@ class Diplomacy_Window(Window):
                 ][2]
                 == True
             ):
+                t = []
+                t.append(self.game.conv_idn_to_data(self.game.idn))
                 self.game.diplomacy.relations[self.status_player][
                     self.game.player.side
                 ][2] = False
+                t.append(self.game.language.INFO_TEXTS[4] + self.game.players[self.status_player].name)
+
                 self.game.diplomacy.relations[self.status_player][
                     self.game.player.side
-                ][1] -= 50
+                ][1] -= LOSE_RELATIONS_WAR
+                t.append(self.game.language.INFO_TEXTS[5] + str(LOSE_RELATIONS_WAR))
+
                 self.game.diplomacy.relations[self.status_player][
                     self.game.player.side
                 ][5] = self.game.idn
+
+
                 self.game.diplomacy.relations[self.game.player.side][
                     self.status_player
                 ][2] = False
+
                 self.game.diplomacy.relations[self.game.player.side][
                     self.status_player
-                ][1] -= 50
+                ][1] -= LOSE_RELATIONS_WAR
+
                 self.game.diplomacy.relations[self.game.player.side][
                     self.status_player
                 ][1] -= self.game.idn
+
                 self.game.players[self.game.player.side].reputation -= LOSE_REP_WAR
                 self.trade()
                 self.alliance()
+
+                self.game.event_list.show_new_info(t)
             else:
                 self.game.players[self.status_player].make_diplo_decision(
                     "peace", self.game.player.side
@@ -2840,7 +2906,7 @@ class Trade_Window(Window):
         self.trade_building = None
         self.trade_building_counter = None
         self.trade_goods = 0
-        self.trade_goods_name = ""
+        self.trade_goods_name = "wood"
         self.trade_quantity = 0
         self.trade_transport_cost = 0
         self.trade_goods_cost = 0
@@ -3399,9 +3465,9 @@ class Trade_Window(Window):
             self.owner.global_money -= self.trade_total_cost
             d = 0
             if self.trade_building.name == self.game.language.BUILDINGS1[3]:
-                d = 30
+                d = HARBOR_SHIPING_TIME
             elif self.trade_building.name == self.game.language.BUILDINGS1[4]:
-                d = 10
+                d = AIRPORT_SHIPING_TIME
             self.game.event_list.add_event(
                 [
                     self.game.idn + d,
@@ -3411,6 +3477,13 @@ class Trade_Window(Window):
                     self.trade_quantity,
                 ]
             )
+            t = []
+            t.append(self.game.language.INFO_TEXTS[0] + self.trade_goods_name)
+            t.append(self.game.language.INFO_TEXTS[1] + str(self.trade_quantity))
+            t.append(self.game.language.INFO_TEXTS[2] + self.trade_building.name)
+            t.append(self.game.language.INFO_TEXTS[3] + str(d))
+
+            self.game.event_list.show_new_info(t)
         else:
             pass
 

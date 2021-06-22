@@ -55,7 +55,7 @@
   <object id="9" name="unit" x="753.595" y="452.974" width="23.8659" height="23.8659">
    <properties>
     <property name="1_1_nationality" type="int" value="0"/>
-    <property name="1_1_owner" type="int" value="1"/>
+    <property name="1_1_owner" type="int" value="3"/>
     <property name="1_1_typ" type="int" value="3"/>
     <property name="1_1_unit_name" value="Island Badgers"/>
     <property name="1_2_1_brigade" type="int" value="1"/>
@@ -211,6 +211,7 @@
   <object id="27" name="building" x="816.48" y="546.852" width="23.8659" height="23.8659">
    <properties>
     <property name="food" type="int" value="0"/>
+    <property name="loyalty" type="int" value="40"/>
     <property name="name" value="Wygwizow"/>
     <property name="nationality" type="int" value="0"/>
     <property name="owner" type="int" value="1"/>
@@ -360,6 +361,7 @@
     <property name="electronics" type="int" value="10"/>
     <property name="food" type="int" value="100000"/>
     <property name="furniture" type="int" value="1000"/>
+    <property name="loyalty" type="int" value="15"/>
     <property name="name" value="Miasto"/>
     <property name="nationality" type="int" value="0"/>
     <property name="owner" type="int" value="1"/>
@@ -372,6 +374,7 @@
   <object id="40" name="building" x="277.48" y="789.852" width="23.8659" height="23.8659">
    <properties>
     <property name="food" type="int" value="0"/>
+    <property name="loyalty" type="int" value="30"/>
     <property name="name" value="Wypalowo"/>
     <property name="nationality" type="int" value="0"/>
     <property name="owner" type="int" value="0"/>

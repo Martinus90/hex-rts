@@ -22,6 +22,11 @@ def mergeDict(dict1, dict2):
             dict3[key] = value + dict1[key]
     return dict3
 
+def return_bool(var):
+    if var == True:
+        return "True"
+    elif var == False:
+        return "False"
 
 # define some colors in tuples(R, G, B) and as hexadecimal string
 WHITE = (255, 255, 255)
@@ -485,6 +490,9 @@ AIRCRAFT_COST = {}
 HARBOR_TRANSPORT_COST = 1
 AIRPORT_TRANSPORT_COST = 10
 
+HARBOR_SHIPING_TIME = 10
+AIRPORT_SHIPING_TIME = 3
+
 PEACE_TREATY = 20
 TRADE_TREATY = 50
 ALLIANCE_TREATY = 100
@@ -500,12 +508,19 @@ LOSE_REP_WAR = 10
 LOSE_REP_TRADE = 5
 LOSE_REP_ALLY = 10
 
+LOSE_RELATIONS_WAR = 50
+LOSE_RELATIONS_TRADE = 2
+LOSE_RELATIONS_ALLY = 3
+
 UPKEEP_TRUCK = 10
 UPKEEP_APC = 20
 UPKEEP_TANK = 50
 UPKEEP_HELI = 200
 UPKEEP_AIRCRAFT = 500
 UPKEEP_ROCKET_TRUCK = 10
+
+LOYALTY_DAYLI_GAIN = 1
+
 
 # Technologies Cost
 # empty for now

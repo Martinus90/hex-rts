@@ -297,6 +297,7 @@ class TiledMap:
                                 obj.properties["prosperity"],
                                 obj.properties["food"],
                                 obj.properties["wood"],
+                                obj.properties["loyalty"],
                             ]
                         )
                     elif obj.properties["typ"] == "CITY":
@@ -314,6 +315,7 @@ class TiledMap:
                                 obj.properties["textiles"],
                                 obj.properties["furniture"],
                                 obj.properties["electronics"],
+                                obj.properties["loyalty"],
                             ]
                         )
 
