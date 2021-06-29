@@ -242,6 +242,7 @@ class TiledMap:
                         [
                             math.floor(obj.x / 64),  # 0
                             math.floor(obj.y / 48),
+                            obj.properties["1_1_loyalty"],
                             obj.properties["1_1_nationality"],
                             obj.properties["1_1_owner"],
                             obj.properties["1_1_typ"],
@@ -297,6 +298,8 @@ class TiledMap:
                                 obj.properties["prosperity"],
                                 obj.properties["food"],
                                 obj.properties["wood"],
+                                obj.properties["cotton"],
+                                obj.properties["rubber"],
                                 obj.properties["loyalty"],
                             ]
                         )

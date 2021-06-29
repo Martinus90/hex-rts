@@ -68,6 +68,7 @@ class Game:
         self.window_display = False
         self.dragging = False
         self.dragged = None
+        self.multi_task = False
         self.territory_visible = False
         self.s_drag = pg.Vector2
         self.nations = []
@@ -280,7 +281,7 @@ class Game:
                 player=True,
                 side=1,
                 exc_rt=10.0,
-                money=0,
+                money=10000,
                 global_money=10000,
                 reputation=0,
                 stability=2,
@@ -310,7 +311,7 @@ class Game:
                 name="Sovenyan Rebels",
                 nation=0,
                 player=False,
-                side=10,
+                side=11,
                 exc_rt=10.0,
                 money=10000,
                 global_money=0,
@@ -326,7 +327,7 @@ class Game:
                 name="Nebohray Rebels",
                 nation=1,
                 player=False,
-                side=11,
+                side=12,
                 exc_rt=10.0,
                 money=10000,
                 global_money=0,
@@ -583,7 +584,7 @@ class Game:
                 s_river=12,
                 s_no_fuel=20,
                 money_usage=2,
-                max_men=64,
+                max_men=45,
                 max_art=0,
                 max_truck=20,
                 max_apc=0,
@@ -1016,7 +1017,7 @@ class Game:
             if b[2] == "CONSTRUCTION":
                 CONSTRUCTION(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
             elif b[2] == "VILLAGE":
-                VILLAGE(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10])
+                VILLAGE(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11], b[12])
             elif b[2] == "CITY":
                 CITY(self,b[0],b[1],b[3],b[4],b[5],b[6],b[7],b[8],b[9],b[10],b[11],b[12])
             elif b[2] == "HARBOR":
@@ -1081,7 +1082,7 @@ class Game:
         for u in self.map.units:
             Unit(self,u[0],u[1],u[2],u[3],u[4],u[5],u[6],u[7],u[8],u[9],
                 u[10],u[11],u[12],u[13],u[14],u[15],u[16],u[17],u[18],
-                u[19],u[20],u[21],u[22],u[23],u[24])
+                u[19],u[20],u[21],u[22],u[23],u[24],u[25])
 
         for b in range(len(self.players)):
             self.players[b].recalculate_all()
@@ -1329,9 +1330,27 @@ class Game:
         self.menu.unit1[0] = ""
         self.menu.unit2[0] = ""
         self.menu.unit3[0] = ""
+        self.menu.unit4[0] = ""
+        self.menu.unit5[0] = ""
+        self.menu.unit6[0] = ""
+        self.menu.unit7[0] = ""
         self.menu.building1[0] = ""
         self.menu.building2[0] = ""
         self.menu.building3[0] = ""
+        self.menu.building4[0] = ""
+        self.menu.building5[0] = ""
+        self.menu.building6[0] = ""
+        self.menu.building7[0] = ""
+        self.menu.building8[0] = ""
+        self.menu.building9[0] = ""
+        self.menu.building10[0] = ""
+        self.menu.building11[0] = ""
+        self.menu.building12[0] = ""
+        self.menu.building13[0] = ""
+
+        for w in self.windows:
+            if w.visible == True:
+                w.visible = False
 
     def quit(self):
         """
@@ -1699,9 +1718,15 @@ class Game:
                         ),
                         (window.pos[0] + 10, window.pos[1] + 378),
                     )
-
-
-
+                    self.screen.blit(
+                        pg.font.Font(FONT_NAME, FONT_SIZE).render(
+                            self.language.DESCRIPTION[13]
+                            + str(window.thing.max_transport),
+                            False,
+                            LIGHTGREY,
+                        ),
+                        (window.pos[0] + 10, window.pos[1] + 398),
+                    )
                     self.screen.blit(
                         window.thing.owner.image,
                         (window.pos[0] + 270, window.pos[1] + 30),
@@ -1740,7 +1765,6 @@ class Game:
                         ),
                         (window.pos[0] + 270, window.pos[1] + 96),
                     )
-
                     self.screen.blit(
                         pg.font.Font(FONT_NAME, FONT_SIZE).render(
                             self.language.DESCRIPTION[0]
@@ -1771,11 +1795,16 @@ class Game:
                     )
                     self.screen.blit(
                         pg.font.Font(FONT_NAME, FONT_SIZE).render(
+                            self.language.GUI[14] + str(window.thing.loyalty), False, LIGHTGREY
+                        ),
+                        (window.pos[0] + 270, window.pos[1] + 173),
+                    )
+                    self.screen.blit(
+                        pg.font.Font(FONT_NAME, FONT_SIZE).render(
                             str(window.thing.fuel_usage), False, YELLOW
                         ),
                         (window.pos[0] + 510, window.pos[1] + 40),
                     )
-
                     self.screen.blit(
                         pg.font.Font(FONT_NAME, FONT_SIZE).render(
                             self.language.GUI[12] + " " + return_bool(window.thing.conditions["starving"]), False, LIGHTGREY
@@ -1788,6 +1817,17 @@ class Game:
                         ),
                         (window.pos[0] + 510, window.pos[1] + 240),
                     )
+                    y = 0
+                    for t in window.thing.order_list:
+                        self.screen.blit(
+                            pg.font.Font(FONT_NAME, FONT_SIZE).render(
+
+                                t[0] + ": " + str(t[1][0]) + " " + str(t[1][1]), False, GREEN
+                            ),
+                            (window.pos[0] + 270, window.pos[1] + 240 + y),
+                        )
+                        y += 20
+
 
         for window in self.building_windows:
             if window.visible == True:
@@ -1934,6 +1974,13 @@ class Game:
                         ),
                         (window.pos[0] + 550, window.pos[1] + 60),
                     )
+                    self.screen.blit(
+                        pg.font.Font(FONT_NAME, FONT_SIZE).render(
+                            self.language.GUI[14] +
+                            str(window.thing.loyalty), False, LIGHTGREY
+                        ),
+                        (window.pos[0] + 550, window.pos[1] + 100),
+                    )
 
         for window in self.menu_windows:
             if window.visible == True:
@@ -2004,9 +2051,9 @@ class Game:
             if event.type == pg.QUIT:
                 self.quit()
             if event.type == pg.KEYDOWN:
-                print(event.key)
                 if event.key == pg.K_ESCAPE:
                     self.deselect()
+                    self.window_display = False
                 if event.key == pg.K_LEFT or event.key == pg.K_a:
                     self.player.move(dx=-1)
                 if event.key == pg.K_RIGHT or event.key == pg.K_d:
@@ -2017,9 +2064,7 @@ class Game:
                     self.player.move(dy=1)
                 if event.key == pg.K_r:
                     for a in self.units:
-                        print(a)
                         a.calculate_cost()
-                        print(a.weekly_cost)
                 if event.key == pg.K_e:
                     self.player.x = 12
                     self.player.y = 12
@@ -2033,7 +2078,6 @@ class Game:
                     # print("Cheat")
                     self.building.materials = self.building.cost
                     # print(self.building.materials)
-
                 if event.key == pg.K_m:
                     self.territory_visible = not self.territory_visible
                     # print(self.territory_visible)
@@ -2047,6 +2091,15 @@ class Game:
                     # print(self.speed)
                 if event.key == pg.K_PAUSE or event.key == 32:
                     self.pause = not self.pause
+                if event.key == pg.K_LSHIFT:
+                    self.multi_task = True
+            
+            if event.type == pg.KEYUP:
+                if event.key == pg.K_LSHIFT:
+                    self.multi_task = False
+
+
+
             if event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     for window in self.windows:
@@ -2072,6 +2125,7 @@ class Game:
             if event.type == pg.MOUSEBUTTONUP:
                 # print(event.button)
                 self.dragging = False
+                self.dragged = None
 
                 for a in self.menu.buttons:
                     #if isinstance(a, NB_Button):
@@ -2097,13 +2151,15 @@ class Game:
 
                     if event.button == 3:
                         if self.uniting != None:
-                            # print("To tu")
-                            # self.uniting.go_to = roffset_to_cube(OFFSET, self.mouse_pos)
-                            self.uniting.stop()
-                            self.uniting.make_path(
-                                roffset_to_cube(OFFSET, self.mouse_pos)
-                            )
-                            # self.uniting.col = self.mouse_pos.col
+                            print("HERE")
+                            print(roffset_to_cube(OFFSET, self.mouse_pos))
+                            if self.multi_task == False:
+                                self.uniting.stop()
+                                self.uniting.order_list = []
+                                self.uniting.order_list.append(["go_to",self.mouse_pos])
+                                
+                            else:
+                                self.uniting.order_list.append(["go_to",self.mouse_pos])
 
                 if pg.mouse.get_pos()[0] > (WIDTH - MENU_RIGHT[0]):
                     if event.button == 1:
@@ -2113,7 +2169,8 @@ class Game:
                             # print(self.uniting.button.rect)
                             # print(pg.mouse.get_pos())
                         if self.building:
-                            self.building.button.check_col(pg.mouse.get_pos())
+                            if self.building.window != None:
+                                self.building.button.check_col(pg.mouse.get_pos())
                             # print(self.building.button.rect)
                             # print(pg.mouse.get_pos())
 

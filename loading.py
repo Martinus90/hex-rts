@@ -123,7 +123,6 @@ class Event_List(pg.sprite.Sprite):
         self.window.show()
 
     def dayli(self):
-        print(self.game.idn)  # identification date number
         if not self.queue.empty():
             self.check = self.queue.get()
         if self.check != None:
@@ -242,9 +241,7 @@ class Diplomacy(pg.sprite.Sprite):
     def dayli(self):
         #calculate country relations
         for p in self.relations:  # p is each player
-            print("Player")
             for r in p:  # r is each players relation
-                print(r)
                 if r[2] == False:  # is at war with
                     if r[1] > -200:
                         r[1] -= 1
@@ -524,10 +521,6 @@ class Contender(pg.sprite.Sprite):
                     if b.nationality == self.nation:
                         self.citizens += b.population
                     self.tax_from_pop += round(b.population * b.owner.tax / 10, 2)
-                
-                print(b.name)
-                print(b.owner.name)
-                print(b.upkeep)
                 self.upkeep_of_buildings += b.upkeep
         for u in self.game.units:
             u.calculate_cost()
@@ -540,6 +533,7 @@ class Contender(pg.sprite.Sprite):
         self.weekly_change -= self.import_goods
         self.weekly_change -= self.upkeep_of_buildings
         self.weekly_change -= self.salary
+        self.weekly_change = round(self.weekly_change, 2)
     
     def reputation_change(self, change):
         self.reputation += change
@@ -1399,7 +1393,7 @@ class Info_Window(Window):
         textcolor=LIGHTGREY,
         textpos=(50, 10),
         border_size=3,
-        display_text=["Just random text."],
+        display_text=[],
         visible=False,
     ):
         self.groups = game.menu_windows, game.windows
@@ -1419,6 +1413,8 @@ class Info_Window(Window):
         self.variables = []
         self.resources = []
         self.texts = display_text
+        self.all_texts = []
+        self.which_text_display = 0
 
         # draw window
         self.image = pg.Surface(self.size)
@@ -1442,17 +1438,53 @@ class Info_Window(Window):
 
         # draw buttons
         self.buttons.append(CW_Button(self.game, self, pos=[10, 10]))
+        self.buttons.append(
+            Function_Button(
+                self.game,
+                self,
+                pos=(350, 10),
+                text=self.game.language.BASIC[4],
+                function="prev_texts",
+            )
+        )
+        self.buttons.append(
+            Function_Button(
+                self.game,
+                self,
+                pos=(430, 10),
+                text=self.game.language.BASIC[5],
+                function="next_texts",
+            )
+        )
 
         self.rect = self.image.get_rect()
         self.rectangle = pg.Surface(self.size)
 
     def function_list(self, function=None):
-        pass
+        if function == "next_texts":
+            self.next_texts()
+        elif function == "prev_texts":
+            self.prev_texts()
+
+    def next_texts(self):
+        self.which_text_display += 1
+        if self.which_text_display > len(self.all_texts) - 1:
+            self.which_text_display = 0
+        self.texts = self.all_texts[self.which_text_display]
+
+    def prev_texts(self):
+        self.which_text_display -= 1
+        if self.which_text_display < 0:
+            self.which_text_display = len(self.all_texts) - 1
+        self.texts = self.all_texts[self.which_text_display]
 
     def new_text_to_display(self, display_text):
+        #self.old_texts.pop()
         self.texts = []
         for a in range(len(display_text)):
             self.texts.append([display_text[a], 16, LIGHTGREY, (10, 45 + (a * 20))])
+        self.all_texts.insert(0,self.texts)
+        self.which_text_display = 0
 
     def show(self):
         # self.pause = True
@@ -1585,6 +1617,16 @@ class Politics_Window(Window):
                 function="conscription",
             )
         )
+        self.buttons.append(
+            Function_Button(
+                self.game,
+                self,
+                pos=(410, 235),
+                text=self.game.language.POLITICS[19],
+                function="print_money",
+            )
+        )
+        
         
         
         self.rect = self.image.get_rect()
@@ -1597,6 +1639,8 @@ class Politics_Window(Window):
             self.tax_increase()
         elif function == "conscription":
             self.conscription()
+        elif function == "print_money":
+            self.print_money()
         else:
             pass
 
@@ -1619,12 +1663,20 @@ class Politics_Window(Window):
                             b.population -= CONSCRIPT_CITY_POP
                             self.game.players[self.game.player.side].reserve += CONSCRIPT_CITY_POP
                             self.game.players[self.game.player.side].stability -= CONSCRIPT_STAB_RED
+                            b.loyalty -= CONSCRIPT_CITY_LOY
 
                 if b.name == self.game.language.BUILDINGS1[1]:#VILLAGE
                     if b.nationality == self.game.players[self.game.player.side].nation:
                         if b.population > 40:
                             b.population -= CONSCRIPT_VILL_POP
                             self.game.players[self.game.player.side].reserve += CONSCRIPT_VILL_POP
+                            b.loyalty -= CONSCRIPT_VILL_LOY
+        self.update_politics()
+
+    def print_money(self):
+        self.game.players[self.game.player.side].money += 1000
+        self.game.players[self.game.player.side].exc_rt += 1
+        self.game.players[self.game.player.side].stability -= 5
         self.update_politics()
 
     def update_politics(self):
@@ -1872,7 +1924,6 @@ class Diplomacy_Window(Window):
         self.texts[1][0] = self.game.players[self.status_player].name
         self.show_relations()
         self.update_dip_info()
-        print(self.game.conv_idn_to_data(self.game.idn))
 
     def next(self):
         self.check_number_of_players()
@@ -1882,7 +1933,6 @@ class Diplomacy_Window(Window):
         self.texts[1][0] = self.game.players[self.status_player].name
         self.show_relations()
         self.update_dip_info()
-        print(self.game.conv_idn_to_data(self.game.idn))
 
     def peace(self):
         if self.status_player != self.game.player.side:
@@ -2535,7 +2585,7 @@ class Unit_Window(pg.sprite.Sprite):
                 text="X",
                 textsize=10,
                 textcolor=BLACK,
-                variable="patroling",
+                variable="repeat",
             )
         )
         self.buttons.append(
@@ -2564,6 +2614,43 @@ class Unit_Window(pg.sprite.Sprite):
                 variable="conquest",
             )
         )
+        self.buttons.append(
+            Function_Button(
+                self.game,
+                self,
+                pos=(20, 450),
+                text=self.game.language.DECISIONS[3],
+                function="give_bonus",
+            )
+        )
+        self.buttons.append(
+            Function_Button(
+                self.game,
+                self,
+                pos=(440, 450),
+                text=self.game.language.BASIC[4],
+                function="prev_order",
+            )
+        )
+        self.buttons.append(
+            Function_Button(
+                self.game,
+                self,
+                pos=(600, 450),
+                text=self.game.language.BASIC[5],
+                function="next_order",
+            )
+        )
+        self.buttons.append(
+            Function_Button(
+                self.game,
+                self,
+                pos=(520, 450),
+                text=self.game.language.BASIC[9],
+                function="change_order",
+            )
+        )
+        
 
         # draw eq names
         self.image.blit(
@@ -2714,6 +2801,13 @@ class Unit_Window(pg.sprite.Sprite):
             ),
             (400, 40),
         )
+        self.image.blit(
+            pg.font.Font(FONT_NAME, self.textsize).render(
+                self.game.language.GUI[15], False, RED#self.textcolor
+            ),
+            (300, 220),
+        )
+
 
         self.rect = self.image.get_rect()
         self.rectangle = pg.Surface(self.size)
@@ -2721,17 +2815,29 @@ class Unit_Window(pg.sprite.Sprite):
         # self.rect.y = 600
 
     def function_list(self, function=None):
-        if function == "func_1":
-            self.func_1()
-        elif function == "func_2":
-            self.func_2()
+        if function == "give_bonus":
+            self.give_bonus()
+        elif function == "prev_order":
+            self.prev_order()
+        elif function == "next_order":
+            self.next_order()
+        elif function == "change_order":
+            self.change_order()
         else:
             pass
 
-    def func_1(self):
+    def give_bonus(self):
+        if self.thing.owner.money > self.thing.men:
+            self.thing.owner.money -= self.thing.men
+            self.thing.loyalty += 5
+
+    def next_order(self):
         pass
 
-    def func_2(self):
+    def prev_order(self):
+        pass
+
+    def change_order(self):
         pass
 
     def show(self):
@@ -2836,6 +2942,8 @@ class Building_Window(pg.sprite.Sprite):
             self.func_new_unit()
         elif function == "func_next_unit":
             self.func_next_unit()
+        elif function == "grant_money":
+            self.grant_money()
         else:
             pass
 
@@ -2862,6 +2970,12 @@ class Building_Window(pg.sprite.Sprite):
     def func_new_unit(self):
         print("Number of graduates:")
         print(self.thing.storage["graduates"])
+
+    def grant_money(self):
+        if self.thing.owner.money > self.thing.population:
+            self.thing.owner.money -= self.thing.population
+            self.thing.loyalty += 5
+
 
     def show(self):
         self.visible = True

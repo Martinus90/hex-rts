@@ -4,6 +4,7 @@ import inspect
 from hexo import *
 from settings import *
 from queue import PriorityQueue
+import random
 
 
 class Player(pg.sprite.Sprite):
@@ -389,6 +390,7 @@ class Cotton(Resource):
         self.x = x
         self.y = y
         self.value = value
+        self.growth = 0
         self.off_road_value = 0
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
         self.game.map.grids[self.grid_id].resource = self
@@ -430,6 +432,7 @@ class Rubber(Resource):
         self.x = x
         self.y = y
         self.value = value
+        self.growth = 0
         self.off_road_value = 3
         self.grid_id = self.x + self.y * self.game.map.tmxdata.width
         self.game.map.grids[self.grid_id].resource = self
@@ -564,6 +567,8 @@ class CONSTRUCTION(pg.sprite.Sprite):
         self.storage = {}
         self.orders = []
         self.window = None
+
+    
 
         self.upkeep = 10
         self.side = self.owner.side
@@ -783,6 +788,7 @@ class SETTLEMENT(pg.sprite.Sprite):
         self.owner = self.game.players[new_owner]
         self.image.set_colorkey(VIOLET)
         self.image.blit(self.owner.image, (44, 10))
+        self.loyalty = 30
 
         if self.window != None:
             b = pg.Surface((150, 30))
@@ -822,6 +828,8 @@ class VILLAGE(SETTLEMENT):
         prosperity=0,
         food=0,
         wood=0,
+        cotton=0,
+        rubber=0,
         loyalty=20
     ):
         self.groups = game.all_sprites, game.buildings
@@ -835,7 +843,7 @@ class VILLAGE(SETTLEMENT):
         self.nationality = self.game.nations[nationality]
         self.population = population
         self.prosperity = prosperity
-        self.state = {"food": True, "wood": True}
+        self.state = {"food": True, "wood": True, "cotton": False, "rubber": False}
         self.orders = []
         self.loyalty = loyalty
 
@@ -843,7 +851,7 @@ class VILLAGE(SETTLEMENT):
         self.image.set_colorkey(VIOLET)
         self.image.blit(self.owner.image, (44, 10))
         self.rect = self.image.get_rect()
-        self.storage = {"food": food, "wood": wood}
+        self.storage = {"food": food, "wood": wood, "cotton": cotton, "rubber": rubber}
         self.grid_with_res = []
         self.sum_res = []
 
@@ -902,6 +910,16 @@ class VILLAGE(SETTLEMENT):
             )
             b += 1
 
+        self.window.buttons.append(
+            ld.Function_Button(
+                self.game,
+                self.window,
+                pos=(510, 460),
+                text=self.game.language.DECISIONS[2],
+                function="grant_money",
+            )
+        )
+
         self.col = x
         self.row = y
         self.hex = roffset_to_cube(-1, self)
@@ -922,9 +940,9 @@ class VILLAGE(SETTLEMENT):
             self.game.language.GUI[0],
             self.game.language.RESOURCES[2] + ":",
             self.game.language.RESOURCES[1] + ":",
-            "",
-            "",
-            "",
+            self.game.language.RESOURCES[8] + ":",
+            self.game.language.RESOURCES[9] + ":",
+            self.game.language.GUI[14] + str(self.loyalty),
             "",
             "",
             "",
@@ -964,12 +982,66 @@ class VILLAGE(SETTLEMENT):
                     self.grid_with_res.append(a)
                     self.sum_res[1] += a.resource.value
 
+        self.sum_res.append(0)
+        if self.game.map.grids[self.hexid].resource != None:
+            if (
+                self.game.map.grids[self.hexid].resource.name
+                == self.game.language.RESOURCES[8]
+            ):
+                self.grid_with_res.append(self.game.map.grids[self.hexid])
+                self.sum_res[2] += self.game.map.grids[self.hexid].resource.value
+        for a in self.game.map.grids[self.hexid].neighbors:
+            if a.resource != None:
+                if a.resource.name == self.game.language.RESOURCES[8]:
+                    self.grid_with_res.append(a)
+                    self.sum_res[2] += a.resource.value
+        
+        self.sum_res.append(0)
+        if self.game.map.grids[self.hexid].resource != None:
+            if (
+                self.game.map.grids[self.hexid].resource.name
+                == self.game.language.RESOURCES[9]
+            ):
+                self.grid_with_res.append(self.game.map.grids[self.hexid])
+                self.sum_res[3] += self.game.map.grids[self.hexid].resource.value
+        for a in self.game.map.grids[self.hexid].neighbors:
+            if a.resource != None:
+                if a.resource.name == self.game.language.RESOURCES[9]:
+                    self.grid_with_res.append(a)
+                    self.sum_res[3] += a.resource.value
+
         self.description[5] = (
             self.game.language.RESOURCES[2] + ": " + str(self.sum_res[0])
         )
         self.description[6] = (
             self.game.language.RESOURCES[1] + ": " + str(self.sum_res[1])
         )
+        self.description[7] = (
+            self.game.language.RESOURCES[8] + ": " + str(self.sum_res[2])
+        )
+        self.description[8] = (
+            self.game.language.RESOURCES[9] + ": " + str(self.sum_res[3])
+        )
+
+    def rebeling(self):
+        enemy = None
+        print(" - - - ")
+        print("Owner:")
+        print(self.owner.name)
+        print(self.owner.nation.name)
+        for p in self.game.players:
+            if p.name != self.owner.name and p.nation.name == self.owner.nation.name:
+                enemy = p.id_num
+        
+        if enemy == None:
+            enemy = 0
+
+        g = [self.grid.id]
+        for a in self.grid.neighbors:
+            g.append(a.id)
+
+        self.game.event_list.get_control_over_grids(enemy, g, False)
+
 
     def do(self):
         pass
@@ -993,6 +1065,14 @@ class VILLAGE(SETTLEMENT):
                         if self.state["wood"] == True:
                             self.storage["wood"] += e
                             d.resource.value -= e
+                    if d.resource.name == self.game.language.RESOURCES[8]:  # cotton
+                        if self.state["cotton"] == True:
+                            self.storage["cotton"] += e
+                            d.resource.value -= e
+                    if d.resource.name == self.game.language.RESOURCES[9]:  # cotton
+                        if self.state["rubber"] == True:
+                            self.storage["rubber"] += e
+                            d.resource.value -= e
 
     def daily(self):
         if self.nationality == self.owner.nation:
@@ -1000,14 +1080,31 @@ class VILLAGE(SETTLEMENT):
 
         if self.storage["food"] >= self.population:
             self.storage["food"] -= self.population
-            self.loyalty += 1
         else:
             if self.prosperity >= 1:
                 self.prosperity -= 1
-                self.loyalty -= 1
+            self.loyalty -= 1
+        
+        if self.owner.stability < -50:
+            self.loyalty -= 1
+        elif self.owner.stability > 50:
+            self.loyalty += 1
+
         
         if self.loyalty > 100:
             self.loyalty = 100
+
+        a = random.randint(1,30)
+        print(self.settlement_name)
+        print(a)
+        print(self.loyalty)
+        if self.loyalty < a:
+            print("Rebeling")
+            self.rebeling()
+        else:
+            print("No rebeling")
+
+        
 
     def weekly(self):
         self.owner.money -= self.upkeep
@@ -1035,9 +1132,9 @@ class VILLAGE(SETTLEMENT):
             self.game.language.GUI[0],
             self.game.language.RESOURCES[2] + ":",
             self.game.language.RESOURCES[1] + ":",
-            "",
-            "",
-            "",
+            self.game.language.RESOURCES[8] + ":",
+            self.game.language.RESOURCES[9] + ":",
+            self.game.language.GUI[14] + str(self.loyalty),
             "",
             "",
             "",
@@ -1047,6 +1144,12 @@ class VILLAGE(SETTLEMENT):
         )
         self.description[6] = (
             self.game.language.RESOURCES[1] + ": " + str(self.sum_res[1])
+        )
+        self.description[7] = (
+            self.game.language.RESOURCES[8] + ": " + str(self.sum_res[2])
+        )
+        self.description[8] = (
+            self.game.language.RESOURCES[9] + ": " + str(self.sum_res[3])
         )
 
 
@@ -1119,6 +1222,16 @@ class CITY(SETTLEMENT):
             textcolor=BLACK,
         )
 
+        self.window.buttons.append(
+            ld.Function_Button(
+                self.game,
+                self.window,
+                pos=(510, 460),
+                text=self.game.language.DECISIONS[2],
+                function="grant_money",
+            )
+        )
+
         g = self.storage.keys()
         for a in g:
             self.window.variables.append(a)
@@ -1147,7 +1260,7 @@ class CITY(SETTLEMENT):
             self.name,
             self.settlement_name,
             "Pop: " + str(self.population),
-            "",
+            self.game.language.GUI[14] + str(self.loyalty),
             "",
             "",
             "",
@@ -1159,6 +1272,25 @@ class CITY(SETTLEMENT):
         ]
         # here near resources
 
+    def rebeling(self):
+        enemy = None
+        print(" - - - ")
+        print("Owner:")
+        print(self.owner.name)
+        print(self.owner.nation.name)
+        for p in self.game.players:
+            if p.name != self.owner.name and p.nation.name == self.owner.nation.name:
+                enemy = p.id_num
+            
+        if enemy == None:
+            enemy = 0
+
+        g = [self.grid.id]
+        for a in self.grid.neighbors:
+            g.append(a.id)
+
+        self.game.event_list.get_control_over_grids(enemy, g, False)
+
     def do(self):
         pass
 
@@ -1169,17 +1301,31 @@ class CITY(SETTLEMENT):
         if self.nationality == self.owner.nation:
             self.loyalty += LOYALTY_DAYLI_GAIN
 
-
         if self.storage["food"] >= self.population:
             self.storage["food"] -= self.population
             self.loyalty += 1
         else:
             if self.prosperity >= 1:
                 self.prosperity -= 1
-                self.loyalty -= 1
+            self.loyalty -= 1
+
+        if self.owner.stability < -50:
+            self.loyalty -= 1
+        elif self.owner.stability > 50:
+            self.loyalty += 1
 
         if self.loyalty > 100:
             self.loyalty = 100
+
+        a = random.randint(1,30)
+        print(self.settlement_name)
+        print(a)
+        print(self.loyalty)
+        if self.loyalty < a:
+            print("Rebeling")
+            self.rebeling()
+        else:
+            print("No rebeling")
 
     def weekly(self):
         self.owner.money -= self.upkeep
@@ -1228,7 +1374,7 @@ class CITY(SETTLEMENT):
             self.settlement_name,
             "Pop: " + str(self.population),
             self.game.language.GUI[0],
-            "",
+            self.game.language.GUI[14] + str(self.loyalty),
             "",
             "",
             "",
@@ -4443,6 +4589,7 @@ class Unit(pg.sprite.Sprite):
         game,
         x,
         y,
+        loyalty,
         nationality,
         owner,
         typ,
@@ -4474,6 +4621,7 @@ class Unit(pg.sprite.Sprite):
 
         self.x = x
         self.y = y
+        self.loyalty = loyalty
         self.nationality = self.game.nations[nationality]
         self.owner = self.game.players[owner]
         self.side = self.owner.side
@@ -4490,7 +4638,7 @@ class Unit(pg.sprite.Sprite):
             "refill_equipment": False,
             "refill_crew": False,
             "building": False,
-            "patroling": False,
+            "repeat": False,
             "engage": True,
             "conquest": False,
         }
@@ -4505,6 +4653,9 @@ class Unit(pg.sprite.Sprite):
         self.refill_crew = False
         self.building = False
 
+        self.order_list = []
+        self.transporting = {}
+
         self.combat_ability = 20
         self.combat_ability_max = 20
         self.experience = 0
@@ -4512,6 +4663,8 @@ class Unit(pg.sprite.Sprite):
         self.tiredness_max = 20
         self.fuel_usage = 0
         self.weekly_cost = 0
+        self.max_transport = 0
+        self.current_transport = 0
         self.task = self.game.language.COMMANDS[0]
 
         self.men = men
@@ -4562,7 +4715,6 @@ class Unit(pg.sprite.Sprite):
         )
         self.max_rockets = 0
         self.max_rockets += self.rocket_truck * 40 + self.heli * 8 + self.aircraft * 8
-        self.transporting = {}
 
         self.visible = True
         self.pos = [50, 50]
@@ -4615,6 +4767,7 @@ class Unit(pg.sprite.Sprite):
         self.image.blit(self.unit_typ.image, UNIT_OFFSET)
 
         self.step_to = None
+        self.to_do = None
         self.go_to = None
         self.path = None
         self.return_to = None
@@ -4661,6 +4814,25 @@ class Unit(pg.sprite.Sprite):
             + (self.aircraft * AIRCRAFT_FUEL_CAP)
             + (self.rocket_truck * ROCKET_TRUCK_FUEL_CAP)
         )
+
+        self.max_transport = 0
+        self.max_transport = (
+            (self.men * MEN_TRANSPORT_CAP)
+            + (self.truck * TRUCK_TRANSPORT_CAP)
+            + (self.apc * APC_TRANSPORT_CAP)
+            + (self.tank * TANK_TRANSPORT_CAP)
+            + (self.heli * HELI_TRANSPORT_CAP)
+            + (self.aircraft * AIRCRAFT_TRANSPORT_CAP)
+            + (self.rocket_truck * ROCKET_TRANSPORT_CAP)
+        )
+
+        self.current_transport = 0
+        for a in self.transporting.values():
+            self.current_transport += a
+
+        print("Max transport = " + str(self.max_transport))
+        print("Current transport" + str(self.current_transport))
+        print("Pos" + str(self.x) + " " + str(self.y))
 
     def print_mobilized(self):
         if self.state["mobilized"] == True:
@@ -4759,6 +4931,7 @@ class Unit(pg.sprite.Sprite):
         # print("There is clear area to build something.")
 
     def stop(self):
+        self.to_do = None
         self.go_to = None
         self.step_to = None
         self.frontier = PriorityQueue()
@@ -4770,8 +4943,8 @@ class Unit(pg.sprite.Sprite):
         self.last_step_cost = 0
 
     def make_path(self, go_to):
-        self.go_to = go_to
-        if self.state["patroling"] == True:
+        self.go_to = roffset_to_cube(OFFSET, go_to)
+        if self.state["repeat"] == True:
             self.return_to = roffset_to_cube(-1, self)
         else:
             self.return_to = None
@@ -4827,28 +5000,29 @@ class Unit(pg.sprite.Sprite):
         while self.current != self.hexid:
             self.path.append(self.current)
             self.current = self.came_from[self.current]
-        # self.path.append(self.hexid) # optional
-        # self.path.reverse() # optional
-        # print("Start:")
-        # print(self.hexid)
-        # print("Path:")
-        # print(self.path)
-        # print("Full move cost:")
-        # for p in self.path:
-        #    print(self.cost_so_far[p])
-        #    break
-        # print(" ")
 
     def do(self):
+        print(self.unit_name)
+        print(self.order_list)
+        print(len(self.order_list))
+        if len(self.order_list) > 0:
+            if self.to_do == None:
+                self.to_do = self.order_list[0]
+                if self.to_do[0] == "go_to":
+                    self.make_path(self.to_do[1])
+                elif self.to_do[0] == "pick_up":
+                    self.pick_up_goods()
+
+
         if self.go_to != None:
-            print(self.doing)
-            if self.go_to == self.hex:
-                print("Na miejscu")
-                if self.state["patroling"] == True and self.return_to != None:
-                    self.make_path(self.return_to)
-                else:
-                    self.stop()
-                    self.task = self.game.language.COMMANDS[0]
+            if self.go_to == self.hex:#rewrite
+                if self.state["repeat"] == True:
+                    self.order_list.append(self.to_do)
+                self.stop()
+                self.to_do = None
+                del self.order_list[0]
+                print(self.order_list)
+
             else:
                 if self.step_to == None:
                     if len(self.path) != 0:
@@ -4857,8 +5031,6 @@ class Unit(pg.sprite.Sprite):
                             self.cost_so_far[self.step_to] - self.last_step_cost
                         )
                     else:
-                        print("Teoretycznie nie powinno do tego dojść / test")
-                        print("Koniec drogi")
                         self.stop()
 
                 if self.step_to != None:
@@ -4898,26 +5070,31 @@ class Unit(pg.sprite.Sprite):
             else:
                 self.fuel = 0
         else:
+            #if not going / just stand
             self.doing = 0
             self.task = self.game.language.COMMANDS[0]
 
-        if self.state["training"] == True:
-            self.combat_ability = 5
-            self.task = self.game.language.COMMANDS[2]
+            if self.state["training"] == True:
+                self.combat_ability = 5
+                self.task = self.game.language.COMMANDS[2]
 
-        if self.state["mobilized"] == True:
-            if self.state["building"] == True:
-                self.combat_ability_max = 15
+            if self.state["mobilized"] == True:
+                if self.state["building"] == True:
+                    self.combat_ability_max = 15
+                else:
+                    self.combat_ability_max = 25
             else:
-                self.combat_ability_max = 25
-        else:
-            self.combat_ability_max = 5
+                self.combat_ability_max = 5
 
-        if self.state["refill_equipment"] == True:
-            self.refill_eq()
+            if self.state["refill_equipment"] == True:
+                self.refill_eq()
 
-        if self.state["refill_crew"] == True:
-            self.refill_cr()
+            if self.state["refill_crew"] == True:
+                self.refill_cr()
+
+    def new_task(self, task="None"):
+        print(task)
+        pass
 
     def refill_eq(self):
         if self.game.map.grids[self.hexid].building != None:
@@ -5058,6 +5235,26 @@ class Unit(pg.sprite.Sprite):
                                 self.experience = round(self.experience, 2)
                     self.calculate_cost()
 
+    def pick_up_goods(self, goods, quantity):
+        a = quantity
+        if quantity == 0:
+            a = 100
+        if self.game.map.grids[self.hexid].building != None:
+            if self.game.map.grids[self.hexid].building.owner.name == self.owner.name:
+                #check if specific goods are in building
+                if goods in self.game.map.grids[self.hexid].building.storage:
+                    if self.game.map.grids[self.hexid].building.storage[goods] >= a:
+                        self.game.map.grids[self.hexid].building.storage[goods] -= a
+                        if not goods in self.transporting:
+                            self.transporting[goods] = 0
+                            b = self.transporting[goods]
+                        #b = self.transporting[goods]
+                        #b += quantity
+                        self.transporting += a
+
+    def leave_goods(self, goods, quantity):
+        pass
+
     def change_owner(self, new_owner):
         self.owner = self.game.players[new_owner]
 
@@ -5066,15 +5263,17 @@ class Unit(pg.sprite.Sprite):
         self.image.set_colorkey(VIOLET)
         self.image.blit(self.owner.image, FLAG_OFFSET)
         self.image.blit(self.unit_typ.image, UNIT_OFFSET)
+        self.loyalty = 30
+        self.window.hide()
 
     def hourly(self):
-        if self.state["mobilized"] == True and self.state["training"] == False and self.conditions["starving"] == False and self.conditions["run_away"] == False:
+        if self.state["mobilized"] == True and self.state["training"] == False and self.conditions["starving"] == False and self.conditions["run_away"] == False and self.go_to == None:
             if self.combat_ability < self.combat_ability_max:
                 self.combat_ability += 1
             elif self.combat_ability > self.combat_ability_max:
                 self.combat_ability = self.combat_ability_max
 
-        if self.state["mobilized"] == True and self.state["training"] == True:
+        if self.state["mobilized"] == True and self.state["training"] == True and self.go_to == None:
             if self.experience < 100:
                 self.experience += 0.1
                 self.experience = round(self.experience, 2)
@@ -5082,6 +5281,7 @@ class Unit(pg.sprite.Sprite):
             self.state["mobilized"] == True
             and self.state["training"] == False
             and self.state["building"] == True
+            and self.go_to == None
         ):
             if self.game.map.grids[self.hexid].building != None:
                 if self.game.map.grids[self.hexid].building.name == self.game.language.BUILDINGS1[0]:
@@ -5096,18 +5296,18 @@ class Unit(pg.sprite.Sprite):
 
     def daily(self):
         self.supply -= self.men
-        print("HERE SUPPLY")
-        print(self.supply)
         if self.supply <= 0:
-            print("Starving")
             self.conditions["starving"] = True
             self.supply = 0
+            self.loyalty -= 1
         else:
-            print("Not starving")
             self.conditions["starving"] = False
         
-        print(self.conditions)
+        if self.owner.money < 0:
+            self.loyalty -= 1
 
+        if self.nationality == self.owner.nation:
+            self.loyalty += 1
 
     def weekly(self):
         self.calculate_cost()

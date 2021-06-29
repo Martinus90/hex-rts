@@ -173,10 +173,11 @@ class Language:
                 "Refill crew",
                 "Tiredness",
                 "Building",
-                "Patroling",
+                "Repeat",
                 "Engage",
                 "Conquest",
-                "Upkeep cost: "
+                "Upkeep cost: ",
+                "Max transporting: "
             ]
             self.GUI = [
                 "Nearby resources: ",
@@ -192,7 +193,9 @@ class Language:
                 "Electricity:",
                 "Fuel usage:",
                 "Starving:",
-                "Run Away:"
+                "Run Away:",
+                "Loyalty: ",
+                "Orders: "
             ]
             self.TRADE = [
                 "Trade building:",
@@ -211,7 +214,7 @@ class Language:
                 "not enough money",
                 "correct",
             ]
-            self.DECISIONS = ["Decision", "Option"]
+            self.DECISIONS = ["Decision", "Option", "Grant", "Bonus"]
             self.DIPLOMACY = [
                 "Diplomatic status of:",
                 "Relations with you",
@@ -239,7 +242,8 @@ class Language:
                 "Import: ",
                 "Upkeep of buildings: ",
                 "Salary: ",
-                "Weekly change: "
+                "Weekly change: ",
+                "Print $"
             ]
             self.INFO_TEXTS = [
                 "You bought ",
@@ -351,8 +355,8 @@ class Language:
                 "Zaopatrzenie",
                 "Mudury",
                 "Paliwo",
-                "Lekka Amunicja",
-                "Ciężka Amunicja",
+                "Lekka Amun.",
+                "Ciężka Amun.",
                 "Rakiety",
                 "Karabiny",
                 "Artyleria",
@@ -361,6 +365,7 @@ class Language:
                 "Czołgi",
                 "Helikoptery",
                 "Samoloty",
+                "Wozy rak."
             ]
 
             self.UNIT_TYPE = [
@@ -425,10 +430,11 @@ class Language:
                 "Uzup. załoge",
                 "Zmęczenie",
                 "Budowanie",
-                "Patroluj",
+                "Powtarzaj",
                 "Bojowy",
                 "Podbuj",
-                "Koszt utrzymania: "
+                "Koszt utrzymania: ",
+                "Maksymalny trans.: "
             ]
             self.GUI = [
                 "Pobliskie zasoby: ",
@@ -442,9 +448,11 @@ class Language:
                 "Zlecenie/czas",
                 "lacznie zlecen:",
                 "Elektrycznosc:",
-                "Z. Paliwa:"
-                "Brak zaop.:",
-                "Ucieka:"
+                "Z. Paliwa:",
+                "Brak zaop.: ",
+                "Ucieka: ",
+                "Lojalnosc: ",
+                "Zadania: ",
             ]
             self.TRADE = [
                 "Budynek wymiany:",
@@ -463,7 +471,7 @@ class Language:
                 "brak funduszy",
                 "gotowe",
             ]
-            self.DECISIONS = ["Decyzja", "Opcja"]
+            self.DECISIONS = ["Decyzja", "Opcja", "Dotacja", "Premia"]
             self.DIPLOMACY = [
                 "Status dyplomatyczny strony:",
                 "Relacje z tobą",
@@ -491,7 +499,8 @@ class Language:
                 "Import: ",
                 "Utrzymanie budynków: ",
                 "Zołd: ",
-                "Tygodniowa zmiana: "
+                "Tygodniowa zmiana: ",
+                "Drukuj $"
             ]
             self.INFO_TEXTS = [
                 "Kupiles ",
