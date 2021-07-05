@@ -39,6 +39,10 @@ def hex_id(offset, h, width):
     idnr = roffset_from_cube(offset, h)[0] + roffset_from_cube(offset, h)[1] * width
     return idnr
 
+def hex_id_from_pos(col, row, width):
+    idnr = col + (row * width)
+    return idnr
+
 hex_diagonals = [Hex(2, -1, -1), Hex(1, -2, 1), Hex(-1, -1, 2), Hex(-2, 1, 1), Hex(-1, 2, -1), Hex(1, 1, -2)]
 def hex_diagonal_neighbor(hex, direction):
     return hex_add(hex, hex_diagonals[direction])

@@ -71,12 +71,12 @@ END
 
 
 
-PosX,PosY,Building_Typ(Village),Owner,Name,Nationality,Pop,Prosper,Food,Wood
+PosX,PosY,Building_Typ(Village),Owner,Name,Nationality,Pop,Prosper,Food,Wood,Cotton,Rubber
 *3,*3,VILLAGE,*1,Nazwa wioski,*1,*40,*3,*100,*50,*0,*0,*20
 
 SCENARIO_BUILDINGS
-*10,*16,VILLAGE,*2,Nazwa wioski,*2,*50,*3,*100,*50,*0,*0,*20
-*4,*9,VILLAGE,*1,Nazwa wioski,*1,*50,*3,*100,*50,*0,*100,*20
+*10,*16,VILLAGE,*1,Nazwa wioski,*1,*50,*3,*100,*50,*0,*0,*20
+*4,*9,VILLAGE,*1,Nazwa wioski,*0,*50,*1,*100,*50,*0,*100,*20
 END
 
 

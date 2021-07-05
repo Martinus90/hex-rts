@@ -1244,12 +1244,14 @@ class Game:
                 self.menu.terrain3[0] = ""
 
         for u in self.units:
+            
             if (
                 (u.col == self.mouse_pos.col)
                 and (u.row == self.mouse_pos.row)
                 and (u.owner.player == True)
             ):
                 # print("Tak tu jest jednostka")
+                print(u.unit_id)
                 self.uniting = u
                 self.uniting.check_grid()
                 self.menu.unit1[0] = self.uniting.description[0]
@@ -1709,6 +1711,7 @@ class Game:
                         ),
                         (window.pos[0] + 10, window.pos[1] + 358),
                     )
+                    #upkeep cost
                     self.screen.blit(
                         pg.font.Font(FONT_NAME, FONT_SIZE).render(
                             self.language.DESCRIPTION[12]
@@ -1718,6 +1721,7 @@ class Game:
                         ),
                         (window.pos[0] + 10, window.pos[1] + 378),
                     )
+                    #max transporting
                     self.screen.blit(
                         pg.font.Font(FONT_NAME, FONT_SIZE).render(
                             self.language.DESCRIPTION[13]
@@ -1727,6 +1731,32 @@ class Game:
                         ),
                         (window.pos[0] + 10, window.pos[1] + 398),
                     )
+                    #current transporting
+                    self.screen.blit(
+                        pg.font.Font(FONT_NAME, FONT_SIZE).render(
+                            self.language.DESCRIPTION[14],
+                            False,
+                            LIGHTGREY,
+                        ),
+                        (window.pos[0] + 220, window.pos[1] + 378),
+                    )
+                    #diplaying list of current transporting things
+                    if len(window.thing.transporting) > 0:
+                        keys = window.thing.transporting.keys()
+                        posy = 0
+                        for key in keys:
+                            self.screen.blit(
+                                pg.font.Font(FONT_NAME, FONT_SIZE).render(
+                                    key + ": " + str(window.thing.transporting[key]),
+                                    False,
+                                    LIGHTGREY,
+                                ),
+                                (window.pos[0] + 210, window.pos[1] + 398 + posy),
+                            )
+                            posy += 20
+
+
+
                     self.screen.blit(
                         window.thing.owner.image,
                         (window.pos[0] + 270, window.pos[1] + 30),
@@ -1741,12 +1771,9 @@ class Game:
                         window.thing.unit_typ.image,
                         (window.pos[0] + 260, window.pos[1] + 56),
                     )
-                    self.screen.blit(
-                        pg.font.Font(FONT_NAME, FONT_SIZE).render(
-                            window.thing.unit_typ.name, False, LIGHTGREY
-                        ),
-                        (window.pos[0] + 300, window.pos[1] + 58),
-                    )
+                    self.screen.blit(pg.font.Font(FONT_NAME, FONT_SIZE).render(window.thing.unit_typ.name, False, LIGHTGREY),
+                        (window.pos[0] + 300, window.pos[1] + 58),)
+                        
                     self.screen.blit(
                         pg.font.Font(FONT_NAME, FONT_SIZE).render(
                             window.thing.print_mobilized(), False, LIGHTGREY
@@ -1819,14 +1846,60 @@ class Game:
                     )
                     y = 0
                     for t in window.thing.order_list:
-                        self.screen.blit(
+                        if y <= 100:
+                            self.screen.blit(
+                                pg.font.Font(FONT_NAME, FONT_SIZE).render(
+
+                                    t[0] + ": " + str(t[1][0]) + " " + str(t[1][1]), False, LIGHTGREY
+                                ),
+                                (window.pos[0] + 270, window.pos[1] + 240 + y),
+                            )
+                            y += 20
+                        else:
+                            self.screen.blit(
                             pg.font.Font(FONT_NAME, FONT_SIZE).render(
 
-                                t[0] + ": " + str(t[1][0]) + " " + str(t[1][1]), False, GREEN
+                                "... ... ...", False, LIGHTGREY
                             ),
                             (window.pos[0] + 270, window.pos[1] + 240 + y),
                         )
-                        y += 20
+                            break
+
+                    #printing new task option or change task option
+                    if window.selected_order == 0:
+                        self.screen.blit(
+                            pg.font.Font(FONT_NAME, FONT_SIZE).render(
+                                self.language.INFO_TEXTS[10], False, LIGHTGREY
+                            ),
+                            (window.pos[0] + 450, window.pos[1] + 340),
+                        )
+                    else:
+                        self.screen.blit(
+                            pg.font.Font(FONT_NAME, FONT_SIZE).render(
+                                self.language.INFO_TEXTS[12] + str(window.selected_order), False, LIGHTGREY
+                            ),
+                            (window.pos[0] + 450, window.pos[1] + 340),
+                        )
+
+
+                    self.screen.blit(
+                        pg.font.Font(FONT_NAME, FONT_SIZE).render(
+                            self.language.NEW_TASKS[window.new_task_properties[0]], False, LIGHTGREY
+                        ),
+                        (window.pos[0] + 520, window.pos[1] + 360),
+                    )
+                    self.screen.blit(
+                        pg.font.Font(FONT_NAME, FONT_SIZE).render(
+                            str(window.new_task_properties[2]), False, LIGHTGREY
+                        ),
+                        (window.pos[0] + 520, window.pos[1] + 380),
+                    )
+                    self.screen.blit(
+                        pg.font.Font(FONT_NAME, FONT_SIZE).render(
+                            str(window.new_task_properties[3]), False, LIGHTGREY
+                        ),
+                        (window.pos[0] + 520, window.pos[1] + 400),
+                    )
 
 
         for window in self.building_windows:

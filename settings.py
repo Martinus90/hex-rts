@@ -88,6 +88,7 @@ STABILITY_SIZE = (21, 21)
 STABILITY_OFFSET = (0, 0)
 
 BUTTON_BORDER_SIZE = 2
+MINI_BUTTON_BORDER_SIZE = 1
 
 SCROLL_SPEED = 10
 GAME_SPEED = 1.0
@@ -104,21 +105,25 @@ RES1_LIST = [
     "Cement",
     "Iron_Ore",
     "Coal",
+
     "Steel",
     "Water",
     "Tools",
     "Parts",
     "Aluminum",
+
     "Oil",
     "Fuel",
     "Plastic",
     "Chem_Comp",
     "Fertilizer",
+
     "Silicon",
     "Calcium",
     "Electronics",
     "Cotton",
     "Textiles",
+
     "Rubber",
     "Bauxite",
     "Furniture",
@@ -131,11 +136,13 @@ RES2_LIST = [
     "Fuel",
     "Light_Ammo",
     "Heavy_Ammo",
+
     "Rockets",
     "Rifle",
     "Artilleries",
     "Truck",
     "APC",
+    
     "Tank",
     "Heli",
     "Aircrafts",
@@ -210,13 +217,13 @@ TANK_FUEL_CAP = 200
 HELI_FUEL_CAP = 100
 AIRCRAFT_FUEL_CAP = 300
 
-MEN_TRANSPORT_CAP = 5
-TRUCK_TRANSPORT_CAP = 500
-ROCKET_TRANSPORT_CAP = 50
-APC_TRANSPORT_CAP = 100
-TANK_TRANSPORT_CAP = 100
-HELI_TRANSPORT_CAP = 100
-AIRCRAFT_TRANSPORT_CAP = 100
+MEN_TRANSPORT_CAP = 2
+TRUCK_TRANSPORT_CAP = 400
+ROCKET_TRANSPORT_CAP = 40
+APC_TRANSPORT_CAP = 50
+TANK_TRANSPORT_CAP = 50
+HELI_TRANSPORT_CAP = 50
+AIRCRAFT_TRANSPORT_CAP = 50
 
 
 

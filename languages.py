@@ -22,6 +22,7 @@ class Language:
                 "Change",
                 "Give $1000",
                 "Ask for $",
+                "Delete",
             ]
             self.SEASONS = ["Spring", "Summer", "Autumn", "Winter"]
             self.DAY = [
@@ -162,6 +163,8 @@ class Language:
                 "Training",
                 "Constructing",
                 "Civilian Tasks",
+                "Picking up goods",
+                "Leaving goods",
             ]
             self.DESCRIPTION = [
                 "Experience",
@@ -177,7 +180,8 @@ class Language:
                 "Engage",
                 "Conquest",
                 "Upkeep cost: ",
-                "Max transporting: "
+                "Max transporting: ",
+                "Transporting: "
             ]
             self.GUI = [
                 "Nearby resources: ",
@@ -257,7 +261,31 @@ class Language:
                 "agree to sign peace treaty.",
                 "agree to sign trade agreement.",
                 "agree to sign alliance pact.",
-                "agree to send money."
+                "agree to send money.",
+
+                "New task: ",
+                "Task",
+
+                "Change task: ",
+                "",
+                "",
+                "",
+
+                "",
+                "",
+                "",
+                "",
+
+                "Building don't store this type of goods.",
+                "You are not owner of this building.",
+                "There is no building here.",
+                
+            ]
+            self.NEW_TASKS = [
+                "Go to: ",
+                "Wait: ",
+                "Pick up: ",
+                "Leave: ",
             ]
 
         elif LANGUAGE == "PL":
@@ -278,6 +306,7 @@ class Language:
                 "Zmień",
                 "Daj $1000",
                 "Proś o $",
+                "Usun",
             ]
             self.SEASONS = ["Wiosna", "Lato", "Jesien", "Zima"]
             self.DAY = [
@@ -419,6 +448,8 @@ class Language:
                 "Trenuje",
                 "Buduje",
                 "Zadania Cywilne",
+                "Podnosi zasoby",
+                "Zostawia zasoby",
             ]
             self.DESCRIPTION = [
                 "Doswiadczenie",
@@ -434,7 +465,8 @@ class Language:
                 "Bojowy",
                 "Podbuj",
                 "Koszt utrzymania: ",
-                "Maksymalny trans.: "
+                "Maksymalny trans.: ",
+                "Transpotuje: "
             ]
             self.GUI = [
                 "Pobliskie zasoby: ",
@@ -510,6 +542,22 @@ class Language:
 
                 "Stan wojny z ",
                 "Relacje obnizone o ",
+
+                "zaakceptował traktat pokojowy.",
+                "zaakceptował traktat handlowy.",
+                "zaakceptował pakt sojuszniczy.",
+                "zaakceptował wysłanie środków.",
+
+                "Nowe zadanie: ",
+                "Zadanie: ",
+
+                "W budynku nie ma zasobów danego typu.",
+            ]
+            self.NEW_TASKS = [
+                "Idz do",
+                "Czekaj",
+                "Podnies",
+                "Zostaw",
             ]
 
         self.PERSON_NAME1 = [

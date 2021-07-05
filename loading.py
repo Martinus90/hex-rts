@@ -1083,6 +1083,69 @@ class Function_Button(Button):
         self.rect.x = self.pos[0] + self.window.pos[0]
         self.rect.y = self.pos[1] + self.window.pos[1]
 
+class Mini_Function_Button(Button):
+    def __init__(
+        self,
+        game,
+        window,
+        pos=[6, 6],
+        color=DARKGREY,
+        text="X",
+        textsize=10,
+        textcolor=LIGHTGREY,
+        function="function_name",
+    ):
+        self.groups = game.buttons
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.window = window
+        self.pos = pos
+        self.size = (len(text) * 5 + 8, 15)
+        self.color = color
+        self.text = text
+        self.textsize = textsize
+        self.textcolor = textcolor
+        self.function = function
+
+        self.visible = self.window.visible
+        # self.image = self.game.new_b_button.copy()
+
+        self.image = pg.Surface(self.size)
+        pg.draw.rect(self.image, self.textcolor, (0, 0, self.size[0], self.size[1]))
+        pg.draw.rect(
+            self.image,
+            self.color,
+            (
+                0 + MINI_BUTTON_BORDER_SIZE,
+                0 + MINI_BUTTON_BORDER_SIZE,
+                self.size[0] - MINI_BUTTON_BORDER_SIZE * 2 - 1,
+                self.size[1] - MINI_BUTTON_BORDER_SIZE * 2 - 1,
+            ),
+        )
+
+        # self.image = self.game.button_1_img.copy()
+        self.image.blit(
+            pg.font.Font(FONT_NAME, self.textsize).render(
+                self.text, False, self.textcolor
+            ),
+            (3, 3),
+        )
+        # self.image.set_colorkey(VIOLET)
+        self.rect = self.image.get_rect()
+
+    def click(self):
+        self.window.function_list(self.function)
+        # self.game.window_display = True
+
+    def check_col(self, mouse):
+        if self.rect.collidepoint(mouse):
+            self.click()
+
+    def update(self):
+        # self.abs_pos = self.pos + self.window.pos
+        self.rect.x = self.pos[0] + self.window.pos[0]
+        self.rect.y = self.pos[1] + self.window.pos[1]
+
 
 class CW_Button(Button):  # CW -> Close window
     def __init__(
@@ -2488,6 +2551,10 @@ class Unit_Window(pg.sprite.Sprite):
         self.variables = []
         self.texts = []
 
+        self.new_task_properties = [0, 0, [0, 0], ""]
+        self.selected_goods = 0
+        self.selected_order = 0
+
         # draw window
         self.image = pg.Surface(self.size)
         pg.draw.rect(self.image, self.textcolor, (0, 0, size[0], size[1]))
@@ -2627,7 +2694,7 @@ class Unit_Window(pg.sprite.Sprite):
             Function_Button(
                 self.game,
                 self,
-                pos=(440, 450),
+                pos=(440, 300),
                 text=self.game.language.BASIC[4],
                 function="prev_order",
             )
@@ -2636,7 +2703,7 @@ class Unit_Window(pg.sprite.Sprite):
             Function_Button(
                 self.game,
                 self,
-                pos=(600, 450),
+                pos=(600, 300),
                 text=self.game.language.BASIC[5],
                 function="next_order",
             )
@@ -2645,9 +2712,72 @@ class Unit_Window(pg.sprite.Sprite):
             Function_Button(
                 self.game,
                 self,
-                pos=(520, 450),
+                pos=(520, 300),
                 text=self.game.language.BASIC[9],
-                function="change_order",
+                function="adding_task",
+            )
+        )
+        self.buttons.append(
+            Function_Button(
+                self.game,
+                self,
+                pos=(600, 350),
+                text=self.game.language.BASIC[16],
+                function="delete_task",
+            )
+        )
+        self.buttons.append(
+            Mini_Function_Button(
+                self.game,
+                self,
+                pos=(440, 360),
+                text=self.game.language.BASIC[4],
+                function="prev_task",
+            )
+        )
+        self.buttons.append(
+            Mini_Function_Button(
+                self.game,
+                self,
+                pos=(480, 360),
+                text=self.game.language.BASIC[5],
+                function="next_task",
+            )
+        )
+        self.buttons.append(
+            Mini_Function_Button(
+                self.game,
+                self,
+                pos=(440, 380),
+                text=self.game.language.BASIC[4],
+                function="task_line_1_prev",
+            )
+        )
+        self.buttons.append(
+            Mini_Function_Button(
+                self.game,
+                self,
+                pos=(480, 380),
+                text=self.game.language.BASIC[5],
+                function="task_line_1_next",
+            )
+        )
+        self.buttons.append(
+            Mini_Function_Button(
+                self.game,
+                self,
+                pos=(440, 400),
+                text=self.game.language.BASIC[4],
+                function="task_line_2_prev",
+            )
+        )
+        self.buttons.append(
+            Mini_Function_Button(
+                self.game,
+                self,
+                pos=(480, 400),
+                text=self.game.language.BASIC[5],
+                function="task_line_2_next",
             )
         )
         
@@ -2818,27 +2948,272 @@ class Unit_Window(pg.sprite.Sprite):
         if function == "give_bonus":
             self.give_bonus()
         elif function == "prev_order":
-            self.prev_order()
+            if len(self.thing.order_list) > 0:
+                self.prev_order()
         elif function == "next_order":
-            self.next_order()
-        elif function == "change_order":
-            self.change_order()
+            if len(self.thing.order_list) > 0:
+                self.next_order()
+        elif function == "adding_task":
+            self.adding_task()
+        elif function == "delete_task":
+            if len(self.thing.order_list) > 0:
+                self.delete_task()
+        elif function == "prev_task":
+            self.prev_task()
+        elif function == "next_task":
+            self.next_task()
+        #task var line 1 button prev
+        elif function == "task_line_1_prev":
+            if self.new_task_properties[0] == 0:
+                if self.game.multi_task == True:
+                    self.new_pos(0, -10)
+                else:
+                    self.new_pos(0, -1)
+            elif self.new_task_properties[0] == 1:
+                if self.game.multi_task == True:
+                    self.add_time(-4)
+                else:
+                    self.add_time(-1)
+            elif self.new_task_properties[0] == 2 or self.new_task_properties[0] == 3:
+                if self.game.multi_task == True:
+                    self.prev_goods()
+                    self.prev_goods()
+                    self.prev_goods()
+                else:
+                    self.prev_goods()
+        #task var line 1 button next
+        elif function == "task_line_1_next":
+            if self.new_task_properties[0] == 0:
+                if self.game.multi_task == True:
+                    self.new_pos(0, 10)
+                else:
+                    self.new_pos(0, 1)
+            elif self.new_task_properties[0] == 1:
+                if self.game.multi_task == True:
+                    self.add_time(4)#1h
+                else:
+                    self.add_time(1)#15 min
+            elif self.new_task_properties[0] == 2 or self.new_task_properties[0] == 3:
+                if self.game.multi_task == True:
+                    self.next_goods()
+                    self.next_goods()
+                    self.next_goods()
+                else:
+                    self.next_goods()
+        #task var line 2 button prev
+        elif function == "task_line_2_prev":
+            if self.new_task_properties[0] == 0:
+                if self.game.multi_task == True:
+                    self.new_pos(1, -10)
+                else:
+                    self.new_pos(1, -1)
+            elif self.new_task_properties[0] == 1:
+                if self.game.multi_task == True:
+                    self.add_time(-48)#-12h
+                else:
+                    self.add_time(-12)#-3h
+            elif self.new_task_properties[0] == 2 or self.new_task_properties[0] == 3:
+                if self.game.multi_task == True:
+                    self.new_task_properties[3] -= 25
+                else:    
+                    self.new_task_properties[3] -= 5
+                if self.new_task_properties[3] < 0:
+                    self.new_task_properties[3] = 0
+        #task var line 2 button next
+        elif function == "task_line_2_next":
+            if self.new_task_properties[0] == 0:
+                if self.game.multi_task == True:
+                    self.new_pos(1, 5)
+                else:
+                    self.new_pos(1, 1)
+            elif self.new_task_properties[0] == 1:
+                if self.game.multi_task == True:
+                    self.add_time(48)#12h
+                else:
+                    self.add_time(12)#3h
+            elif self.new_task_properties[0] == 2 or self.new_task_properties[0] == 3:
+                if self.game.multi_task == True:
+                    self.new_task_properties[3] += 25
+                else:    
+                    self.new_task_properties[3] += 5
         else:
             pass
+
 
     def give_bonus(self):
         if self.thing.owner.money > self.thing.men:
             self.thing.owner.money -= self.thing.men
             self.thing.loyalty += 5
 
-    def next_order(self):
-        pass
 
     def prev_order(self):
+        self.selected_order -= 1
+        if self.selected_order < 0:
+            self.selected_order = len(self.thing.order_list)
+        task = self.thing.order_list[self.selected_order - 1]
+        print(len(self.thing.order_list))
+        print(task)
+        if self.selected_order == 0:
+            #new task
+            self.new_task_properties = [0, 0, [0, 0], ""]
+        else:
+            if task[0] == "go_to":
+                self.new_task_properties = [0, 0, [task[1][0], task[1][1]], ""]
+            elif task[0] == "wait_time":
+                self.new_task_properties = [1, 0, task[1], ""]
+            elif task[0] == "pick_up":
+                self.new_task_properties = [2, 0, task[1], ""]
+            elif task[0] == "leave":
+                self.new_task_properties = [3, 0, task[1][0], task[1][1]]
+
+
+    def next_order(self):
+        self.selected_order += 1
+        if self.selected_order > len(self.thing.order_list):
+            self.selected_order = 0
+        task = self.thing.order_list[self.selected_order - 1]
+        if self.selected_order == 0:
+            pass
+        print(len(self.thing.order_list))
+        print(task)
+        if self.selected_order == 0:
+            #new task
+            self.new_task_properties = [0, 0, [0, 0], ""]
+        else:
+            if task[0] == "go_to":
+                self.new_task_properties = [0, 0, [task[1][0], task[1][1]], ""]
+            elif task[0] == "wait_time":
+                self.new_task_properties = [1, 0, task[1][0], ""]
+            elif task[0] == "pick_up":
+                self.selected_goods = self.int_of_goods(task[1][0])
+                self.new_task_properties = [2, 0, self.name_of_goods(), task[1][1]]
+            elif task[0] == "leave":
+                self.selected_goods = self.int_of_goods(task[1][0])
+                self.new_task_properties = [3, 0, self.name_of_goods(), task[1][1]]
+
+
+    def adding_task(self):
+        if self.selected_order > len(self.thing.order_list):
+            print("Problem, order larger then lenght of order list.")
+            self.reset_task()
+        else:
+            if self.selected_order == 0:
+                if self.new_task_properties[0] == 0:   #0 == go_to
+                    self.thing.order_list.append(["go_to", OffsetCoord(self.new_task_properties[2][0], self.new_task_properties[2][1])])
+                elif self.new_task_properties[0] == 1: #1 == wait
+                    self.thing.order_list.append(["wait_time", [self.new_task_properties[2], ""]])
+                elif self.new_task_properties[0] == 2: #2 == pick up goods
+                    self.thing.order_list.append(["pick_up", [self.new_task_properties[2], self.new_task_properties[3]]])
+                elif self.new_task_properties[0] == 3: #3 == leave goods
+                    self.thing.order_list.append(["leave", [self.new_task_properties[2], self.new_task_properties[3]]])
+                else:
+                    pass
+            else:
+                if self.new_task_properties[0] == 0:   #0 == go_to
+                    self.thing.order_list[self.selected_order - 1] = ["go_to", OffsetCoord(self.new_task_properties[2][0], self.new_task_properties[2][1])]
+                elif self.new_task_properties[0] == 1: #1 == wait
+                    self.thing.order_list[self.selected_order - 1] = ["wait_time", [self.new_task_properties[2], ""]]
+                elif self.new_task_properties[0] == 2: #2 == pick up goods
+                    self.thing.order_list[self.selected_order - 1] = ["pick_up", [self.new_task_properties[2], self.new_task_properties[3]]]
+                elif self.new_task_properties[0] == 3: #3 == leave goods
+                    self.thing.order_list[self.selected_order - 1] = ["leave", [self.new_task_properties[2], self.new_task_properties[3]]]
+                else:
+                    pass
+
+
+    def delete_task(self):
+        if self.selected_order > len(self.thing.order_list) or self.selected_order == 0:
+            print("Problem, order larger then lenght of order list")
+            print("or selected is new order.")
+            self.reset_task()
+        else:
+            self.thing.order_list.pop(self.selected_order - 1)
+            self.reset_task()
+
+
+    def new_pos(self, axis, val):
+        self.new_task_properties[2][axis] += val
+
+
+    def add_time(self, time):
+        self.new_task_properties[2] += time
+        if self.new_task_properties[2] < 0:
+            self.new_task_properties[2] = 0
+    
+
+    def prev_goods(self):
+        self.selected_goods -= 1
+        if self.selected_goods < 0:
+            self.selected_goods = int(len(RES1_LIST) + len(RES2_LIST) - 1)
+        self.new_task_properties[2] = self.name_of_goods()
+
+
+    def next_goods(self):
+        self.selected_goods += 1
+        if self.selected_goods >= (len(RES1_LIST) + len(RES2_LIST)):
+            self.selected_goods = 0
+        self.new_task_properties[2] = self.name_of_goods()
+
+
+    def name_of_goods(self):
+        if self.selected_goods < len(RES1_LIST):
+            return RES1_LIST[self.selected_goods].lower()
+        else:
+            return RES2_LIST[self.selected_goods - len(RES1_LIST)].lower()
+
+
+    def int_of_goods(self, name):
+        i = 0
+        rrr = None
+        for r in RES1_LIST:
+            rr = r.lower()
+            if name == rr:
+                rrr = i
+                return rrr
+            i += 1
+        for r in RES2_LIST:
+            rr = r.lower()
+            if name == rr:
+                rrr = i
+                return rrr
+            i += 1
+        
+
+    def prev_task(self):
+        self.new_task_properties[0] -= 1
+        if self.new_task_properties[0] < 0:
+            self.new_task_properties[0] = len(self.game.language.NEW_TASKS) - 1
+
+        if self.new_task_properties[0] == 0:
+            self.new_task_properties = [0, 0, [self.thing.col, self.thing.row], ""]
+        elif self.new_task_properties[0] == 1:
+            self.new_task_properties = [1, 0, 0, ""]
+        elif self.new_task_properties[0] == 2:
+            self.new_task_properties = [2, 0, self.name_of_goods(), 0]
+        elif self.new_task_properties[0] == 3:
+            self.new_task_properties = [3, 0, self.name_of_goods(), 0]
+
+    def next_task(self):
+        self.new_task_properties[0] += 1
+        if self.new_task_properties[0] >= len(self.game.language.NEW_TASKS):
+            self.new_task_properties[0] = 0
+
+        if self.new_task_properties[0] == 0:
+            self.new_task_properties = [0, 0, [self.thing.col, self.thing.row], ""]
+        elif self.new_task_properties[0] == 1:
+            self.new_task_properties = [1, 0, 0, ""]
+        elif self.new_task_properties[0] == 2:
+            self.new_task_properties = [2, 0, self.name_of_goods(), 0]
+        elif self.new_task_properties[0] == 3:
+            self.new_task_properties = [3, 0, self.name_of_goods(), 0]
+
+    def recalc_new_task(self):
         pass
 
-    def change_order(self):
-        pass
+    def reset_task(self):
+        self.new_task_properties = [0, 0, [0, 0], ""]
+        self.selected_goods = 0
+        self.selected_order = 0
 
     def show(self):
         self.thing.calculate_cost()

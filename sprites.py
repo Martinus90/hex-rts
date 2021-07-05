@@ -4628,6 +4628,7 @@ class Unit(pg.sprite.Sprite):
         self.unit_typ = self.game.types[typ]
         self.typ = self.unit_typ.typ
         self.unit_name = unit_name
+        self.unit_id = len(self.game.units)
         self.brigade = brigade
         self.regiment = regiment
         self.battalion = battalion
@@ -4705,6 +4706,7 @@ class Unit(pg.sprite.Sprite):
             + (self.rocket_truck * ROCKET_TRUCK_FUEL_CAP)
         )
         self.fuel_usage_calc()
+        self.transporting_calc()
         self.max_light_ammo = 0
         self.max_light_ammo += (
             self.men * 5 + self.apc * 200 + self.heli * 50 + self.aircraft * 40
@@ -4815,6 +4817,11 @@ class Unit(pg.sprite.Sprite):
             + (self.rocket_truck * ROCKET_TRUCK_FUEL_CAP)
         )
 
+
+    def transporting_calc(self):
+        self.current_transport = 0
+        for a in self.transporting.values():
+            self.current_transport += a
         self.max_transport = 0
         self.max_transport = (
             (self.men * MEN_TRANSPORT_CAP)
@@ -4826,13 +4833,6 @@ class Unit(pg.sprite.Sprite):
             + (self.rocket_truck * ROCKET_TRANSPORT_CAP)
         )
 
-        self.current_transport = 0
-        for a in self.transporting.values():
-            self.current_transport += a
-
-        print("Max transport = " + str(self.max_transport))
-        print("Current transport" + str(self.current_transport))
-        print("Pos" + str(self.x) + " " + str(self.y))
 
     def print_mobilized(self):
         if self.state["mobilized"] == True:
@@ -4945,7 +4945,7 @@ class Unit(pg.sprite.Sprite):
     def make_path(self, go_to):
         self.go_to = roffset_to_cube(OFFSET, go_to)
         if self.state["repeat"] == True:
-            self.return_to = roffset_to_cube(-1, self)
+            self.return_to = roffset_to_cube(OFFSET, self)
         else:
             self.return_to = None
         self.step_to = None
@@ -5002,73 +5002,32 @@ class Unit(pg.sprite.Sprite):
             self.current = self.came_from[self.current]
 
     def do(self):
-        print(self.unit_name)
-        print(self.order_list)
-        print(len(self.order_list))
-        if len(self.order_list) > 0:
-            if self.to_do == None:
+        if len(self.order_list) > 0:#selecting task to do if not empty
+            if self.to_do == None:#selecting task to do if not selected
                 self.to_do = self.order_list[0]
                 if self.to_do[0] == "go_to":
                     self.make_path(self.to_do[1])
+                elif self.to_do[0] == "wait_time":
+                    pass
                 elif self.to_do[0] == "pick_up":
-                    self.pick_up_goods()
+                    pass
+                elif self.to_do[0] == "leave":
+                    pass
 
-
-        if self.go_to != None:
-            if self.go_to == self.hex:#rewrite
-                if self.state["repeat"] == True:
-                    self.order_list.append(self.to_do)
-                self.stop()
-                self.to_do = None
-                del self.order_list[0]
-                print(self.order_list)
-
-            else:
-                if self.step_to == None:
-                    if len(self.path) != 0:
-                        self.step_to = self.path.pop()
-                        self.step_cost = (
-                            self.cost_so_far[self.step_to] - self.last_step_cost
-                        )
-                    else:
-                        self.stop()
-
-                if self.step_to != None:
-                    self.task = (
-                        self.game.language.COMMANDS[1]
-                        + str(roffset_from_cube(-1, self.go_to)[0])
-                        + ", "
-                        + str(roffset_from_cube(-1, self.go_to)[1])
-                    )
-                    if self.fuel < self.fuel_usage:
-                        # moving without fuel
-                        if self.doing >= self.step_cost:
-                            self.doing = self.doing - self.step_cost
-                            self.hex = self.game.map.grids[self.step_to].hex
-                            self.hexid = hex_id(
-                                OFFSET, self.hex, self.game.map.tmxdata.width
-                            )
-                            self.last_step_cost = self.cost_so_far[self.step_to]
-                            self.step_to = None
-                            self.concquering()
-                    else:
-                        if self.doing >= self.step_cost:
-                            self.doing = self.doing - self.step_cost
-                            self.hex = self.game.map.grids[self.step_to].hex
-                            self.hexid = hex_id(
-                                OFFSET, self.hex, self.game.map.tmxdata.width
-                            )
-                            self.last_step_cost = self.cost_so_far[self.step_to]
-                            self.step_to = None
-                            self.concquering()
+        if self.to_do != None:#doing selected task
+            if self.to_do[0] == "go_to":
+                self.moving()
+                self.task = self.game.language.COMMANDS[1] + str(self.x) + "/" + str(self.y)
+            elif self.to_do[0] == "wait_time":
+                self.wait_time()
+                self.task = self.game.language.COMMANDS[0]
+            elif self.to_do[0] == "pick_up":
+                self.pick_up_goods(self.to_do[1][0], self.to_do[1][1])
+                self.task = self.game.language.COMMANDS[5]
+            elif self.to_do[0] == "leave":
+                self.leave_goods(self.to_do[1][0], self.to_do[1][1])
+                self.task = self.game.language.COMMANDS[6]
             self.doing += 1
-            if self.fuel > 0:
-                self.fuel = self.fuel - self.fuel_usage
-                if self.fuel < self.fuel_usage:
-                    self.stop()
-                    self.fuel = 0
-            else:
-                self.fuel = 0
         else:
             #if not going / just stand
             self.doing = 0
@@ -5097,9 +5056,128 @@ class Unit(pg.sprite.Sprite):
         pass
 
     def refill_eq(self):
+        f = None
+        for u in self.game.units:
+            #check if another unit is on same hex
+            if u.unit_id != self.unit_id and u.hex == self.hex:
+                if u.task == self.game.language.COMMANDS[0]:
+                    f = u
+            #if not then refill eq from transporting goods
+            else:
+                f = self
+        if f != None:
+            for d in self.unit_typ.equipment:
+            #refill from transporting unit
+                if d in f.transporting.keys() and f.owner == self.owner:
+                    b = f.transporting[d]
+                    c = 0
+                    e = 0
+                    if d == "supply":
+                        c = self.max_supply - self.supply
+                    elif d == "uniforms":
+                        c = self.max_uniforms - self.uniforms
+                    elif d == "fuel":
+                        c = self.max_fuel - self.fuel
+                    elif d == "light_ammo":
+                        c = self.max_light_ammo - self.light_ammo
+                    elif d == "heavy_ammo":
+                        c = self.max_heavy_ammo - self.heavy_ammo
+                    elif d == "rockets":
+                        c = self.max_rockets - self.rockets
+                    elif d == "rifle":
+                        c = self.max_rifle - self.rifle
+                    elif d == "artilleries":
+                        c = self.max_artilleries - self.artilleries
+                    elif d == "truck":
+                        c = self.max_truck - self.truck
+                        e = self.max_rocket_truck - self.rocket_truck
+                    elif d == "apc":
+                        c = self.max_apc - self.apc
+                    elif d == "tank":
+                        c = self.max_tank - self.tank
+                    elif d == "rifle":
+                        c = self.max_rifle - self.rifle
+                    elif d == "heli":
+                        c = self.max_heli - self.heli
+                    elif d == "aircraft":
+                        c = self.max_aircraft - self.aircraft
+
+                    if b < c:
+                        f.transporting[d] -= b
+                        if d == "supply":
+                            self.supply += b
+                        elif d == "uniforms":
+                            self.uniforms += b
+                        elif d == "fuel":
+                            self.fuel += b
+                        elif d == "light_ammo":
+                            self.light_ammo += b
+                        elif d == "heavy_ammo":
+                            self.heavy_ammo += b
+                        elif d == "rockets":
+                            self.rockets += b
+                        elif d == "rifle":
+                            self.rifle += b
+                        elif d == "artilleries":
+                            self.artilleries += b
+                        elif d == "truck":
+                            self.truck += b
+                        elif d == "apc":
+                            self.apc += b
+                        elif d == "tank":
+                            self.tank += b
+                        elif d == "heli":
+                            self.heli += b
+                        elif d == "aircraft":
+                            self.aircraft += b
+
+                    else:
+                        f.transporting[d] -= c
+                        if d == "supply":
+                            self.supply += c
+                        if d == "uniforms":
+                            self.uniforms += c
+                        if d == "fuel":
+                            self.fuel += c
+                        if d == "light_ammo":
+                            self.light_ammo += c
+                        if d == "heavy_ammo":
+                            self.heavy_ammo += c
+                        if d == "rockets":
+                            self.rockets += c
+                        if d == "rifle":
+                            self.rifle += c
+                        if d == "artilleries":
+                            self.artilleries += c
+                        if d == "truck":
+                            self.truck += c
+                        if d == "apc":
+                            self.apc += c
+                        if d == "tank":
+                            self.tank += c
+                        if d == "heli":
+                            self.heli += c
+                        if d == "aircraft":
+                            self.aircraft += c
+
+                    if c == 0 and e > 0:
+                        if b < e:
+                            f.transporting[d] -= b
+                            if d == "truck":
+                                self.rocket_truck += b
+                        else:
+                            f.transporting[d] -= e
+                            if d == "truck":
+                                self.rocket_truck += e
+
+                    self.fuel_usage_calc()
+                    self.transporting_calc()
+                    self.calculate_cost()
+
         if self.game.map.grids[self.hexid].building != None:
             a = self.game.map.grids[self.hexid].building
             for d in self.unit_typ.equipment:
+                #refill from storage in building
                 if d in a.storage.keys() and a.owner == self.owner:
                     if a.storage[d] > 100:
                         b = 100
@@ -5207,7 +5285,9 @@ class Unit(pg.sprite.Sprite):
                                 self.rocket_truck += e
 
                     self.fuel_usage_calc()
+                    self.transporting_calc()
                     self.calculate_cost()
+                
 
     def refill_cr(self):
         if self.game.map.grids[self.hexid].building != None:
@@ -5234,26 +5314,156 @@ class Unit(pg.sprite.Sprite):
                                 self.experience -= 1
                                 self.experience = round(self.experience, 2)
                     self.calculate_cost()
+                    self.transporting_calc()
+
+
+    def moving(self):
+        if self.go_to != None:
+            if self.go_to == self.hex:#rewrite
+                if self.state["repeat"] == True:
+                    self.order_list.append(self.to_do)
+                self.stop()
+                self.to_do = None
+                del self.order_list[0]
+            else:
+                if self.step_to == None:
+                    if len(self.path) != 0:
+                        self.step_to = self.path.pop()
+                        self.step_cost = (
+                            self.cost_so_far[self.step_to] - self.last_step_cost
+                        )
+                    else:
+                        self.stop()
+
+                if self.step_to != None:
+                    self.task = (
+                        self.game.language.COMMANDS[1]
+                        + str(roffset_from_cube(-1, self.go_to)[0])
+                        + ", "
+                        + str(roffset_from_cube(-1, self.go_to)[1])
+                    )
+                    if self.fuel < self.fuel_usage:
+                        # moving without fuel
+                        if self.doing >= self.step_cost:
+
+                            #self.doing = self.doing - self.step_cost
+
+                            self.hex = self.game.map.grids[self.step_to].hex
+                            self.hexid = hex_id(
+                                OFFSET, self.hex, self.game.map.tmxdata.width
+                            )
+                            self.last_step_cost = self.cost_so_far[self.step_to]
+                            self.step_to = None
+                            self.concquering()
+                            self.doing = 0
+                    else:
+                        if self.doing >= self.step_cost:
+                            #self.doing = self.doing - self.step_cost
+                            self.hex = self.game.map.grids[self.step_to].hex
+                            self.hexid = hex_id(
+                                OFFSET, self.hex, self.game.map.tmxdata.width
+                            )
+                            self.last_step_cost = self.cost_so_far[self.step_to]
+                            self.step_to = None
+                            self.concquering()
+                            self.doing = 0
+            if self.fuel > 0:
+                self.fuel = self.fuel - self.fuel_usage
+                if self.fuel < self.fuel_usage:
+                    self.stop()
+                    self.fuel = 0
+            else:
+                self.fuel = 0
+
+
+    def wait_time(self):
+        if self.state["refill_equipment"] == True:
+                self.refill_eq()
+
+        if self.state["refill_crew"] == True:
+            self.refill_cr()
+
+        if self.to_do[1][0] <= self.doing:
+            if self.state["repeat"] == True:
+                self.order_list.append(self.to_do)
+            self.stop()
+            self.to_do = None
+            del self.order_list[0]
+            self.doing = 0
+
 
     def pick_up_goods(self, goods, quantity):
+        self.transporting_calc()
         a = quantity
+        b = self.max_transport - self.current_transport
         if quantity == 0:
-            a = 100
+            a = 3000
+        if a > b:
+            a = b
+
+        if self.game.map.grids[self.hexid].building != None and a != 0:
+            if self.game.map.grids[self.hexid].building.owner.name == self.owner.name:
+                #check if specific goods are in building
+                if goods in self.game.map.grids[self.hexid].building.storage:
+                    c = self.game.map.grids[self.hexid].building.storage[goods]
+                    if not goods in self.transporting:
+                        self.transporting[goods] = 0
+                    if c >= a:
+                        self.transporting[goods] += a
+                        self.game.map.grids[self.hexid].building.storage[goods] -= a
+                        if self.state["repeat"] == True:
+                            self.order_list.append(self.to_do)
+                        self.stop()
+                        self.to_do = None
+                        del self.order_list[0]
+                        self.doing = 0
+                    else:
+                        self.transporting[goods] += c
+                        self.game.map.grids[self.hexid].building.storage[goods] -= c
+                        if self.state["repeat"] == True:
+                            self.order_list.append(self.to_do)
+                        self.stop()
+                        self.to_do = None
+                        del self.order_list[0]
+                        self.doing = 0
+                else:
+                    self.game.event_list.show_new_info([self.game.language.INFO_TEXTS[20], "Pos: " + str(self.x) + "/" + str(self.y)])
+            else:
+                self.game.event_list.show_new_info([self.game.language.INFO_TEXTS[21], "Pos: " + str(self.x) + "/" + str(self.y)])
+        else:
+            self.game.event_list.show_new_info([self.game.language.INFO_TEXTS[22], "Pos: " + str(self.x) + "/" + str(self.y)])
+
+                        
+
+    def leave_goods(self, goods, quantity):
+        a = quantity
+        
+        #if 0 or more then transporting, then leave all goods
+        if goods in self.transporting: 
+            if quantity == 0 or a > self.transporting[goods]:
+                a = self.transporting[goods]
+        print(self.game.map.grids[self.hexid].building)
         if self.game.map.grids[self.hexid].building != None:
             if self.game.map.grids[self.hexid].building.owner.name == self.owner.name:
                 #check if specific goods are in building
                 if goods in self.game.map.grids[self.hexid].building.storage:
-                    if self.game.map.grids[self.hexid].building.storage[goods] >= a:
-                        self.game.map.grids[self.hexid].building.storage[goods] -= a
-                        if not goods in self.transporting:
-                            self.transporting[goods] = 0
-                            b = self.transporting[goods]
-                        #b = self.transporting[goods]
-                        #b += quantity
-                        self.transporting += a
-
-    def leave_goods(self, goods, quantity):
-        pass
+                    if goods in self.transporting:
+                        if self.transporting[goods] >= a:
+                            self.transporting[goods] -= a
+                            self.game.map.grids[self.hexid].building.storage[goods] += a
+                            #if self.transporting[goods] == 0:
+                            if self.state["repeat"] == True:
+                                self.order_list.append(self.to_do)
+                            self.stop()
+                            self.to_do = None
+                            del self.order_list[0]
+                            self.doing = 0
+                else:
+                    self.game.event_list.show_new_info([self.game.language.INFO_TEXTS[20], "Pos: " + str(self.x) + "/" + str(self.y)])
+            else:
+                self.game.event_list.show_new_info([self.game.language.INFO_TEXTS[21], "Pos: " + str(self.x) + "/" + str(self.y)])
+        else:
+            self.game.event_list.show_new_info([self.game.language.INFO_TEXTS[22], "Pos: " + str(self.x) + "/" + str(self.y)])
 
     def change_owner(self, new_owner):
         self.owner = self.game.players[new_owner]
