@@ -1,7 +1,6 @@
 # cos
 import sys
 import math
-
 import pygame as pg
 import inspect
 from os import path
@@ -255,6 +254,11 @@ class Game:
         self.nations.append(Nation(self, name="Grenaly"))
         self.nations.append(Nation(self, name="Kitayce"))
 
+
+
+        for a in range(len(self.nations)):
+            self.nations[a].id_num = a
+
         # first on the list is always neutral, second is player, 3+ are others / to change color just change side
         self.player = Player(self, 0, 0, 1)
         self.players.append(
@@ -269,7 +273,8 @@ class Game:
                 global_money=2000,
                 reputation=0,
                 stability=2,
-                tax=10,
+                pop_tax=10,
+                build_tax=10,
                 reserve=100,
             )
         )
@@ -285,7 +290,8 @@ class Game:
                 global_money=10000,
                 reputation=0,
                 stability=2,
-                tax=10,
+                pop_tax=10,
+                build_tax=10,
                 reserve=100,
             )
         )
@@ -301,7 +307,8 @@ class Game:
                 global_money=0,
                 reputation=0,
                 stability=2,
-                tax=3,
+                pop_tax=3,
+                build_tax=10,
                 reserve=100,
             )
         )
@@ -317,7 +324,8 @@ class Game:
                 global_money=0,
                 reputation=0,
                 stability=2,
-                tax=3,
+                pop_tax=3,
+                build_tax=10,
                 reserve=100,
             )
         )
@@ -333,7 +341,8 @@ class Game:
                 global_money=0,
                 reputation=0,
                 stability=2,
-                tax=3,
+                pop_tax=3,
+                build_tax=10,
                 reserve=100,
             )
         )
@@ -349,7 +358,8 @@ class Game:
                 global_money=0,
                 reputation=0,
                 stability=2,
-                tax=3,
+                pop_tax=3,
+                build_tax=10,
                 reserve=100,
             )
         )
@@ -365,7 +375,8 @@ class Game:
                 global_money=0,
                 reputation=0,
                 stability=2,
-                tax=3,
+                pop_tax=3,
+                build_tax=10,
                 reserve=100,
             )
         )
@@ -378,398 +389,408 @@ class Game:
         self.event_list = Event_List(
             self,
             [
-                [5, "event_name", "here_event_properties"],
-                [7, "event_name2", "here_event_properies2"],
+                [50, "event_name", "here_event_properties"]
             ],
         )
-        self.event_list.add_event([7, "event_name", "Event 3"])
-        #self.event_list.add_event([2, "get_control_over_grids", 1, [20, 21]])
 
 
-        self.event_list.add_event(
-            [
-                2,
-                "show_new_info",
-                [
-                    "First line of text",
-                    "Second line",
-                    "Last third line of the thext.",
-                    "The End",
-                ],
-            ]
-        )
-
+        #initialising trade
         self.trade = Trade(self)
 
-
-        # unit types
-        # infantry
-        self.types.append(
-            Unit_Type(
-                self,
-                name=self.language.UNIT_TYPE[0],
-                typ=0,
-                s_normal=4,
-                s_water=100,
-                s_mountain=6,
-                s_coast=4,
-                s_river=12,
-                s_no_fuel=20,
-                money_usage=2,
-                max_men=79,
-                max_art=0,
-                max_truck=0,
-                max_apc=0,
-                max_tank=0,
-                max_heli=0,
-                max_aircraft=0,
-                max_rocket_truck=0,
+        # creating unit types
+        if 1 == 1:
+            # infantry
+            self.types.append(
+                Unit_Type(
+                    self,
+                    name=self.language.UNIT_TYPE[0],
+                    typ=0,
+                    s_normal=4,
+                    s_water=200,
+                    s_mountain=6,
+                    s_coast=4,
+                    s_river=12,
+                    s_no_fuel=20,
+                    money_usage=2,
+                    max_men=79,
+                    max_art=0,
+                    max_truck=0,
+                    max_apc=0,
+                    max_tank=0,
+                    max_heli=0,
+                    max_aircraft=0,
+                    max_rocket_truck=0,
+                )
             )
-        )
 
-        # armored
-        self.types.append(
-            Unit_Type(
-                self,
-                name=self.language.UNIT_TYPE[1],
-                typ=1,
-                s_normal=2,
-                s_water=100,
-                s_mountain=12,
-                s_coast=4,
-                s_river=12,
-                s_no_fuel=40,
-                money_usage=2,
-                max_men=20,
-                max_art=0,
-                max_truck=0,
-                max_apc=0,
-                max_tank=4,
-                max_heli=0,
-                max_aircraft=0,
-                max_rocket_truck=0,
+            # armored
+            self.types.append(
+                Unit_Type(
+                    self,
+                    name=self.language.UNIT_TYPE[1],
+                    typ=1,
+                    s_normal=2,
+                    s_water=200,
+                    s_mountain=12,
+                    s_coast=4,
+                    s_river=12,
+                    s_no_fuel=40,
+                    money_usage=2,
+                    max_men=20,
+                    max_art=0,
+                    max_truck=0,
+                    max_apc=0,
+                    max_tank=4,
+                    max_heli=0,
+                    max_aircraft=0,
+                    max_rocket_truck=0,
+                )
             )
-        )
 
-        # artillery
-        self.types.append(
-            Unit_Type(
-                self,
-                name=self.language.UNIT_TYPE[2],
-                typ=2,
-                s_normal=2,
-                s_water=100,
-                s_mountain=12,
-                s_coast=4,
-                s_river=12,
-                s_no_fuel=20,
-                money_usage=2,
-                max_men=25,
-                max_art=4,
-                max_truck=4,
-                max_apc=0,
-                max_tank=0,
-                max_heli=0,
-                max_aircraft=0,
-                max_rocket_truck=0,
+            # artillery
+            self.types.append(
+                Unit_Type(
+                    self,
+                    name=self.language.UNIT_TYPE[2],
+                    typ=2,
+                    s_normal=2,
+                    s_water=200,
+                    s_mountain=12,
+                    s_coast=4,
+                    s_river=12,
+                    s_no_fuel=20,
+                    money_usage=2,
+                    max_men=25,
+                    max_art=4,
+                    max_truck=4,
+                    max_apc=0,
+                    max_tank=0,
+                    max_heli=0,
+                    max_aircraft=0,
+                    max_rocket_truck=0,
+                )
             )
-        )
 
-        # mechanized
-        self.types.append(
-            Unit_Type(
-                self,
-                name=self.language.UNIT_TYPE[3],
-                typ=3,
-                s_normal=2,
-                s_water=100,
-                s_mountain=12,
-                s_coast=4,
-                s_river=12,
-                s_no_fuel=40,
-                money_usage=2,
-                max_men=99,
-                max_art=0,
-                max_truck=0,
-                max_apc=9,
-                max_tank=0,
-                max_heli=0,
-                max_aircraft=0,
-                max_rocket_truck=0,
+            # mechanized
+            self.types.append(
+                Unit_Type(
+                    self,
+                    name=self.language.UNIT_TYPE[3],
+                    typ=3,
+                    s_normal=2,
+                    s_water=200,
+                    s_mountain=12,
+                    s_coast=4,
+                    s_river=12,
+                    s_no_fuel=40,
+                    money_usage=2,
+                    max_men=99,
+                    max_art=0,
+                    max_truck=0,
+                    max_apc=9,
+                    max_tank=0,
+                    max_heli=0,
+                    max_aircraft=0,
+                    max_rocket_truck=0,
+                )
             )
-        )
 
-        # reconnaissance
-        self.types.append(
-            Unit_Type(
-                self,
-                name=self.language.UNIT_TYPE[4],
-                typ=4,
-                s_normal=2,
-                s_water=100,
-                s_mountain=8,
-                s_coast=3,
-                s_river=8,
-                s_no_fuel=20,
-                money_usage=2,
-                max_men=99,
-                max_art=0,
-                max_truck=4,
-                max_apc=4,
-                max_tank=0,
-                max_heli=0,
-                max_aircraft=0,
-                max_rocket_truck=0,
+            # reconnaissance
+            self.types.append(
+                Unit_Type(
+                    self,
+                    name=self.language.UNIT_TYPE[4],
+                    typ=4,
+                    s_normal=2,
+                    s_water=200,
+                    s_mountain=8,
+                    s_coast=3,
+                    s_river=8,
+                    s_no_fuel=20,
+                    money_usage=2,
+                    max_men=99,
+                    max_art=0,
+                    max_truck=4,
+                    max_apc=4,
+                    max_tank=0,
+                    max_heli=0,
+                    max_aircraft=0,
+                    max_rocket_truck=0,
+                )
             )
-        )
 
-        # motorized
-        self.types.append(
-            Unit_Type(
-                self,
-                name=self.language.UNIT_TYPE[5],
-                typ=5,
-                s_normal=2,
-                s_water=100,
-                s_mountain=12,
-                s_coast=4,
-                s_river=12,
-                s_no_fuel=20,
-                money_usage=2,
-                max_men=99,
-                max_art=0,
-                max_truck=9,
-                max_apc=0,
-                max_tank=0,
-                max_heli=0,
-                max_aircraft=0,
-                max_rocket_truck=0,
+            # motorized
+            self.types.append(
+                Unit_Type(
+                    self,
+                    name=self.language.UNIT_TYPE[5],
+                    typ=5,
+                    s_normal=2,
+                    s_water=200,
+                    s_mountain=12,
+                    s_coast=4,
+                    s_river=12,
+                    s_no_fuel=20,
+                    money_usage=2,
+                    max_men=99,
+                    max_art=0,
+                    max_truck=9,
+                    max_apc=0,
+                    max_tank=0,
+                    max_heli=0,
+                    max_aircraft=0,
+                    max_rocket_truck=0,
+                )
             )
-        )
 
-        # other
-        self.types.append(
-            Unit_Type(
-                self,
-                name=self.language.UNIT_TYPE[6],
-                typ=6,
-                s_normal=4,
-                s_water=100,
-                s_mountain=6,
-                s_coast=4,
-                s_river=12,
-                s_no_fuel=20,
-                money_usage=1,
-                max_men=79,
-                max_art=0,
-                max_truck=0,
-                max_apc=0,
-                max_tank=0,
-                max_heli=0,
-                max_aircraft=0,
-                max_rocket_truck=0,
+            # other
+            self.types.append(
+                Unit_Type(
+                    self,
+                    name=self.language.UNIT_TYPE[6],
+                    typ=6,
+                    s_normal=4,
+                    s_water=200,
+                    s_mountain=6,
+                    s_coast=4,
+                    s_river=12,
+                    s_no_fuel=20,
+                    money_usage=1,
+                    max_men=79,
+                    max_art=0,
+                    max_truck=0,
+                    max_apc=0,
+                    max_tank=0,
+                    max_heli=0,
+                    max_aircraft=0,
+                    max_rocket_truck=0,
+                )
             )
-        )
 
-        # logistic
-        self.types.append(
-            Unit_Type(
-                self,
-                name=self.language.UNIT_TYPE[7],
-                typ=7,
-                s_normal=2,
-                s_water=100,
-                s_mountain=12,
-                s_coast=4,
-                s_river=12,
-                s_no_fuel=20,
-                money_usage=2,
-                max_men=45,
-                max_art=0,
-                max_truck=20,
-                max_apc=0,
-                max_tank=0,
-                max_heli=0,
-                max_aircraft=0,
-                max_rocket_truck=0,
+            # logistic
+            self.types.append(
+                Unit_Type(
+                    self,
+                    name=self.language.UNIT_TYPE[7],
+                    typ=7,
+                    s_normal=2,
+                    s_water=200,
+                    s_mountain=12,
+                    s_coast=4,
+                    s_river=12,
+                    s_no_fuel=20,
+                    money_usage=2,
+                    max_men=45,
+                    max_art=0,
+                    max_truck=20,
+                    max_apc=0,
+                    max_tank=0,
+                    max_heli=0,
+                    max_aircraft=0,
+                    max_rocket_truck=0,
+                )
             )
-        )
 
-        # headquaters
-        self.types.append(
-            Unit_Type(
-                self,
-                name=self.language.UNIT_TYPE[8],
-                typ=8,
-                s_normal=2,
-                s_water=100,
-                s_mountain=12,
-                s_coast=4,
-                s_river=12,
-                s_no_fuel=20,
-                money_usage=2,
-                max_men=30,
-                max_art=0,
-                max_truck=5,
-                max_apc=0,
-                max_tank=0,
-                max_heli=0,
-                max_aircraft=0,
-                max_rocket_truck=0,
+            # headquaters
+            self.types.append(
+                Unit_Type(
+                    self,
+                    name=self.language.UNIT_TYPE[8],
+                    typ=8,
+                    s_normal=2,
+                    s_water=200,
+                    s_mountain=12,
+                    s_coast=4,
+                    s_river=12,
+                    s_no_fuel=20,
+                    money_usage=2,
+                    max_men=30,
+                    max_art=0,
+                    max_truck=5,
+                    max_apc=0,
+                    max_tank=0,
+                    max_heli=0,
+                    max_aircraft=0,
+                    max_rocket_truck=0,
+                )
             )
-        )
 
-        # helicopters
-        self.types.append(
-            Unit_Type(
-                self,
-                name=self.language.UNIT_TYPE[9],
-                typ=9,
-                s_normal=2,
-                s_water=2,
-                s_mountain=2,
-                s_coast=2,
-                s_river=2,
-                s_no_fuel=40,
-                money_usage=10,
-                max_men=6,
-                max_art=0,
-                max_truck=0,
-                max_apc=0,
-                max_tank=0,
-                max_heli=3,
-                max_aircraft=0,
-                max_rocket_truck=0,
+            # helicopters
+            self.types.append(
+                Unit_Type(
+                    self,
+                    name=self.language.UNIT_TYPE[9],
+                    typ=9,
+                    s_normal=2,
+                    s_water=2,
+                    s_mountain=2,
+                    s_coast=2,
+                    s_river=2,
+                    s_no_fuel=40,
+                    money_usage=10,
+                    max_men=6,
+                    max_art=0,
+                    max_truck=0,
+                    max_apc=0,
+                    max_tank=0,
+                    max_heli=3,
+                    max_aircraft=0,
+                    max_rocket_truck=0,
+                )
             )
-        )
 
-        # aircraft
-        self.types.append(
-            Unit_Type(
-                self,
-                name=self.language.UNIT_TYPE[10],
-                typ=10,
-                s_normal=1,
-                s_water=1,
-                s_mountain=1,
-                s_coast=1,
-                s_river=1,
-                s_no_fuel=40,
-                money_usage=20,
-                max_men=6,
-                max_art=0,
-                max_truck=0,
-                max_apc=0,
-                max_tank=0,
-                max_heli=0,
-                max_aircraft=3,
-                max_rocket_truck=0,
+            # aircraft
+            self.types.append(
+                Unit_Type(
+                    self,
+                    name=self.language.UNIT_TYPE[10],
+                    typ=10,
+                    s_normal=1,
+                    s_water=1,
+                    s_mountain=1,
+                    s_coast=1,
+                    s_river=1,
+                    s_no_fuel=40,
+                    money_usage=20,
+                    max_men=6,
+                    max_art=0,
+                    max_truck=0,
+                    max_apc=0,
+                    max_tank=0,
+                    max_heli=0,
+                    max_aircraft=3,
+                    max_rocket_truck=0,
+                )
             )
-        )
 
-        # need to do
-
-        # AA anti-aircraft
-        self.types.append(
-            Unit_Type(
-                self,
-                name=self.language.UNIT_TYPE[11],
-                typ=11,
-                s_normal=3,
-                s_water=100,
-                s_mountain=12,
-                s_coast=5,
-                s_river=12,
-                s_no_fuel=40,
-                money_usage=2,
-                max_men=25,
-                max_art=0,
-                max_truck=5,
-                max_apc=0,
-                max_tank=0,
-                max_heli=0,
-                max_aircraft=0,
-                max_rocket_truck=0,
+            # need to do
+            # AA anti-aircraft
+            self.types.append(
+                Unit_Type(
+                    self,
+                    name=self.language.UNIT_TYPE[11],
+                    typ=11,
+                    s_normal=3,
+                    s_water=200,
+                    s_mountain=12,
+                    s_coast=5,
+                    s_river=12,
+                    s_no_fuel=40,
+                    money_usage=2,
+                    max_men=25,
+                    max_art=0,
+                    max_truck=5,
+                    max_apc=0,
+                    max_tank=0,
+                    max_heli=0,
+                    max_aircraft=0,
+                    max_rocket_truck=0,
+                )
             )
-        )
 
-        # anti-armor
-        self.types.append(
-            Unit_Type(
-                self,
-                name=self.language.UNIT_TYPE[12],
-                typ=12,
-                s_normal=2,
-                s_water=100,
-                s_mountain=12,
-                s_coast=4,
-                s_river=12,
-                s_no_fuel=20,
-                money_usage=2,
-                max_men=25,
-                max_art=0,
-                max_truck=5,
-                max_apc=0,
-                max_tank=0,
-                max_heli=0,
-                max_aircraft=0,
-                max_rocket_truck=0,
+            # anti-armor
+            self.types.append(
+                Unit_Type(
+                    self,
+                    name=self.language.UNIT_TYPE[12],
+                    typ=12,
+                    s_normal=2,
+                    s_water=200,
+                    s_mountain=12,
+                    s_coast=4,
+                    s_river=12,
+                    s_no_fuel=20,
+                    money_usage=2,
+                    max_men=25,
+                    max_art=0,
+                    max_truck=5,
+                    max_apc=0,
+                    max_tank=0,
+                    max_heli=0,
+                    max_aircraft=0,
+                    max_rocket_truck=0,
+                )
             )
-        )
 
-        # rocket
-        self.types.append(
-            Unit_Type(
-                self,
-                name=self.language.UNIT_TYPE[13],
-                typ=13,
-                s_normal=2,
-                s_water=100,
-                s_mountain=12,
-                s_coast=5,
-                s_river=12,
-                s_no_fuel=40,
-                money_usage=5,
-                max_men=25,
-                max_art=0,
-                max_truck=5,
-                max_apc=0,
-                max_tank=0,
-                max_heli=0,
-                max_aircraft=0,
-                max_rocket_truck=0,
+            # rocket
+            self.types.append(
+                Unit_Type(
+                    self,
+                    name=self.language.UNIT_TYPE[13],
+                    typ=13,
+                    s_normal=2,
+                    s_water=200,
+                    s_mountain=12,
+                    s_coast=5,
+                    s_river=12,
+                    s_no_fuel=40,
+                    money_usage=5,
+                    max_men=25,
+                    max_art=0,
+                    max_truck=5,
+                    max_apc=0,
+                    max_tank=0,
+                    max_heli=0,
+                    max_aircraft=0,
+                    max_rocket_truck=0,
+                )
             )
-        )
 
-        # engineering
-        self.types.append(
-            Unit_Type(
-                self,
-                name=self.language.UNIT_TYPE[14],
-                typ=14,
-                s_normal=2,
-                s_water=100,
-                s_mountain=10,
-                s_coast=4,
-                s_river=12,
-                s_no_fuel=40,
-                money_usage=3,
-                max_men=25,
-                max_art=0,
-                max_truck=5,
-                max_apc=0,
-                max_tank=0,
-                max_heli=0,
-                max_aircraft=0,
-                max_rocket_truck=0,
+            # engineering
+            self.types.append(
+                Unit_Type(
+                    self,
+                    name=self.language.UNIT_TYPE[14],
+                    typ=14,
+                    s_normal=2,
+                    s_water=200,
+                    s_mountain=10,
+                    s_coast=4,
+                    s_river=12,
+                    s_no_fuel=40,
+                    money_usage=3,
+                    max_men=25,
+                    max_art=0,
+                    max_truck=5,
+                    max_apc=0,
+                    max_tank=0,
+                    max_heli=0,
+                    max_aircraft=0,
+                    max_rocket_truck=0,
+                )
             )
-        )
+            # volunteers
+            self.types.append(
+                Unit_Type(
+                    self,
+                    name=self.language.UNIT_TYPE[15],
+                    typ=15,
+                    s_normal=5,
+                    s_water=200,
+                    s_mountain=8,
+                    s_coast=5,
+                    s_river=16,
+                    s_no_fuel=20,
+                    money_usage=1,
+                    max_men=25,
+                    max_art=0,
+                    max_truck=0,
+                    max_apc=0,
+                    max_tank=0,
+                    max_heli=0,
+                    max_aircraft=0,
+                    max_rocket_truck=0,
+                )
+            )
 
+        #making map
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
 
+        #getting grids neighbors
         for grid in self.map.grids:
             grid.get_neighbors(self.map)
+            grid.get_owner()
 
         # print(self.map.grids)
         self.menu = Menu(self)  # .make_menu()
@@ -792,16 +813,13 @@ class Game:
 
             if SCENARIO_INFO == True:
                 if line != "END":
-                    print(line)
                     self.new_info_text.append(line)
                 if line == "END":
                     self.event_list.scenario.new_text_to_display(self.new_info_text)
-                    print("")
                     SCENARIO_INFO = False
 
             if SCENARIO_DIPLOMACY == True:
                 if line != "END":
-                    # print(line)
                     n_line = list(line.split(","))
                     for n in n_line:
                         if "/" in n:
@@ -809,7 +827,6 @@ class Game:
                         else:
                             nn_line.append(n)
                     for nn in nn_line:
-                        # print(nn)
                         if nn[0] == "*":
                             nnn_line.append(int(nn[1:]))
                         else:
@@ -821,12 +838,10 @@ class Game:
                                 nnn_line.append(nn)
                     self.diplomacy.relations[nnn_line[0]][nnn_line[1]][nnn_line[2]] = nnn_line[3]
                 if line == "END":
-                    print("")
                     SCENARIO_DIPLOMACY = False
 
             if SCENARIO_EVENTS == True:
                 if line != "END":
-                    # print(line)
                     n_line = list(line.split(","))
                     for n in n_line:
                         if "/" in n:
@@ -852,7 +867,6 @@ class Game:
                             elif nnn[0] == "^":
                                 nnnn_line.append(float(nnn[1:]))
                             else:
-                                print(nnn)
                                 nnnn_line.append(nnn)
                         else:
                             f = []
@@ -862,7 +876,6 @@ class Game:
                                 elif a[0] == "^":
                                     f.append(float(a[1:]))
                                 else:
-                                    print(a)
                                     g = []
                                     if type(a) == list:
                                         for b in a:
@@ -877,9 +890,6 @@ class Game:
                                     else:
                                         f.append(a)
                             nnnn_line.append(f)
-
-                    print(nnnn_line)
-                    print(len(nnnn_line))
                     if len(nnnn_line) == 3:
                         self.event_list.add_event(
                             [nnnn_line[0], nnnn_line[1], nnnn_line[2]]
@@ -899,12 +909,10 @@ class Game:
                             ]
                         )
                 if line == "END":
-                    # print("")
                     SCENARIO_EVENTS = False
 
             if SCENARIO_RESOURCES == True:
                 if line != "END":
-                    # print(line)
                     n_line = list(line.split(","))
                     for n in n_line:
                         if "/" in n:
@@ -912,23 +920,19 @@ class Game:
                         else:
                             nn_line.append(n)
                     for nn in nn_line:
-                        # print(nn)
                         if nn[0] == "*":
                             nnn_line.append(int(nn[1:]))
                         else:
                             nnn_line.append(nn)
-                    # print(nnn_line)
                     lista = []
                     for nnn in nnn_line:
                         lista.append(nnn)
                     self.map.resources.append(lista)
                 if line == "END":
-                    # print("")
                     SCENARIO_RESOURCES = False
 
             if SCENARIO_BUILDINGS == True:
                 if line != "END":
-                    # print(line)
                     n_line = list(line.split(","))
                     for n in n_line:
                         if "/" in n:
@@ -936,23 +940,19 @@ class Game:
                         else:
                             nn_line.append(n)
                     for nn in nn_line:
-                        # print(nn)
                         if nn[0] == "*" or nn == "":
                             nnn_line.append(int(nn[1:]))
                         else:
                             nnn_line.append(nn)
-                    # print(nnn_line)
                     lista = []
                     for nnn in nnn_line:
                         lista.append(nnn)
                     self.map.buildings.append(lista)
                 if line == "END":
-                    # print("")
                     SCENARIO_BUILDINGS = False
 
             if SCENARIO_UNITS == True:
                 if line != "END":
-                    # print(line)
                     n_line = list(line.split(","))
                     for n in n_line:
                         if "/" in n:
@@ -960,18 +960,15 @@ class Game:
                         else:
                             nn_line.append(n)
                     for nn in nn_line:
-                        # print(nn)
                         if nn[0] == "*" or nn == "":
                             nnn_line.append(int(nn[1:]))
                         else:
                             nnn_line.append(nn)
-                    # print(nnn_line)
                     lista = []
                     for nnn in nnn_line:
                         lista.append(nnn)
                     self.map.units.append(lista)
                 if line == "END":
-                    # print("")
                     SCENARIO_UNITS = False
 
             if line == "SCENARIO_INFO":
@@ -987,6 +984,7 @@ class Game:
             if line == "SCENARIO_UNITS":
                 SCENARIO_UNITS = True
 
+        #creating resources objects from list
         for r in self.map.resources:
             if r[2] == "tree":
                 Tree(self, r[0], r[1], r[3])
@@ -1013,6 +1011,7 @@ class Game:
             elif r[2] == "water":
                 Water(self, r[0], r[1], r[3])
 
+        #creating buildings objects from list
         for b in self.map.buildings:
             if b[2] == "CONSTRUCTION":
                 CONSTRUCTION(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
@@ -1079,6 +1078,7 @@ class Game:
                     b[11],
                 )
 
+        #creating units objects from list
         for u in self.map.units:
             Unit(self,u[0],u[1],u[2],u[3],u[4],u[5],u[6],u[7],u[8],u[9],
                 u[10],u[11],u[12],u[13],u[14],u[15],u[16],u[17],u[18],
@@ -1089,6 +1089,7 @@ class Game:
 
         self.camera = Camera(self.map.width, self.map.height)
 
+    #adding new construction site on map
     def adding_building(self, variable):
         """
         Function that add construction, placed by player
@@ -1107,17 +1108,90 @@ class Game:
             0,
         )
 
+    def adding_unit(self, x, y, loyalty, nationality, owner, typ, unit_name):
+        Unit(self, x, y, loyalty, nationality, owner, typ, unit_name)
+
+    #converting construction site to building if finished
     def build(self, construction):
         """
-        Need to do
-
-        Function initialized by CONSTRUCTION what is finished
+        Function initialized by CONSTRUCTION if finished
         del CONSTRUCTION and place building
         """
-        if construction.what == OIL_WELL:
-            a = construction
-            del construction
-            OIL_WELL(self, a.x, a.y, a.owner)
+        a = construction
+        
+        if a.what == "VILLAGE":
+            construction.kill()
+            VILLAGE(self, a.x, a.y, a.owner.id_num, "New village", 
+            a.owner.nation.id_num)
+               
+        elif a.what == "CITY":
+            construction.kill()
+            CITY(self, a.x, a.y, a.owner.id_num, "New city",
+            a.owner.nation.id_num)
+            
+        elif a.what == "HARBOR":
+            construction.kill()
+            HARBOR(self, a.x, a.y, a.owner.id_num)
+
+        elif a.what == "AIRPORT":
+            construction.kill()
+            AIRPORT(self, a.x, a.y, a.owner.id_num)
+
+        elif a.what == "WAREHOUSE":
+            construction.kill()
+            WAREHOUSE(self, a.x, a.y, a.owner.id_num)
+
+        elif a.what == "BARRACK":
+            construction.kill()
+            BARRACK(self, a.x, a.y, a.owner.id_num)
+
+        elif a.what == "MINE":
+            construction.kill()
+            MINE(self, a.x, a.y, a.owner.id_num)
+
+        elif a.what == "SMELTER":
+            construction.kill()
+            SMELTER(self, a.x, a.y, a.owner.id_num)
+
+        elif a.what == "OIL_WELL":
+            construction.kill()
+            OIL_WELL(self, a.x, a.y, a.owner.id_num)
+        
+        elif a.what == "RAFINERY":
+            construction.kill()
+            RAFINERY(self, a.x, a.y, a.owner.id_num)
+
+        elif a.what == "POWER_PLANT":
+            construction.kill()
+            POWER_PLANT(self, a.x, a.y, a.owner.id_num)
+
+        elif a.what == "LIGHT_INDUSTRY_PLANT":
+            construction.kill()
+            LIGHT_INDUSTRY_PLANT(self, a.x, a.y, a.owner.id_num)
+
+        elif a.what == "HEAVY_INDUSTRY_PLANT":
+            construction.kill()
+            HEAVY_INDUSTRY_PLANT(self, a.x, a.y, a.owner.id_num)
+
+        elif a.what == "CHEMICAL_PLANT":
+            construction.kill()
+            CHEMICAL_PLANT(self, a.x, a.y, a.owner.id_num)
+
+        elif a.what == "HIGH_TECH_PLANT":
+            construction.kill()
+            HIGH_TECH_PLANT(self, a.x, a.y, a.owner.id_num)
+
+        elif a.what == "MECHANICAL_PLANT":
+            construction.kill()
+            MECHANICAL_PLANT(self, a.x, a.y, a.owner.id_num)
+
+        elif a.what == "ARMAMENT_PLANT":
+            construction.kill()
+            ARMAMENT_PLANT(self, a.x, a.y, a.owner.id_num)
+
+        elif a.what == "AVIATION_PLANT":
+            construction.kill()
+            AVIATION_PLANT(self, a.x, a.y, a.owner.id_num)
 
     def time(self):
         """
@@ -1164,8 +1238,8 @@ class Game:
                 cont.daily()
             self.politics.dayli()
             self.diplomacy.dayli()
-            self.menu.trade_window.dayli()
             self.trade.dayli()
+            self.trade.window.dayli()
             self.event_list.dayli()
         if self.day > 7:  # def 7
             self.day -= 7
@@ -1206,8 +1280,10 @@ class Game:
     def run(self):
         """
         In game loop, call function update, events, draw
+        game loop - set self.playing = False to end the game
+        self.pause in-game pause
         """
-        # game loop - set self.playing = False to end the game
+
         self.playing = True
         while self.playing:
             self.dt = self.clock.tick(FPS) / 1000
@@ -1225,7 +1301,6 @@ class Game:
         for grid in self.map.grids:
             if (grid.col == self.mouse_pos.col) and (grid.row == self.mouse_pos.row):
                 self.selecting = grid
-                print(grid.id)
                 self.menu.terrain1[0] = (
                     "X: " + str(self.selecting.col) + ", Y: " + str(self.selecting.row)
                 )
@@ -1251,7 +1326,6 @@ class Game:
                 and (u.owner.player == True)
             ):
                 # print("Tak tu jest jednostka")
-                print(u.unit_id)
                 self.uniting = u
                 self.uniting.check_grid()
                 self.menu.unit1[0] = self.uniting.description[0]
@@ -1261,9 +1335,6 @@ class Game:
                 self.menu.unit5[0] = self.uniting.description[4]
                 self.menu.unit6[0] = self.uniting.description[5]
                 self.menu.unit7[0] = self.uniting.description[6]
-                # print("Unit typ:")
-                # print(self.uniting.unit_typ.name)
-                # print(self.uniting.unit_typ.equipment)
                 break
             else:
                 self.uniting = None
@@ -1276,18 +1347,12 @@ class Game:
                 self.menu.unit7[0] = ""
 
         for b in self.buildings:
-            # print("First")
-            # print(str(b.col) + " / " + str(self.mouse_pos.col))
-            # print("Second")
-            # print(str(b.row) + " / " + str(self.mouse_pos.row))
             if (
                 (b.col == self.mouse_pos.col)
                 and (b.row == self.mouse_pos.row)
                 and (b.owner.player == True)
             ):
-                # print("Selected")
                 self.building = b
-                # print(self.building)
                 self.menu.building1[0] = self.building.description[0]
                 self.menu.building2[0] = self.building.description[1]
                 self.menu.building3[0] = self.building.description[2]
@@ -1447,11 +1512,16 @@ class Game:
         if self.territory_visible == True:
             self.screen.blit(self.map.surface2, self.camera.apply_rect(self.map_rect))
 
-        for sprite in self.all_sprites:
-            # if (self.player.x - 8 < sprite.x < self.player.x + 8) and (self.player.y - 8 < sprite.y < self.player.y + 8):
-            # print(sprite.x, sprite.y, sprite.z)
+        #for sprite in self.all_sprites:
+        #    self.screen.blit(sprite.image, self.camera.apply(sprite))
+        for sprite in self.resources:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
-            # self.screen.blit(sprite.image, self.camera.apply(sprite))
+        for sprite in self.buildings:
+            self.screen.blit(sprite.image, self.camera.apply(sprite))
+        for sprite in self.units:
+            self.screen.blit(sprite.image, self.camera.apply(sprite))
+
+
         self.screen.blit(self.menu2, (0, 0))
 
         # draw top bar
@@ -1482,59 +1552,56 @@ class Game:
         self.screen.blit(self.global_img, (463, 8))
         self.screen.blit(self.money_img, (460, 30))
 
-        # print("HERE")
-        # print(self.players[self.player.side].electricity)
+        #drawing electricity status image
         if self.players[self.player.side].electricity == True:
 
             self.screen.blit(self.elect_yes_img, (23, 23))
         else:
             self.screen.blit(self.elect_no_img, (23, 23))
 
-        # print(self.menu.buttons)
-        # for b in self.menu.buttons:
-        #    self.screen.blit(b.image, b.pos)
+        #drawing all menu buttons
         for x in self.menu.buttons:
             self.screen.blit(x.image, x.pos)
 
+        #drawing top status of currency exchange rate 
         for a in range(len(self.players) - 1):
-            self.screen.blit(
-                self.players[a + 1].image, (TOP_BAR_DISTANS + (a * TOP_BAR_STEP), -6)
-            )
-            self.screen.blit(
-                self.exchange_img, (TOP_BAR_DISTANS + (a * TOP_BAR_STEP), 14)
-            )
-            self.screen.blit(
-                self.global_img, (TOP_BAR_DISTANS + 3 + (a * TOP_BAR_STEP), 34)
-            )
+            #max 5 players
+            if a < 5:
+                self.screen.blit(
+                    self.players[a + 1].image, (TOP_BAR_DISTANS + (a * TOP_BAR_STEP), -6)
+                )
+                self.screen.blit(
+                    self.exchange_img, (TOP_BAR_DISTANS + (a * TOP_BAR_STEP), 14)
+                )
+                self.screen.blit(
+                    self.global_img, (TOP_BAR_DISTANS + 3 + (a * TOP_BAR_STEP), 34)
+                )
 
-            self.screen.blit(
-                pg.font.Font(FONT_NAME, FONT_SIZE).render(
-                    str(self.players[a + 1].exc_rt), False, LIGHTGREY
-                ),
-                (TOP_BAR_DISTANS + 20 + (a * TOP_BAR_STEP), 17),
-            )
+                self.screen.blit(
+                    pg.font.Font(FONT_NAME, FONT_SIZE).render(
+                        str(self.players[a + 1].exc_rt), False, LIGHTGREY
+                    ),
+                    (TOP_BAR_DISTANS + 20 + (a * TOP_BAR_STEP), 17),
+                )
 
+        #displaing text on menu
         for text in self.texts:
             self.screen.blit(
                 pg.font.Font(FONT_NAME, text[1]).render(text[0], False, text[2]),
                 text[3],
             )
 
+
         if self.selecting != None:
             self.screen.blit(
                 self.map.tmxdata.images[self.selecting.gid],
                 (WIDTH - MENU_RIGHT[0] + 10, 140),
             )
-            if self.building == None:
-                # self.screen.blit(self.building.image, (WIDTH - MENU_RIGHT[0]+0, 435))
-                # print("Empty place to build something")
+            if self.building == None and self.selecting.owner == self.player.side:
                 self.screen.blit(
                     self.menu.new_building_button.image,
                     self.menu.new_building_button.pos,
                 )
-            else:
-                # print("There is a building")
-                pass
 
         if self.resourcing != None:
             self.screen.blit(self.resourcing.image, (WIDTH - MENU_RIGHT[0] + 10, 140))
@@ -1734,7 +1801,7 @@ class Game:
                     #current transporting
                     self.screen.blit(
                         pg.font.Font(FONT_NAME, FONT_SIZE).render(
-                            self.language.DESCRIPTION[14],
+                            self.language.DESCRIPTION[14] + str(window.thing.current_transport),
                             False,
                             LIGHTGREY,
                         ),
@@ -1745,14 +1812,24 @@ class Game:
                         keys = window.thing.transporting.keys()
                         posy = 0
                         for key in keys:
-                            self.screen.blit(
-                                pg.font.Font(FONT_NAME, FONT_SIZE).render(
-                                    key + ": " + str(window.thing.transporting[key]),
-                                    False,
-                                    LIGHTGREY,
-                                ),
-                                (window.pos[0] + 210, window.pos[1] + 398 + posy),
-                            )
+                            if posy < 80:
+                                self.screen.blit(
+                                    pg.font.Font(FONT_NAME, FONT_SIZE).render(
+                                        key + ": " + str(window.thing.transporting[key]),
+                                        False,
+                                        LIGHTGREY,
+                                    ),
+                                    (window.pos[0] + 210, window.pos[1] + 398 + posy),
+                                )
+                            elif posy == 80:
+                                self.screen.blit(
+                                    pg.font.Font(FONT_NAME, FONT_SIZE).render(
+                                        "... ... ...",
+                                        False,
+                                        LIGHTGREY,
+                                    ),
+                                    (window.pos[0] + 210, window.pos[1] + 398 + posy),
+                                )
                             posy += 20
 
 
@@ -2127,44 +2204,28 @@ class Game:
                 if event.key == pg.K_ESCAPE:
                     self.deselect()
                     self.window_display = False
-                if event.key == pg.K_LEFT or event.key == pg.K_a:
+                elif event.key == pg.K_LEFT or event.key == pg.K_a:
                     self.player.move(dx=-1)
-                if event.key == pg.K_RIGHT or event.key == pg.K_d:
+                elif event.key == pg.K_RIGHT or event.key == pg.K_d:
                     self.player.move(dx=1)
-                if event.key == pg.K_UP or event.key == pg.K_w:
+                elif event.key == pg.K_UP or event.key == pg.K_w:
                     self.player.move(dy=-1)
-                if event.key == pg.K_DOWN or event.key == pg.K_s:
+                elif event.key == pg.K_DOWN or event.key == pg.K_s:
                     self.player.move(dy=1)
-                if event.key == pg.K_r:
-                    for a in self.units:
-                        a.calculate_cost()
-                if event.key == pg.K_e:
+                elif event.key == pg.K_e:
                     self.player.x = 12
                     self.player.y = 12
-                if event.key == pg.K_r:
-                    self.players[self.player.side].stability += 1
-                if event.key == pg.K_t:
-                    # print(self.building)
-                    # print(self.building.materials)
-
-                    # print(self.building.cost)
-                    # print("Cheat")
-                    self.building.materials = self.building.cost
-                    # print(self.building.materials)
-                if event.key == pg.K_m:
+                elif event.key == pg.K_m:
                     self.territory_visible = not self.territory_visible
-                    # print(self.territory_visible)
-                if (event.key == 61) or (event.key == 270):  # plus key
+                elif (event.key == pg.K_KP_PLUS) or (event.key == pg.K_PLUS):  # plus key
                     if self.speed < 32:
                         self.speed = self.speed * 2
-                    # print(self.speed)
-                if (event.key == 45) or (event.key == 269):  # minus key
+                elif (event.key == pg.K_KP_MINUS) or (event.key == pg.K_MINUS):  # minus key
                     if self.speed >= 2:
                         self.speed = self.speed / 2
-                    # print(self.speed)
-                if event.key == pg.K_PAUSE or event.key == 32:
+                elif event.key == pg.K_PAUSE or event.key == pg.K_SPACE:
                     self.pause = not self.pause
-                if event.key == pg.K_LSHIFT:
+                elif event.key == pg.K_LSHIFT:
                     self.multi_task = True
             
             if event.type == pg.KEYUP:
@@ -2201,15 +2262,7 @@ class Game:
                 self.dragged = None
 
                 for a in self.menu.buttons:
-                    #if isinstance(a, NB_Button):
-                    #    if self.building == None:
-                    #        a.check_col(pg.mouse.get_pos())
-                            # print(self.menu.buttons)
-                    #else:
                     a.check_col(pg.mouse.get_pos())
-
-
-                
 
                 if pg.mouse.get_pos()[0] < (WIDTH - MENU_RIGHT[0]):
                     if event.button == 1:
@@ -2224,8 +2277,6 @@ class Game:
 
                     if event.button == 3:
                         if self.uniting != None:
-                            print("HERE")
-                            print(roffset_to_cube(OFFSET, self.mouse_pos))
                             if self.multi_task == False:
                                 self.uniting.stop()
                                 self.uniting.order_list = []

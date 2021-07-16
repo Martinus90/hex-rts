@@ -69,6 +69,7 @@ class Grid(pg.sprite.Sprite):
         self.terrain = terrain
         self.gid = gid
         self.owner = owner
+        self.owner_side = None
 
         self.x = x
         self.y = y
@@ -83,6 +84,13 @@ class Grid(pg.sprite.Sprite):
         self.hex = roffset_to_cube(-1, self)  # self.hex = Hex(?,?,?)
 
         self.q, self.r, self.s = self.hex
+
+    def get_owner(self):
+        o = self.owner
+        for p in self.game.players:
+            if p.side == o:
+                self.owner_side = 0
+                self.owner = p.id_num
 
     def get_neighbors(self, map):
         """
@@ -576,11 +584,11 @@ class CONSTRUCTION(pg.sprite.Sprite):
             self.col + self.row * self.game.map.tmxdata.height
         ]
         self.grid.building = self
-        self.materials = {"wood": wood, "cement": cement, "steel": steel}
+        self.storage = {"wood": wood, "cement": cement, "steel": steel}
         self.fullmaterials = {}
         self.cost = globals()[self.what.upper() + "_COST"]
         self.fullcost = sum(self.cost.values())
-        self.fullmaterials = sum(self.materials.values())
+        self.fullmaterials = sum(self.storage.values())
         self.progress = progress
         self.description = [
             self.owner.name,
@@ -610,21 +618,21 @@ class CONSTRUCTION(pg.sprite.Sprite):
         self.description[4] = (
             self.game.language.RES1[0]
             + ": "
-            + str(self.materials["wood"])
+            + str(self.storage["wood"])
             + "/"
             + str(self.cost["wood"])
         )
         self.description[5] = (
             self.game.language.RES1[2]
             + ": "
-            + str(self.materials["cement"])
+            + str(self.storage["cement"])
             + "/"
             + str(self.cost["cement"])
         )
         self.description[6] = (
             self.game.language.RES1[5]
             + ": "
-            + str(self.materials["steel"])
+            + str(self.storage["steel"])
             + "/"
             + str(self.cost["steel"])
         )
@@ -646,18 +654,22 @@ class CONSTRUCTION(pg.sprite.Sprite):
         pass
 
     def hourly(self):
-        pass
-
-    def daily(self):
-        if self.progress >= self.fullmaterials:
-            print("Koniec budowy.")
+        if self.progress >= self.fullcost:
             if self.game.building == self:
-                self.game.building = None
-            # test
+                self.game.deselect()
             self.game.build(self)
 
+    def daily(self):
+        pass
+
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def seasonly(self):
         pass
@@ -688,15 +700,15 @@ class CONSTRUCTION(pg.sprite.Sprite):
         self.update()
 
     def update(self):
-        self.fullmaterials = sum(self.materials.values())
+        self.fullmaterials = sum(self.storage.values())
 
         self.description[3] = self.print_progress()  # str(self.progress)
         self.description[4] = ""
         self.description[5] = ""
         self.description[6] = ""
-        for m in self.materials.items():
+        for m in self.storage.items():
             self.description[4] += m[0].title() + ": " + str(m[1]) + ", "
-        if not self.materials:
+        if not self.storage:
             self.description[4] = "None"
         # for c in self.cost.items():
         #    self.description[5] += c[0].title() + ": " + str(c[1]) + ", "
@@ -704,21 +716,21 @@ class CONSTRUCTION(pg.sprite.Sprite):
         self.description[4] = (
             self.game.language.RES1[0]
             + ": "
-            + str(self.materials["wood"])
+            + str(self.storage["wood"])
             + "/"
             + str(self.cost["wood"])
         )
         self.description[5] = (
             self.game.language.RES1[2]
             + ": "
-            + str(self.materials["cement"])
+            + str(self.storage["cement"])
             + "/"
             + str(self.cost["cement"])
         )
         self.description[6] = (
             self.game.language.RES1[5]
             + ": "
-            + str(self.materials["steel"])
+            + str(self.storage["steel"])
             + "/"
             + str(self.cost["steel"])
         )
@@ -777,9 +789,16 @@ class SETTLEMENT(pg.sprite.Sprite):
                 self.loyalty = 100
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
-        self.owner.money += self.population * self.owner.tax
+        #people pay taxes to settlement
+        self.owner.money += self.population * self.owner.pop_tax
 
     def seasonly(self):
         pass
@@ -825,12 +844,12 @@ class VILLAGE(SETTLEMENT):
         name="New",
         nationality=0,
         population=0,
-        prosperity=0,
+        prosperity=1,
         food=0,
         wood=0,
         cotton=0,
         rubber=0,
-        loyalty=20
+        loyalty=30
     ):
         self.groups = game.all_sprites, game.buildings
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -854,6 +873,7 @@ class VILLAGE(SETTLEMENT):
         self.storage = {"food": food, "wood": wood, "cotton": cotton, "rubber": rubber}
         self.grid_with_res = []
         self.sum_res = []
+        self.food_source = False
 
         self.upkeep = 10
         self.window = ld.Building_Window(
@@ -914,9 +934,18 @@ class VILLAGE(SETTLEMENT):
             ld.Function_Button(
                 self.game,
                 self.window,
-                pos=(510, 460),
+                pos=(450, 450),
                 text=self.game.language.DECISIONS[2],
                 function="grant_money",
+            )
+        )
+        self.window.buttons.append(
+            ld.Function_Button(
+                self.game,
+                self.window,
+                pos=(550, 450),
+                text=self.game.language.DECISIONS[4],
+                function="calling_up",
             )
         )
 
@@ -960,6 +989,7 @@ class VILLAGE(SETTLEMENT):
                 self.game.map.grids[self.hexid].resource.name
                 == self.game.language.RESOURCES[2]
             ):
+                self.food_source = True
                 self.grid_with_res.append(self.game.map.grids[self.hexid])
                 self.sum_res[0] += self.game.map.grids[self.hexid].resource.value
         for a in self.game.map.grids[self.hexid].neighbors:
@@ -1025,12 +1055,8 @@ class VILLAGE(SETTLEMENT):
 
     def rebeling(self):
         enemy = None
-        print(" - - - ")
-        print("Owner:")
-        print(self.owner.name)
-        print(self.owner.nation.name)
         for p in self.game.players:
-            if p.name != self.owner.name and p.nation.name == self.owner.nation.name:
+            if p.name != self.owner.name and p.nation.name == self.nationality.name:
                 enemy = p.id_num
         
         if enemy == None:
@@ -1075,6 +1101,15 @@ class VILLAGE(SETTLEMENT):
                             d.resource.value -= e
 
     def daily(self):
+        #check near resources for food
+        self.resources_near_building()
+        if self.food_source == False:
+            for g in self.grid.neighbors:
+                if g.terrain == self.game.language.TERRAIN[0] and g.resource == None and g.building == None:
+                    g.resource = Grain(self.game, g.x, g.y, 0)
+                    self.food_source = True
+                    break
+
         if self.nationality == self.owner.nation:
             self.loyalty += LOYALTY_DAYLI_GAIN
 
@@ -1095,21 +1130,20 @@ class VILLAGE(SETTLEMENT):
             self.loyalty = 100
 
         a = random.randint(1,30)
-        print(self.settlement_name)
-        print(a)
-        print(self.loyalty)
         if self.loyalty < a:
-            print("Rebeling")
             self.rebeling()
-        else:
-            print("No rebeling")
-
         
-
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
-        self.owner.money += round(self.population * self.owner.tax / 10, 2)
+        #people pay taxes to settlement
+        self.owner.money += round(self.population * self.owner.pop_tax / 10, 2)
         self.population += int(self.population * self.prosperity / 100)
         if self.population > 100:
             self.population = 100
@@ -1163,12 +1197,12 @@ class CITY(SETTLEMENT):
         name="New",
         nationality=0,
         population=0,
-        prosperity=0,
+        prosperity=1,
         food=0,
         textiles=0,
         furniture=0,
         electronics=0,
-        loyalty=20
+        loyalty=30
     ):
         self.groups = game.all_sprites, game.buildings
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -1318,18 +1352,20 @@ class CITY(SETTLEMENT):
             self.loyalty = 100
 
         a = random.randint(1,30)
-        print(self.settlement_name)
-        print(a)
-        print(self.loyalty)
         if self.loyalty < a:
-            print("Rebeling")
             self.rebeling()
-        else:
-            print("No rebeling")
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
-        self.owner.money += round(self.population * self.owner.tax / 10, 2)
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
+
+        #people pay taxes to settlement
+        self.owner.money += round(self.population * self.owner.pop_tax / 10, 2)
                           
 
         self.population += int(
@@ -1466,7 +1502,13 @@ class BUILDING(pg.sprite.Sprite):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def seasonly(self):
         pass
@@ -1521,34 +1563,15 @@ class HARBOR(BUILDING):
         x,
         y,
         owner=0,
-        res1=[
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
+        res1=[0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0,
         ],
-        res2=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        res2=[0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 
+            0, 0, 0],
     ):
         self.groups = game.all_sprites, game.buildings
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -1646,7 +1669,13 @@ class HARBOR(BUILDING):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def update(self):
         pass
@@ -1784,7 +1813,13 @@ class AIRPORT(BUILDING):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def update(self):
         pass
@@ -1922,7 +1957,13 @@ class WAREHOUSE(BUILDING):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def update(self):
         pass
@@ -2044,7 +2085,13 @@ class BARRACK(BUILDING):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def update(self):
         pass
@@ -2314,7 +2361,13 @@ class MINE(BUILDING):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def update(self):
         pass
@@ -2493,7 +2546,13 @@ class SMELTER(BUILDING):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def update(self):
         pass
@@ -2650,7 +2709,13 @@ class OIL_WELL(BUILDING):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def update(self):
         self.description = [
@@ -2842,7 +2907,13 @@ class RAFINERY(BUILDING):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def update(self):
         pass
@@ -2987,7 +3058,13 @@ class POWER_PLANT(BUILDING):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def update(self):
         pass
@@ -3210,7 +3287,13 @@ class LIGHT_INDUSTRY_PLANT(BUILDING):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def update(self):
         pass
@@ -3412,12 +3495,10 @@ class HEAVY_INDUSTRY_PLANT(BUILDING):
                 self.orders.append(["rifle", RILFE_COST["time"]])
 
         if self.owner.electricity == True:
-            print(len(self.orders))
             if len(self.orders) > 0:
                 self.orders[0][1] = (
                     self.orders[0][1] - 2
                 )  # 2 temporaly, normaly would be number of civilian machines
-                print(self.orders[0])
                 if self.orders[0][1] <= 0:
                     self.storage[self.orders[0][0]] += 1
                     del self.orders[0]
@@ -3451,7 +3532,13 @@ class HEAVY_INDUSTRY_PLANT(BUILDING):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def update(self):
         pass
@@ -3667,7 +3754,13 @@ class CHEMICAL_PLANT(BUILDING):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def update(self):
         pass
@@ -3877,7 +3970,13 @@ class HIGH_TECH_PLANT(BUILDING):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def update(self):
         pass
@@ -4109,7 +4208,13 @@ class MECHANICAL_PLANT(BUILDING):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def update(self):
         pass
@@ -4340,7 +4445,13 @@ class ARMAMENT_PLANT(BUILDING):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def update(self):
         pass
@@ -4577,7 +4688,13 @@ class AVIATION_PLANT(BUILDING):
         pass
 
     def weekly(self):
+        #paying for maintanance building
         self.owner.money -= self.upkeep
+        #paying money for land owner
+        if self.grid.owner != None:
+            if self.owner.id_num != self.grid.owner:
+                self.owner.global_money -= self.game.players[self.grid.owner].build_tax
+                self.game.players[self.grid.owner].global_money += self.game.players[self.grid.owner].build_tax
 
     def update(self):
         pass
@@ -4589,30 +4706,30 @@ class Unit(pg.sprite.Sprite):
         game,
         x,
         y,
-        loyalty,
-        nationality,
-        owner,
-        typ,
-        unit_name,
-        brigade,
-        regiment,
-        battalion,
-        company,
-        men,
-        supply,
-        uniforms,
-        fuel,
-        light_ammo,
-        heavy_ammo,
-        rockets,
-        rifle,
-        art,
-        truck,
-        apc,
-        tank,
-        heli,
-        aircraft,
-        rocket_truck,
+        loyalty=30,
+        nationality=0,
+        owner=0,
+        typ=0,
+        unit_name="Volunteers",
+        brigade=0,
+        regiment=0,
+        battalion=0,
+        company=0,
+        men=0,
+        supply=0,
+        uniforms=0,
+        fuel=0,
+        light_ammo=0,
+        heavy_ammo=0,
+        rockets=0,
+        rifle=0,
+        art=0,
+        truck=0,
+        apc=0,
+        tank=0,
+        heli=0,
+        aircraft=0,
+        rocket_truck=0,
     ):
 
         self.groups = game.all_sprites, game.units
@@ -4817,7 +4934,6 @@ class Unit(pg.sprite.Sprite):
             + (self.rocket_truck * ROCKET_TRUCK_FUEL_CAP)
         )
 
-
     def transporting_calc(self):
         self.current_transport = 0
         for a in self.transporting.values():
@@ -4833,7 +4949,6 @@ class Unit(pg.sprite.Sprite):
             + (self.rocket_truck * ROCKET_TRANSPORT_CAP)
         )
 
-
     def print_mobilized(self):
         if self.state["mobilized"] == True:
             return (
@@ -4846,36 +4961,29 @@ class Unit(pg.sprite.Sprite):
 
     def concquering(self):
         if self.state["conquest"] == True and self.conditions["run_away"] == False:
-            print(self.game.map.grids[self.hexid].owner)
             if self.game.map.grids[self.hexid].owner != None:
                 a = self.game.map.grids[self.hexid].owner
                 b = self.owner.id_num
-                print(self.game.diplomacy.relations[a][b])
-                if self.game.diplomacy.relations[a][b][2] == False:  # if False, that mean in war
-                    self.game.map.grids[self.hexid].owner = self.owner.side
+                # if False, that mean in war with grid/hex owner
+                if self.game.diplomacy.relations[a][b][2] == False:  
+                    self.game.map.grids[self.hexid].owner = self.owner.id_num
                     self.game.map.new_owner(
-                        self.owner.side, roffset_from_cube(-1, self.hex)
+                        self.owner.id_num, roffset_from_cube(-1, self.hex)
                     )
-                    print("In war")
-                    print(self.game.diplomacy.relations[a][b][2])
-                    print("Check if there is building")
                     if self.game.map.grids[self.hexid].building != None:
-                        #self.game.map.grids[self.hexid].building.owner = self.owner
-                        #self.game.map.grids[self.hexid].building.image.blit(
-                        #    self.owner.image, (44, 10)
-                        #)
-                        self.game.map.grids[self.hexid].building.change_owner(self.owner.side)
-                        self.owner.recalculate_all()
+                        c = self.game.map.grids[self.hexid].building.owner.id_num
+                        #if False, then mean in war with building owner
+                        if self.game.diplomacy.relations[c][b][2] == False:  
+                            self.game.map.grids[self.hexid].building.change_owner(self.owner.id_num)
+                            self.owner.recalculate_all()
                 else:
-                    print("In peace")
-                    print(self.game.diplomacy.relations[a][b])
                     #if owner is not ally to then decrease relations
                     if self.game.diplomacy.relations[a][b][4] == False:
                         self.game.diplomacy.relations[a][b][0] -= 1
             else:
-                self.game.map.grids[self.hexid].owner = self.owner.side
+                self.game.map.grids[self.hexid].owner = self.owner.id_num
                 self.game.map.new_owner(
-                    self.owner.side, roffset_from_cube(-1, self.hex)
+                    self.owner.id_num, roffset_from_cube(-1, self.hex)
                 )
 
     def terrain_cost(self, grid_id):
@@ -4919,9 +5027,6 @@ class Unit(pg.sprite.Sprite):
                 c = self.unit_typ.s_normal + self.unit_typ.s_no_fuel
         # return int(c)
         return c  # self.unit_typ.move_cost(t)
-
-    def add_materials(self):
-        pass
 
     def check_grid(self):
         pass
@@ -5051,9 +5156,6 @@ class Unit(pg.sprite.Sprite):
             if self.state["refill_crew"] == True:
                 self.refill_cr()
 
-    def new_task(self, task="None"):
-        print(task)
-        pass
 
     def refill_eq(self):
         f = None
@@ -5417,6 +5519,7 @@ class Unit(pg.sprite.Sprite):
                         self.to_do = None
                         del self.order_list[0]
                         self.doing = 0
+                        self.transporting_calc()
                     else:
                         self.transporting[goods] += c
                         self.game.map.grids[self.hexid].building.storage[goods] -= c
@@ -5426,23 +5529,25 @@ class Unit(pg.sprite.Sprite):
                         self.to_do = None
                         del self.order_list[0]
                         self.doing = 0
+                        self.transporting_calc()
                 else:
                     self.game.event_list.show_new_info([self.game.language.INFO_TEXTS[20], "Pos: " + str(self.x) + "/" + str(self.y)])
             else:
                 self.game.event_list.show_new_info([self.game.language.INFO_TEXTS[21], "Pos: " + str(self.x) + "/" + str(self.y)])
         else:
-            self.game.event_list.show_new_info([self.game.language.INFO_TEXTS[22], "Pos: " + str(self.x) + "/" + str(self.y)])
+            if a == 0:
+                self.game.event_list.show_new_info([self.game.language.INFO_TEXTS[23], "Pos: " + str(self.x) + "/" + str(self.y)])
+            else:
+                self.game.event_list.show_new_info([self.game.language.INFO_TEXTS[22], "Pos: " + str(self.x) + "/" + str(self.y)])
 
                         
 
     def leave_goods(self, goods, quantity):
         a = quantity
-        
         #if 0 or more then transporting, then leave all goods
         if goods in self.transporting: 
             if quantity == 0 or a > self.transporting[goods]:
                 a = self.transporting[goods]
-        print(self.game.map.grids[self.hexid].building)
         if self.game.map.grids[self.hexid].building != None:
             if self.game.map.grids[self.hexid].building.owner.name == self.owner.name:
                 #check if specific goods are in building
@@ -5451,13 +5556,16 @@ class Unit(pg.sprite.Sprite):
                         if self.transporting[goods] >= a:
                             self.transporting[goods] -= a
                             self.game.map.grids[self.hexid].building.storage[goods] += a
-                            #if self.transporting[goods] == 0:
                             if self.state["repeat"] == True:
                                 self.order_list.append(self.to_do)
                             self.stop()
                             self.to_do = None
                             del self.order_list[0]
                             self.doing = 0
+                            self.transporting_calc()
+                        #del transporting goods from list if there is 0
+                        if self.transporting[goods] == 0:
+                            self.transporting.pop(goods)
                 else:
                     self.game.event_list.show_new_info([self.game.language.INFO_TEXTS[20], "Pos: " + str(self.x) + "/" + str(self.y)])
             else:

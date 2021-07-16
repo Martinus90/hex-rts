@@ -21,11 +21,15 @@ END
 
 
 
+SCENARIO_PLAYERS
+END
+
 
 
 
 *1,*2,which diplo relation (1=relation, 2=peace/war, 3=trade, 4=ally),True
 1player,2player,3diplo_typ,4status
+
 
 SCENARIO_DIPLOMACY
 *1,*3,*2,False
@@ -75,7 +79,7 @@ PosX,PosY,Building_Typ(Village),Owner,Name,Nationality,Pop,Prosper,Food,Wood,Cot
 *3,*3,VILLAGE,*1,Nazwa wioski,*1,*40,*3,*100,*50,*0,*0,*20
 
 SCENARIO_BUILDINGS
-*10,*16,VILLAGE,*1,Nazwa wioski,*1,*50,*3,*100,*50,*0,*0,*20
+*10,*16,VILLAGE,*2,Nazwa wioski,*1,*50,*3,*100,*50,*0,*0,*20
 *4,*9,VILLAGE,*1,Nazwa wioski,*0,*50,*1,*100,*50,*0,*100,*20
 END
 

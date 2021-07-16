@@ -23,6 +23,8 @@ class Language:
                 "Give $1000",
                 "Ask for $",
                 "Delete",
+                "-",
+                "+",
             ]
             self.SEASONS = ["Spring", "Summer", "Autumn", "Winter"]
             self.DAY = [
@@ -129,6 +131,7 @@ class Language:
                 "Anti-Tank",
                 "Missile",
                 "Engineering",
+                "Volunteers",
             ]
             self.UNIT_STRU = ["Brigade", "Regiment", "Battalion", "Company"]
             self.UNIT_STRU_SHORT = [", Brig.: ", ", Reg.: ", ", Batt.: ", ", Comp.: "]
@@ -218,7 +221,8 @@ class Language:
                 "not enough money",
                 "correct",
             ]
-            self.DECISIONS = ["Decision", "Option", "Grant", "Bonus"]
+            self.DECISIONS = ["Decision", "Option", "Grant", "Bonus", "Calling up"]
+
             self.DIPLOMACY = [
                 "Diplomatic status of:",
                 "Relations with you",
@@ -226,14 +230,18 @@ class Language:
                 "Trade agreement",
                 "Alliance",
                 "Last change: ",
+                "Rep.",
+                "Peace/War",
+                "Trade",
+                "Ally",
             ]
             self.POLITICS = [
-                "Level of taxation:",
+                "Population taxation:",
                 "Stability level:",
                 "Global reputation:",
                 "Number of cities:",
                 "Number of villages",
-                "Number of structures:",
+                "Number of struct.:",
                 "Population:",
                 "Citizens:",
                 "Soldiers:",
@@ -244,10 +252,12 @@ class Language:
                 "Taxes from pop.: ",
                 "Export:",
                 "Import: ",
-                "Upkeep of buildings: ",
+                "Upkeep of build.: ",
                 "Salary: ",
                 "Weekly change: ",
-                "Print $"
+                "Print $",
+                "Building taxation",
+                "Taxes from build.: "
             ]
             self.INFO_TEXTS = [
                 "You bought ",
@@ -279,13 +289,23 @@ class Language:
                 "Building don't store this type of goods.",
                 "You are not owner of this building.",
                 "There is no building here.",
-                
+                "Maximum of transporting goods.",  
             ]
             self.NEW_TASKS = [
                 "Go to: ",
                 "Wait: ",
                 "Pick up: ",
                 "Leave: ",
+            ]
+            self.TRADE_ORDER = [
+                "Available orders:",
+                "Goods:",
+                "Order value:",
+                "Quantity:",
+                "Building:",
+                "Order time:",
+                "Active trade orders:",
+                "Trade finished, you have sold: ",
             ]
 
         elif LANGUAGE == "PL":
@@ -307,6 +327,8 @@ class Language:
                 "Daj $1000",
                 "Proś o $",
                 "Usun",
+                "-",
+                "+",
             ]
             self.SEASONS = ["Wiosna", "Lato", "Jesien", "Zima"]
             self.DAY = [
@@ -413,6 +435,7 @@ class Language:
                 "Przeciwpancerna",
                 "Rakietowa",
                 "Inżynieryjna",
+                "Ochotnicy",
             ]
             self.UNIT_STRU = ["Brygada", "Pułk", "Batalion", "Kompania"]
             self.UNIT_STRU_SHORT = [", Bryg.: ", ", Pułk.: ", ", Bat.: ", ", Komp.: "]
@@ -503,7 +526,8 @@ class Language:
                 "brak funduszy",
                 "gotowe",
             ]
-            self.DECISIONS = ["Decyzja", "Opcja", "Dotacja", "Premia"]
+            self.DECISIONS = ["Decyzja", "Opcja", "Dotacja", "Premia", "Pobór"]
+
             self.DIPLOMACY = [
                 "Status dyplomatyczny strony:",
                 "Relacje z tobą",
@@ -511,9 +535,13 @@ class Language:
                 "Układ handlowy",
                 "Sojusz",
                 "Ostatnia zmiana: ",
+                "Rep.",
+                "Pokój/Wojna",
+                "Handel",
+                "Sojusz",
             ]
             self.POLITICS = [
-                "Poziom opodatkowania: ",
+                "Opodatkowanie lud. ",
                 "Stabilitność: ",
                 "Reputacja globalna: ",
                 "Liczba miast:",
@@ -526,13 +554,16 @@ class Language:
                 "Zwiększ",
                 "Rezerwa",
                 "Pobór",
-                "Podatki od mieszkańców: ",
+                "Podatki od miesz.: ",
                 "Eksport: ",
                 "Import: ",
-                "Utrzymanie budynków: ",
+                "Utrzymanie bud.: ",
                 "Zołd: ",
                 "Tygodniowa zmiana: ",
-                "Drukuj $"
+                "Drukuj $",
+                "Opodatkowanie bud.",
+                "Podatki od bud.: "
+
             ]
             self.INFO_TEXTS = [
                 "Kupiles ",
@@ -551,7 +582,20 @@ class Language:
                 "Nowe zadanie: ",
                 "Zadanie: ",
 
+                "Zmiana zadania: ",
+                "",
+                "",
+                "",
+
+                "",
+                "",
+                "",
+                "",
+
                 "W budynku nie ma zasobów danego typu.",
+                "Nie jesteś właścicielem tego budynku.",
+                "Na tym polu nie ma budynku.",
+                "Maksymalna liczba transportowanych dóbr."
             ]
             self.NEW_TASKS = [
                 "Idz do",
@@ -559,6 +603,17 @@ class Language:
                 "Podnies",
                 "Zostaw",
             ]
+            self.TRADE_ORDER = [
+                "Lista zleceń:",
+                "Zasoby:",
+                "Wartosc zlecenia:",
+                "Ilość:",
+                "Budynek:",
+                "Czas zlecenia:",
+                "Aktywne zlecenia:",
+                "Zlecenie zakończone, sprzedałeś: ",
+            ]
+
 
         self.PERSON_NAME1 = [
             "Alexi Jastremsky",

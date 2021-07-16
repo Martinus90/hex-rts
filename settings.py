@@ -64,14 +64,22 @@ ALL_COLORS = [
 ]
 
 # game settings
-WIDTH = 1600  # 1600     #1280   # 16 * 64 or 32 * 32 or 64 * 16
-HEIGHT = 900  # 900      #768    # 16 * 48 or 32 * 24 or 64 * 12
+WIDTH = 1600#1920       #1280   # 16 * 64 or 32 * 32 or 64 * 16
+HEIGHT = 900#1080      #768    # 16 * 48 or 32 * 24 or 64 * 12
 OFFSET = -1
 FPS = 60
 TITLE = "Testing"
 BGCOLOR = BLACK
-FONT_NAME = "MyUnderwood.ttf"
-FONT_SIZE = 15
+#FONT_NAME = "MyUnderwood.ttf"
+FONT_NAME = "ZaiConsulPolishTypewriter.ttf"
+FONT_SIZE = 18 #15
+FONT_MENU_SIZE = 18
+FONT_BUTTON_SIZE = 24
+FONT_MINI_BUTTON_SIZE = 16
+FONT_OW_BUTTON_SIZE = 24
+FONT_MENU_TEXT_SIZE = 26
+FONT_SWITCH_BUTTONS_SIZE = 16
+FONT_WINDOW_SIZE = 18
 TILESIZE = (64, 48)  # 48
 GRIDWIDTH = WIDTH / TILESIZE[0]
 GRIDHEIGHT = HEIGHT / TILESIZE[1]
@@ -411,7 +419,7 @@ BUILDING_LIST = [
 ]
 
 CONSTRUCTION_COST = {"wood": 0, "cement": 0, "steel": 0}
-VILLAGE_COST = {"wood": 0, "cement": 0, "steel": 100}
+VILLAGE_COST = {"wood": 0, "cement": 0, "steel": 10}
 CITY_COST = {"wood": 2000, "cement": 5000, "steel": 2000}
 HARBOR_COST = {"wood": 500, "cement": 500, "steel": 200}
 AIRPORT_COST = {"wood": 100, "cement": 5000, "steel": 500}
@@ -524,7 +532,7 @@ CONSCRIPT_VILL_LOY = 5
 
 CONSCRIPT_STAB_RED = 1
 
-LOSE_REP_WAR = 10
+LOSE_REP_WAR = 30
 LOSE_REP_TRADE = 5
 LOSE_REP_ALLY = 10
 
@@ -540,6 +548,10 @@ UPKEEP_AIRCRAFT = 500
 UPKEEP_ROCKET_TRUCK = 10
 
 LOYALTY_DAYLI_GAIN = 1
+
+#reputation gain/lose after diffrent scenarios
+TRADE_DONE_REP = 5
+TRADE_LOSE_REP = -10
 
 
 # Technologies Cost

@@ -3,6 +3,7 @@ from settings import *
 from random import random
 import math
 import pydoc as pdw
+import keras
 
 class doc_generator(object):
     """

@@ -16,8 +16,8 @@
 17,22,97,2,7,2,8,3,25,31,29,2,7,137,143,24,23,17,22,17,
 24,22,96,61,64,73,6,1,32,37,3,2,4,127,21,19,22,19,23,22,
 18,24,157,4,1,66,63,46,26,77,8,5,2,130,20,23,17,23,17,17,
-24,20,24,153,150,3,3,7,5,8,88,4,7,125,17,19,17,20,18,21,
-21,24,18,17,159,7,8,4,7,39,4,2,2,121,23,23,23,18,22,23,
+24,20,24,153,150,3,3,5,5,8,88,4,7,125,17,19,17,20,18,21,
+21,24,18,17,159,7,5,5,7,39,4,2,2,121,23,23,23,18,22,23,
 21,24,19,21,18,163,137,149,4,7,65,62,64,63,132,21,20,22,18,18,
 22,18,24,105,102,133,17,154,149,6,5,1,7,133,20,17,19,22,18,22,
 21,21,19,95,8,134,18,22,17,158,5,3,139,141,22,21,20,20,20,18,
@@ -52,7 +52,7 @@
     <property name="value" type="int" value="1600"/>
    </properties>
   </object>
-  <object id="9" name="unit" x="753.595" y="452.974" width="23.8659" height="23.8659">
+  <object id="9" name="unit" x="307.595" y="543.974" width="23.8659" height="23.8659">
    <properties>
     <property name="1_1_loyalty" type="int" value="30"/>
     <property name="1_1_nationality" type="int" value="0"/>
@@ -97,9 +97,9 @@
   </object>
   <object id="15" name="building" x="757.48" y="355.852" width="23.8659" height="23.8659">
    <properties>
-    <property name="cement" type="int" value="0"/>
+    <property name="cement" type="int" value="200"/>
     <property name="owner" type="int" value="1"/>
-    <property name="progress" type="int" value="0"/>
+    <property name="progress" type="int" value="1299"/>
     <property name="steel" type="int" value="1000"/>
     <property name="typ" value="CONSTRUCTION"/>
     <property name="what" value="OIL_WELL"/>
@@ -111,7 +111,7 @@
     <property name="value" type="int" value="5000"/>
    </properties>
   </object>
-  <object id="21" name="unit" x="400.595" y="594.974" width="23.8659" height="23.8659">
+  <object id="21" name="unit" x="691.595" y="355.974" width="23.8659" height="23.8659">
    <properties>
     <property name="1_1_loyalty" type="int" value="45"/>
     <property name="1_1_nationality" type="int" value="0"/>
@@ -269,12 +269,12 @@
     <property name="typ" value="POWER_PLANT"/>
    </properties>
   </object>
-  <object id="32" name="building" x="239.48" y="548.852" width="23.8659" height="23.8659">
+  <object id="32" name="building" x="338.48" y="596.852" width="23.8659" height="23.8659">
    <properties>
     <property name="cotton" type="int" value="1000"/>
     <property name="food" type="int" value="2000"/>
     <property name="furniture" type="int" value="500"/>
-    <property name="owner" type="int" value="1"/>
+    <property name="owner" type="int" value="0"/>
     <property name="steel" type="int" value="6000"/>
     <property name="supply" type="int" value="2000"/>
     <property name="textiles" type="int" value="50"/>
@@ -422,44 +422,44 @@
   </object>
   <object id="42" name="building" x="178.48" y="451.852" width="23.8659" height="23.8659">
    <properties>
-    <property name="1_1_wood" type="int" value="0"/>
-    <property name="1_2_food" type="int" value="0"/>
-    <property name="1_3_cement" type="int" value="0"/>
-    <property name="1_4_iron_ore" type="int" value="0"/>
-    <property name="1_5_coal" type="int" value="0"/>
-    <property name="1_6_steel" type="int" value="0"/>
-    <property name="1_7_water" type="int" value="0"/>
-    <property name="1_8_tools" type="int" value="0"/>
-    <property name="1_9_parts" type="int" value="0"/>
-    <property name="2_1_aluminum" type="int" value="0"/>
-    <property name="2_2_oil" type="int" value="0"/>
-    <property name="2_3_fuel" type="int" value="0"/>
-    <property name="2_4_plastic" type="int" value="0"/>
-    <property name="2_5_chem_comp" type="int" value="0"/>
-    <property name="2_6_fertilizer" type="int" value="0"/>
-    <property name="2_7_silicon" type="int" value="0"/>
-    <property name="2_8_calcium" type="int" value="0"/>
-    <property name="2_9_electronics" type="int" value="0"/>
-    <property name="3_1_cotton" type="int" value="0"/>
-    <property name="3_2_textiles" type="int" value="0"/>
-    <property name="3_3_rubber" type="int" value="0"/>
-    <property name="3_4_bauxite" type="int" value="0"/>
-    <property name="3_5_furniture" type="int" value="0"/>
-    <property name="3_6_civ_mach" type="int" value="0"/>
-    <property name="3_7_elec_comp" type="int" value="0"/>
-    <property name="4_1_supply" type="int" value="200"/>
-    <property name="4_2_uniforms" type="int" value="0"/>
-    <property name="4_3_fuel" type="int" value="0"/>
-    <property name="4_4_light_ammo" type="int" value="0"/>
-    <property name="4_5_heavy_ammo" type="int" value="0"/>
-    <property name="4_6_rockets" type="int" value="0"/>
-    <property name="4_7_rifle" type="int" value="0"/>
-    <property name="4_8_artilleries" type="int" value="0"/>
-    <property name="4_9_truck" type="int" value="0"/>
-    <property name="5_1_apc" type="int" value="0"/>
-    <property name="5_2_tank" type="int" value="0"/>
-    <property name="5_3_heli" type="int" value="0"/>
-    <property name="5_4_aircraft" type="int" value="0"/>
+    <property name="1_1_wood" type="int" value="1000"/>
+    <property name="1_2_food" type="int" value="1000"/>
+    <property name="1_3_cement" type="int" value="1000"/>
+    <property name="1_4_iron_ore" type="int" value="1000"/>
+    <property name="1_5_coal" type="int" value="1000"/>
+    <property name="1_6_steel" type="int" value="1000"/>
+    <property name="1_7_water" type="int" value="1000"/>
+    <property name="1_8_tools" type="int" value="1000"/>
+    <property name="1_9_parts" type="int" value="1000"/>
+    <property name="2_1_aluminum" type="int" value="1000"/>
+    <property name="2_2_oil" type="int" value="1000"/>
+    <property name="2_3_fuel" type="int" value="1000"/>
+    <property name="2_4_plastic" type="int" value="1000"/>
+    <property name="2_5_chem_comp" type="int" value="1000"/>
+    <property name="2_6_fertilizer" type="int" value="1000"/>
+    <property name="2_7_silicon" type="int" value="1000"/>
+    <property name="2_8_calcium" type="int" value="1000"/>
+    <property name="2_9_electronics" type="int" value="1000"/>
+    <property name="3_1_cotton" type="int" value="1000"/>
+    <property name="3_2_textiles" type="int" value="1000"/>
+    <property name="3_3_rubber" type="int" value="1000"/>
+    <property name="3_4_bauxite" type="int" value="1000"/>
+    <property name="3_5_furniture" type="int" value="1000"/>
+    <property name="3_6_civ_mach" type="int" value="1000"/>
+    <property name="3_7_elec_comp" type="int" value="1000"/>
+    <property name="4_1_supply" type="int" value="1000"/>
+    <property name="4_2_uniforms" type="int" value="1000"/>
+    <property name="4_3_fuel" type="int" value="1000"/>
+    <property name="4_4_light_ammo" type="int" value="1000"/>
+    <property name="4_5_heavy_ammo" type="int" value="1006"/>
+    <property name="4_6_rockets" type="int" value="1000"/>
+    <property name="4_7_rifle" type="int" value="1000"/>
+    <property name="4_8_artilleries" type="int" value="1000"/>
+    <property name="4_9_truck" type="int" value="1000"/>
+    <property name="5_1_apc" type="int" value="1000"/>
+    <property name="5_2_tank" type="int" value="1000"/>
+    <property name="5_3_heli" type="int" value="1000"/>
+    <property name="5_4_aircraft" type="int" value="1000"/>
     <property name="owner" type="int" value="1"/>
     <property name="typ" value="HARBOR"/>
    </properties>
@@ -508,14 +508,14 @@
     <property name="typ" value="AIRPORT"/>
    </properties>
   </object>
-  <object id="44" name="building" x="338.48" y="592.852" width="23.8659" height="23.8659">
+  <object id="44" name="building" x="243.48" y="546.852" width="23.8659" height="23.8659">
    <properties>
-    <property name="1_1_wood" type="int" value="0"/>
-    <property name="1_2_food" type="int" value="0"/>
-    <property name="1_3_cement" type="int" value="0"/>
-    <property name="1_4_iron_ore" type="int" value="0"/>
-    <property name="1_5_coal" type="int" value="0"/>
-    <property name="1_6_steel" type="int" value="0"/>
+    <property name="1_1_wood" type="int" value="100"/>
+    <property name="1_2_food" type="int" value="100"/>
+    <property name="1_3_cement" type="int" value="100"/>
+    <property name="1_4_iron_ore" type="int" value="100"/>
+    <property name="1_5_coal" type="int" value="100"/>
+    <property name="1_6_steel" type="int" value="100"/>
     <property name="1_7_water" type="int" value="0"/>
     <property name="1_8_tools" type="int" value="0"/>
     <property name="1_9_parts" type="int" value="0"/>
@@ -561,7 +561,7 @@
    </properties>
   </object>
  </objectgroup>
- <layer id="3" name="layer3" width="20" height="20" opacity="0.56">
+ <layer id="3" name="layer3" width="20" height="20" opacity="0.58">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -572,11 +572,11 @@
 0,0,0,0,322,322,322,322,322,322,322,322,322,322,0,0,0,0,0,0,
 0,0,0,0,322,322,322,322,322,322,322,322,322,322,322,0,0,0,0,0,
 0,0,0,322,322,322,322,322,322,321,321,322,322,322,322,322,0,0,0,0,
-0,0,322,322,322,322,322,322,321,321,321,322,322,322,322,0,0,0,0,0,
+0,0,321,322,322,322,322,322,321,321,321,322,322,322,322,0,0,0,0,0,
 0,0,322,322,322,322,322,322,321,321,321,321,322,321,0,0,0,0,0,0,
 0,0,322,322,322,322,322,321,321,321,321,322,322,321,0,0,0,0,0,0,
-0,0,0,322,322,322,322,321,321,321,321,321,321,321,0,0,0,0,0,0,
-0,0,0,0,321,321,321,321,321,321,321,321,321,321,0,0,0,0,0,0,
+0,0,0,322,322,332,332,321,321,321,321,321,321,321,0,0,0,0,0,0,
+0,0,0,0,321,332,321,321,321,321,321,321,321,321,0,0,0,0,0,0,
 0,0,0,0,0,321,321,321,321,323,323,323,323,323,323,0,0,0,0,0,
 0,0,0,321,321,321,0,321,323,323,323,323,323,323,0,0,0,0,0,0,
 0,0,0,321,321,321,0,0,0,323,323,323,323,323,0,0,0,0,0,0,

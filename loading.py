@@ -164,15 +164,17 @@ class Politics(pg.sprite.Sprite):
     def dayli(self):
         #calculate of country global reputation
         for d in range(len(self.game.diplomacy.relations)):
-            #print("Player")
-            #print(d)
             gr_change = 0
+            not_in_war = True
             for r in self.game.diplomacy.relations[d]:
-                #print(r)
+                #if r[2] == False that mean at war
                 if r[2] == False:
                     gr_change -= 2
-                if r[3] == True:
-                    gr_change += 1
+                    not_in_war = False
+            #if not at single war
+            if not_in_war == True:
+                gr_change += 1
+
             self.game.players[d].reputation_change(gr_change)
 
         for p in self.game.players:
@@ -259,52 +261,32 @@ class Trade(pg.sprite.Sprite):
     def __init__(self, game):
         self.game = game
         self.resource_exchange_rate1 = [
-            4,
-            3,
-            3,
-            2,
-            2,  # "Wood", "Food", "Cement", "Iron Ore", "Coal",
-            5,
-            1,
-            10,
-            10,
-            5,  #    "Steel":5, "Water":1, "Tools":10, "Parts":10, "Aluminum":5,
-            2,
-            3,
-            2,
-            3,
-            1,  #      "Oil":2, "Fuel":3, "Plastic":2, "Chemical Compounds":3, "Fertilizer":1,
-            1,
-            1,
-            20,
-            1,
-            2,  #     "Silicon":1, "Calcium":1, "Electronics":20, "Cotton":1, "Textiles":2,
-            1,
-            1,
-            5,
-            30,
-            5,
-        ]  #       "Rubber":1, "Bauxite":1, "Furniture":5, "Civilian Machines":30, "Electronic Comp.":3
+            4,3,3,2,2,          #"Wood", "Food", "Cement", "Iron Ore", "Coal",
+            5,1,10,10,5,        #"Steel", "Water", "Tools", "Parts", "Aluminum",
+            2,3,2,3,1,          #"Oil":2, "Fuel":3, "Plastic":2, "Chemical Compounds", "Fertilizer",
+            1,1,20,1,2,         #"Silicon":1, "Calcium":1, "Electronics":20, "Cotton":1, "Textiles",
+            1,1,5,30,5,         #"Rubber":1, "Bauxite":1, "Furniture":5, "Civilian Machines":30, "Electronic Comp.":3
+        ] 
         self.resource_exchange_rate2 = [
-            4,  #    "Supply":4,
-            3,
-            3,
-            2,
-            4,
-            30,  #    "Uniforms":3, "Fuel":3, "Light Ammo":2, "Heavy Ammo":4, "Rockets":30,
-            8,
-            40,
-            100,
-            200,
-            300,  #    "Rifle":8, "Artilleries":40, "Truck":100, "APC":200, "Tank":300,
-            500,
-            1000,
-        ]  #    "Helicopters":500, "Aircrafts":1000
-        # self.resource_rating = [4,3,3,2,2, #"Wood", "Food", "Cement", "Iron Ore", "Coal",
-        # 5,1,10,10,5,#    "Steel":5, "Water":1, "Tools":10, "Parts":10, "Aluminum":5,
-        # 2,3,2,3,1,#      "Oil":2, "Fuel":3, "Plastic":2, "Chemical Compounds":3, "Fertilizer":1,
-        # 1,1,20,1,2,#     "Silicon":1, "Calcium":1, "Electronics":20, "Cotton":1, "Textiles":2,
-        # 1,1,5,30,5]
+            4,3,3,2,4,          #"Supply","Uniforms","Fuel","Light_Ammo","Heavy_Ammo",
+            30,8,40,100,200,    #"Rockets","Rifle","Artilleries","Truck","APC",
+            300,500,1000,       #"Tank","Heli","Aircrafts",
+        ]
+        self.resource_base_rate1 = [
+            4,3,3,2,2,          #"Wood", "Food", "Cement", "Iron Ore", "Coal",
+            5,1,10,10,5,        #"Steel", "Water", "Tools", "Parts", "Aluminum",
+            2,3,2,3,1,          #"Oil":2, "Fuel":3, "Plastic":2, "Chemical Compounds", "Fertilizer",
+            1,1,20,1,2,         #"Silicon":1, "Calcium":1, "Electronics":20, "Cotton":1, "Textiles",
+            1,1,5,30,5,         #"Rubber":1, "Bauxite":1, "Furniture":5, "Civilian Machines":30, "Electronic Comp.":3
+        ]
+        self.resource_base_rate2 = [
+            4,3,3,2,4,          #"Supply","Uniforms","Fuel","Light_Ammo","Heavy_Ammo",
+            30,8,40,100,200,    #"Rockets","Rifle","Artilleries","Truck","APC",
+            300,500,1000,       #"Tank","Heli","Aircrafts",
+        ]
+        self.available_orders = []
+        self.active_orders = []
+
         self.state = {}
         for a in self.game.language.RES1:
             self.state[a] = False
@@ -329,6 +311,11 @@ class Trade(pg.sprite.Sprite):
         )
         self.handle = []
         # self.label = []
+        self.window = Trade_Window(
+            self.game,
+            self,
+            text="Trade",
+        )
 
     def rating(
         self, value
@@ -341,46 +328,111 @@ class Trade(pg.sprite.Sprite):
             return DARKGREEN
 
     def dayli(self):
-        for a in range(len(self.resource_exchange_rate1)):
-            # for a in self.game.menu.trade_window.variables:
-            c = self.game.menu.trade_window.variables
-            b = randint(1, 3)
-            c[a][2] = self.rating(b)
-            if c[a][0] > 0 and c[a][0] < 10:
-                c[a][0] -= (2 - b) / 10
-            if c[a][0] >= 10 and c[a][0] < 200:
-                c[a][0] -= 2 - b
-            if c[a][0] >= 200:  # and a[0] < 1000:
-                c[a][0] -= (2 - b) * 10
-            c[a][0] = round(c[a][0], 2)
-            self.resource_exchange_rate1[a] = c[a][0]
-        for a in range(len(self.resource_exchange_rate2)):
-            # for a in self.game.menu.trade_window.variables:
-            c = self.game.menu.trade_window.variables
-            b = randint(1, 3)
-            c[a + 25][2] = self.rating(b)
-            if c[a + 25][0] > 0 and c[a + 25][0] < 10:
-                c[a + 25][0] -= (2 - b) / 10
-            if c[a + 25][0] >= 10 and c[a + 25][0] < 200:
-                c[a + 25][0] -= 2 - b
-            if c[a + 25][0] >= 200:  # and a[0] < 1000:
-                c[a + 25][0] -= (2 - b) * 10
-            c[a + 25][0] = round(c[a + 25][0], 2)
-            self.resource_exchange_rate2[a] = c[a + 25][0]
-        for c in range(len(self.resource_exchange_rate1)):
-            self.price_history1[c].append(self.resource_exchange_rate1[c])
-        for d in range(len(self.resource_exchange_rate2)):
-            self.price_history2[d].append(self.resource_exchange_rate2[d])
-        # self.price_history1.append(self.resource_exchange_rate1)
-        # self.price_history2.append(self.resource_exchange_rate2)
-        self.price_history_date.append(
-            self.game.day
-            + ((self.game.week - 1) * 7)
-            + (self.game.season * 13)
-            + ((self.game.year - 1980) * 364)
-        )
-        if self.game.menu.trade_window.visible == True:
-            self.game.menu.trade_window.update_trade_quantity()
+        #delete order from list if they are outdated
+        for o in self.available_orders:
+            if o[4] <= self.game.idn:
+                self.available_orders.remove(o)
+        
+        for a in self.active_orders:
+            #if goods are in building
+            print("READ HERE .... .... ....")
+            print(a[3].storage[a[0]])
+            if a[3].storage[a[0]] >= a[2]:
+                a[3].storage[a[0]] -= a[2]
+                self.game.players[self.game.player.side].global_money += a[1]
+                self.game.players[self.game.player.side].reputation_change(TRADE_DONE_REP)
+                t = []
+                t.append(self.game.language.TRADE_ORDER[7] + str(a[2]) + " " + a[0])
+                t.append("+$ " + str(a[1]))
+                self.game.event_list.show_new_info(t)
+
+            #if its too late
+            if a[4] <= self.game.idn:
+                self.game.players[self.game.player.side].reputation_change(TRADE_LOSE_REP)
+                self.available_orders.remove(a)
+
+        #changing goods price
+        if 1 == 1:
+            for a in range(len(self.resource_exchange_rate1)):
+                c = self.window.variables
+                b = randint(1, 3)
+                c[a][2] = self.rating(b)
+                if c[a][0] > 0 and c[a][0] < 10:
+                    c[a][0] -= (2 - b) / 10
+                if c[a][0] >= 10 and c[a][0] < 200:
+                    c[a][0] -= 2 - b
+                if c[a][0] >= 200:  # and a[0] < 1000:
+                    c[a][0] -= (2 - b) * 10
+                c[a][0] = round(c[a][0], 2)
+                self.resource_exchange_rate1[a] = c[a][0]
+            for a in range(len(self.resource_exchange_rate2)):
+                # for a in self.game.menu.trade_window.variables:
+                c = self.window.variables
+                b = randint(1, 3)
+                c[a + 25][2] = self.rating(b)
+                if c[a + 25][0] > 0 and c[a + 25][0] < 10:
+                    c[a + 25][0] -= (2 - b) / 10
+                if c[a + 25][0] >= 10 and c[a + 25][0] < 200:
+                    c[a + 25][0] -= 2 - b
+                if c[a + 25][0] >= 200:  # and a[0] < 1000:
+                    c[a + 25][0] -= (2 - b) * 10
+                c[a + 25][0] = round(c[a + 25][0], 2)
+                self.resource_exchange_rate2[a] = c[a + 25][0]
+        #adding values to history records
+        if 1 == 1:
+            for c in range(len(self.resource_exchange_rate1)):
+                self.price_history1[c].append(self.resource_exchange_rate1[c])
+            for d in range(len(self.resource_exchange_rate2)):
+                self.price_history2[d].append(self.resource_exchange_rate2[d])
+            self.price_history_date.append(
+                self.game.day
+                + ((self.game.week - 1) * 7)
+                + (self.game.season * 13)
+                + ((self.game.year - 1980) * 364)
+            )
+        #updating trade window if open
+        if self.window.visible == True:
+            self.window.update_trade_quantity()
+        #adding new production task to available orders
+            #self.game.conv_idn_to_data(idn) converting day to date
+        if 1 == 1:
+            a = randint(1,8)
+            #probability new task 4 / 8
+            #if 1, 2 or 3 then civ resource
+            #if 3 then military resource
+            if a > 4:
+                #which goods from resources 1
+                b = randint(1,len(self.resource_base_rate1))
+                #value of order
+                c = 100 * randint(4,20)
+                #quantity of goods
+                d = (c * 0.9)  // self.resource_exchange_rate1[b-1]
+                d -= 1
+                d = int(d)
+                #players building where need to be transported
+                self.window.update_trade_building_list()
+                e = choice(self.window.trade_building_list)
+                #order fulfillment time
+                f = self.game.idn + randint(7,14)
+                self.available_orders.append([RES1_LIST[b-1].lower(), c, d, e, f])
+
+            if a == 4:
+                #which goods from resources 2
+                b = randint(1,len(self.resource_base_rate2))
+                #value of goods
+                c = 1000 * randint(1,5)
+                #quantity of goods
+                d = (c * 0.9) // self.resource_exchange_rate2[b-1]
+                d -= 1
+                d = int(d)
+                #players building where need to be transported
+                self.window.update_trade_building_list()
+                e = choice(self.window.trade_building_list)
+                #order fulfillment time
+                f = self.game.idn + randint(5,15)
+                #adding task if quantity of order goods is more then 0
+                if d > 0:
+                    self.available_orders.append([RES2_LIST[b-1].lower(), c, d, e, f])
 
     def show_graph(self, which=0):
         if which == 0:
@@ -423,6 +475,7 @@ class Nation(pg.sprite.Sprite):
     def __init__(self, game, name="Nation"):
         self.game = game
         self.name = name
+        self.id_num = 0
         self.description = ""
 
 
@@ -439,7 +492,8 @@ class Contender(pg.sprite.Sprite):
         global_money=0,
         reputation=0,
         stability=0,
-        tax=3,
+        pop_tax=4,
+        build_tax=10,
         reserve=0,
     ):
         self.game = game
@@ -454,7 +508,8 @@ class Contender(pg.sprite.Sprite):
         self.global_money = global_money
         self.reputation = reputation
         self.stability = stability
-        self.tax = tax
+        self.pop_tax = pop_tax
+        self.build_tax = build_tax
         self.reserve = reserve
         self.relations = []
         self.electricity = False
@@ -465,6 +520,7 @@ class Contender(pg.sprite.Sprite):
         self.citizens = 0
         self.soldiers = 0
         self.tax_from_pop = 0
+        self.tax_from_buildings = 0
         self.export_goods = 0
         self.import_goods = 0
         self.upkeep_of_buildings = 0
@@ -502,26 +558,34 @@ class Contender(pg.sprite.Sprite):
         self.citizens = 0
         self.soldiers = 0
         self.tax_from_pop = 0
+        self.tax_from_buildings = 0
         self.upkeep_of_buildings = 0
         self.salary = 0
         self.weekly_change = 0
 
+        #taxation predictions
         for b in self.game.buildings:
             if b.owner.side == self.side:
+                #civilain villages/cities taxations
                 self.structures += 1
                 if b.name == self.game.language.BUILDINGS1[2]:
                     self.cities += 1
                     self.population += b.population
                     if b.nationality == self.nation:
                         self.citizens += b.population
-                    self.tax_from_pop += round(b.population * b.owner.tax / 10, 2)
+                    self.tax_from_pop += round(b.population * b.owner.pop_tax / 10, 2)
                 elif b.name == self.game.language.BUILDINGS1[1]:
                     self.villages += 1
                     self.population += b.population
                     if b.nationality == self.nation:
                         self.citizens += b.population
-                    self.tax_from_pop += round(b.population * b.owner.tax / 10, 2)
+                    self.tax_from_pop += round(b.population * b.owner.pop_tax / 10, 2)
                 self.upkeep_of_buildings += b.upkeep
+            else:
+                if b.grid.owner == self.id_num:
+                    self.tax_from_buildings += self.build_tax
+
+
         for u in self.game.units:
             u.calculate_cost()
             if u.owner.side == self.side:
@@ -529,6 +593,7 @@ class Contender(pg.sprite.Sprite):
                 self.salary += u.weekly_cost
 
         self.weekly_change += self.tax_from_pop
+        self.weekly_change += self.tax_from_buildings
         self.weekly_change += self.export_goods
         self.weekly_change -= self.import_goods
         self.weekly_change -= self.upkeep_of_buildings
@@ -832,14 +897,10 @@ class Menu(pg.sprite.Sprite):
         )
         self.buttons.append(self.open_politics_button)
 
-        self.trade_window = Trade_Window(
+        
+        self.open_trade_window = OT_Button(
+            self.game.trade.window,
             self.game,
-            self.game.trade,
-            text="Trade",
-        )
-        self.open_trade_window = OW_Button(
-            self.game,
-            self.trade_window,
             pos=[WIDTH - MENU_RIGHT[0] + 20, HEIGHT - 45],
             size=(78, 30),
             text="Trade",
@@ -855,61 +916,61 @@ class Menu(pg.sprite.Sprite):
             ]
             self.speed = [
                 self.game.language.DISPLAY_GUI[5],
-                16,
+                FONT_MENU_SIZE,
                 LIGHTGREY,
                 (WIDTH - MENU_RIGHT[0] + 10, 35),
             ]
             self.time = [
                 self.game.language.DISPLAY_GUI[1],
-                16,
+                FONT_MENU_SIZE,
                 LIGHTGREY,
                 (WIDTH - MENU_RIGHT[0] + 10, 55),
             ]
-            self.data1 = ["Data", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 75)]
-            self.data2 = ["Year", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 95)]
+            self.data1 = ["Data", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 75)]
+            self.data2 = ["Year", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 95)]
             self.terrain = [
                 self.game.language.DISPLAY_GUI[6],
-                16,
+                FONT_MENU_SIZE,
                 LIGHTGREY,
                 (WIDTH - MENU_RIGHT[0] + 60, 120),
             ]
-            self.terrain1 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 85, 140)]
-            self.terrain2 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 85, 160)]
-            self.terrain3 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 85, 180)]
+            self.terrain1 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 85, 140)]
+            self.terrain2 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 85, 160)]
+            self.terrain3 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 85, 180)]
 
             self.unit = [
                 self.game.language.DISPLAY_GUI[7],
-                16,
+                FONT_MENU_SIZE,
                 LIGHTGREY,
                 (WIDTH - MENU_RIGHT[0] + 60, 210),
             ]
-            self.unit1 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 30, 230)]
-            self.unit2 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 30, 250)]
-            self.unit3 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 270)]
-            self.unit4 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 286)]
-            self.unit5 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 310)]
-            self.unit6 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 326)]
-            self.unit7 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 350)]
+            self.unit1 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 30, 230)]
+            self.unit2 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 30, 250)]
+            self.unit3 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 270)]
+            self.unit4 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 286)]
+            self.unit5 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 310)]
+            self.unit6 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 326)]
+            self.unit7 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 350)]
 
             self.building = [
                 self.game.language.DISPLAY_GUI[8],
-                16,
+                FONT_MENU_SIZE,
                 LIGHTGREY,
                 (WIDTH - MENU_RIGHT[0] + 60, 400),
             ]
-            self.building1 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 40, 420)]
-            self.building2 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 490)]
-            self.building3 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 510)]
-            self.building4 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 530)]
-            self.building5 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 550)]
-            self.building6 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 570)]
-            self.building7 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 590)]
-            self.building8 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 610)]
-            self.building9 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 630)]
-            self.building10 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 650)]
-            self.building11 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 670)]
-            self.building12 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 690)]
-            self.building13 = ["", 16, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 710)]
+            self.building1 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 40, 420)]
+            self.building2 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 490)]
+            self.building3 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 510)]
+            self.building4 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 530)]
+            self.building5 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 550)]
+            self.building6 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 570)]
+            self.building7 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 590)]
+            self.building8 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 610)]
+            self.building9 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 630)]
+            self.building10 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 650)]
+            self.building11 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 670)]
+            self.building12 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 690)]
+            self.building13 = ["", FONT_MENU_SIZE, LIGHTGREY, (WIDTH - MENU_RIGHT[0] + 10, 710)]
 
             self.game.texts.append(self.position)
             self.game.texts.append(self.speed)
@@ -944,8 +1005,8 @@ class Menu(pg.sprite.Sprite):
             self.game.texts.append(self.building13)
 
         if 1 == 1:  # top bar -> tb
-            self.tb_player_money = ["$ 0", 16, DARKGREEN, (340, 17)]
-            self.tb_player_global_money = ["$ 0", 16, DARKGREEN, (490, 17)]
+            self.tb_player_money = ["$ 0", FONT_MENU_SIZE, DARKGREEN, (340, 17)]
+            self.tb_player_global_money = ["$ 0", FONT_MENU_SIZE, DARKGREEN, (490, 17)]
 
             self.game.texts.append(self.tb_player_money)
             self.game.texts.append(self.tb_player_global_money)
@@ -963,8 +1024,8 @@ class Menu(pg.sprite.Sprite):
         return menu
 
     def update(self):
-        self.tb_player_money[0] = "$ " + str(self.game.players[1].money)
-        self.tb_player_global_money[0] = "$ " + str(self.game.players[1].global_money)
+        self.tb_player_money[0] = "$ " + str(self.game.players[self.game.player.side].money)
+        self.tb_player_global_money[0] = "$ " + str(self.game.players[self.game.player.side].global_money)
 
 
 class Button(pg.sprite.Sprite):  # regular button
@@ -976,7 +1037,7 @@ class Button(pg.sprite.Sprite):  # regular button
         size=(20, 20),
         color=DARKGREY,
         text="X",
-        textsize=24,
+        textsize=FONT_BUTTON_SIZE,
         textcolor=LIGHTGREY,
     ):
         self.groups = game.buttons
@@ -1028,7 +1089,7 @@ class Function_Button(Button):
         pos=[6, 6],
         color=DARKGREY,
         text="X",
-        textsize=20,
+        textsize=FONT_BUTTON_SIZE,
         textcolor=LIGHTGREY,
         function="function_name",
     ):
@@ -1065,7 +1126,7 @@ class Function_Button(Button):
             pg.font.Font(FONT_NAME, self.textsize).render(
                 self.text, False, self.textcolor
             ),
-            (6, 7),
+            (4, 4),
         )
         # self.image.set_colorkey(VIOLET)
         self.rect = self.image.get_rect()
@@ -1091,7 +1152,7 @@ class Mini_Function_Button(Button):
         pos=[6, 6],
         color=DARKGREY,
         text="X",
-        textsize=10,
+        textsize=FONT_MINI_BUTTON_SIZE,
         textcolor=LIGHTGREY,
         function="function_name",
     ):
@@ -1100,7 +1161,7 @@ class Mini_Function_Button(Button):
         self.game = game
         self.window = window
         self.pos = pos
-        self.size = (len(text) * 5 + 8, 15)
+        self.size = (len(text) * 9 + 8, 15)
         self.color = color
         self.text = text
         self.textsize = textsize
@@ -1128,7 +1189,7 @@ class Mini_Function_Button(Button):
             pg.font.Font(FONT_NAME, self.textsize).render(
                 self.text, False, self.textcolor
             ),
-            (3, 3),
+            (4, 0),
         )
         # self.image.set_colorkey(VIOLET)
         self.rect = self.image.get_rect()
@@ -1260,7 +1321,7 @@ class OW_Button(Button):  # open window
         size=(60, 30),
         color=DARKGREY,
         text="X",
-        textsize=24,
+        textsize=FONT_OW_BUTTON_SIZE,
         textcolor=LIGHTGREY,
     ):
         self.groups = game.buttons
@@ -1271,30 +1332,30 @@ class OW_Button(Button):  # open window
         self.abs_pos = [0, 0]
         self.abs_pos[0] = self.pos[0] + self.window.pos[0]
         self.abs_pos[1] = self.pos[1] + self.window.pos[1]
-        self.size = size
-        self.color = color
         self.text = text
+        self.size = (len(self.text) * 6 + 35, 28)
+        self.color = color
         self.textsize = textsize
         self.textcolor = textcolor
         self.visible = True
 
         self.image = pg.Surface(self.size)
-        pg.draw.rect(self.image, self.textcolor, (0, 0, size[0], size[1]))
+        pg.draw.rect(self.image, self.textcolor, (0, 0, self.size[0], self.size[1]))
         pg.draw.rect(
             self.image,
             self.color,
             (
                 0 + BUTTON_BORDER_SIZE,
                 0 + BUTTON_BORDER_SIZE,
-                size[0] - BUTTON_BORDER_SIZE * 2 - 1,
-                size[1] - BUTTON_BORDER_SIZE * 2 - 1,
+                self.size[0] - BUTTON_BORDER_SIZE * 2 - 1,
+                self.size[1] - BUTTON_BORDER_SIZE * 2 - 1,
             ),
         )
         self.image.blit(
             pg.font.Font(FONT_NAME, self.textsize).render(
                 self.text, False, self.textcolor
             ),
-            (5, 5),
+            (4, 3),
         )
 
         self.rect = self.image.get_rect()
@@ -1379,7 +1440,7 @@ class Window(pg.sprite.Sprite):
         size=(300, 400),
         color=DARKGREY,
         text="Text",
-        textsize=15,
+        textsize=FONT_MENU_TEXT_SIZE,
         textcolor=LIGHTGREY,
         textpos=(50, 10),
         border_size=3,
@@ -1452,7 +1513,7 @@ class Info_Window(Window):
         size=(300, 400),
         color=DARKGREY,
         text="Text",
-        textsize=15,
+        textsize=FONT_MENU_TEXT_SIZE,
         textcolor=LIGHTGREY,
         textpos=(50, 10),
         border_size=3,
@@ -1571,7 +1632,7 @@ class Politics_Window(Window):
         size=(600, 500),
         color=DARKGREY,
         text="Text",
-        textsize=15,
+        textsize=FONT_MENU_TEXT_SIZE,
         textcolor=LIGHTGREY,
         textpos=(50, 10),
         border_size=3,
@@ -1617,7 +1678,9 @@ class Politics_Window(Window):
 
         # adding texts to display
         self.texts.append([self.game.language.POLITICS[0], 16, LIGHTGREY, (10, 45)])
-        self.texts.append([str(self.game.players[self.game.player.side].tax), 16, LIGHTGREY, (190, 45)])
+        self.texts.append([str(self.game.players[self.game.player.side].pop_tax), 16, LIGHTGREY, (190, 45)])
+        self.texts.append([self.game.language.POLITICS[20], 16, LIGHTGREY, (10, 65)])
+        self.texts.append([str(self.game.players[self.game.player.side].build_tax), 16, LIGHTGREY, (190, 65)])
         self.texts.append([self.game.language.POLITICS[1], 16, LIGHTGREY, (10, 85)])
         self.texts.append([str(self.game.players[self.game.player.side].stability), 16, LIGHTGREY, (190, 85)])
         self.texts.append([self.game.language.POLITICS[2], 16, LIGHTGREY, (10, 105)])
@@ -1639,43 +1702,63 @@ class Politics_Window(Window):
 
         self.texts.append([self.game.language.POLITICS[13], 16, LIGHTGREY, (10, 285)])
         self.texts.append([str(self.game.players[self.game.player.side].tax_from_pop), 16, LIGHTGREY, (190, 285)])
-        self.texts.append([self.game.language.POLITICS[14], 16, LIGHTGREY, (10, 305)])
-        self.texts.append([str(self.game.players[self.game.player.side].export_goods), 16, LIGHTGREY, (190, 305)])
-        self.texts.append([self.game.language.POLITICS[15], 16, LIGHTGREY, (10, 325)])
-        self.texts.append([str(self.game.players[self.game.player.side].import_goods), 16, LIGHTGREY, (190, 325)])
-        self.texts.append([self.game.language.POLITICS[16], 16, LIGHTGREY, (10, 345)])
-        self.texts.append([str(self.game.players[self.game.player.side].upkeep_of_buildings), 16, LIGHTGREY, (190, 345)])
-        self.texts.append([self.game.language.POLITICS[17], 16, LIGHTGREY, (10, 365)])
-        self.texts.append([str(self.game.players[self.game.player.side].salary), 16, LIGHTGREY, (190, 365)])
-        self.texts.append([self.game.language.POLITICS[18], 16, LIGHTGREY, (10, 385)])
-        self.texts.append([str(self.game.players[self.game.player.side].weekly_change), 16, LIGHTGREY, (190, 385)])
+        self.texts.append([self.game.language.POLITICS[21], 16, LIGHTGREY, (10, 305)])
+        self.texts.append([str(self.game.players[self.game.player.side].tax_from_buildings), 16, LIGHTGREY, (190, 305)])
+        self.texts.append([self.game.language.POLITICS[14], 16, LIGHTGREY, (10, 325)])
+        self.texts.append([str(self.game.players[self.game.player.side].export_goods), 16, LIGHTGREY, (190, 325)])
+        self.texts.append([self.game.language.POLITICS[15], 16, LIGHTGREY, (10, 345)])
+        self.texts.append([str(self.game.players[self.game.player.side].import_goods), 16, LIGHTGREY, (190, 345)])
+        self.texts.append([self.game.language.POLITICS[16], 16, LIGHTGREY, (10, 365)])
+        self.texts.append([str(self.game.players[self.game.player.side].upkeep_of_buildings), 16, LIGHTGREY, (190, 365)])
+        self.texts.append([self.game.language.POLITICS[17], 16, LIGHTGREY, (10, 385)])
+        self.texts.append([str(self.game.players[self.game.player.side].salary), 16, LIGHTGREY, (190, 385)])
+        self.texts.append([self.game.language.POLITICS[18], 16, LIGHTGREY, (10, 405)])
+        self.texts.append([str(self.game.players[self.game.player.side].weekly_change), 16, LIGHTGREY, (190, 405)])
 
 
         # draw buttons
         self.buttons.append(CW_Button(self.game, self, pos=[10, 10]))
         self.buttons.append(
-            Function_Button(
+            Mini_Function_Button(
                 self.game,
                 self,
-                pos=(250, 40),
+                pos=(250, 45),
                 text=self.game.language.POLITICS[9],
-                function="tax_decrease",
+                function="tax_pop_dec",
             )
         )
         self.buttons.append(
-            Function_Button(
+            Mini_Function_Button(
                 self.game,
                 self,
-                pos=(370, 40),
+                pos=(310, 45),
                 text=self.game.language.POLITICS[10],
-                function="tax_increase",
+                function="tax_pop_inc",
             )
         )
         self.buttons.append(
-            Function_Button(
+            Mini_Function_Button(
                 self.game,
                 self,
-                pos=(250, 235),
+                pos=(250, 65),
+                text=self.game.language.POLITICS[9],
+                function="tax_build_dec",
+            )
+        )
+        self.buttons.append(
+            Mini_Function_Button(
+                self.game,
+                self,
+                pos=(310, 65),
+                text=self.game.language.POLITICS[10],
+                function="tax_build_inc",
+            )
+        )
+        self.buttons.append(
+            Mini_Function_Button(
+                self.game,
+                self,
+                pos=(250, 245),
                 text=self.game.language.POLITICS[12],
                 function="conscription",
             )
@@ -1684,7 +1767,7 @@ class Politics_Window(Window):
             Function_Button(
                 self.game,
                 self,
-                pos=(410, 235),
+                pos=(410, 20),
                 text=self.game.language.POLITICS[19],
                 function="print_money",
             )
@@ -1696,10 +1779,14 @@ class Politics_Window(Window):
         self.rectangle = pg.Surface(self.size)
 
     def function_list(self, function=None):
-        if function == "tax_decrease":
-            self.tax_decrease()
-        elif function == "tax_increase":
-            self.tax_increase()
+        if function == "tax_pop_dec":
+            self.tax_pop_dec()
+        elif function == "tax_pop_inc":
+            self.tax_pop_inc()
+        elif function == "tax_build_dec":
+            self.tax_build_dec()
+        elif function == "tax_build_inc":
+            self.tax_build_inc()
         elif function == "conscription":
             self.conscription()
         elif function == "print_money":
@@ -1707,14 +1794,24 @@ class Politics_Window(Window):
         else:
             pass
 
-    def tax_decrease(self):
-        if self.game.players[self.game.player.side].tax >= 1:
-            self.game.players[self.game.player.side].tax -= 1
+    def tax_pop_dec(self):
+        if self.game.players[self.game.player.side].pop_tax >= 1:
+            self.game.players[self.game.player.side].pop_tax -= 1
         self.update_politics()
 
-    def tax_increase(self):
-        self.game.players[self.game.player.side].tax += 1
+    def tax_pop_inc(self):
+        self.game.players[self.game.player.side].pop_tax += 1
         self.game.players[self.game.player.side].stability -= 5
+        self.update_politics()
+    
+    def tax_build_dec(self):
+        if self.game.players[self.game.player.side].build_tax >= 1:
+            self.game.players[self.game.player.side].build_tax -= 1
+        self.update_politics()
+
+    def tax_build_inc(self):
+        self.game.players[self.game.player.side].build_tax += 1
+        self.game.players[self.game.player.side].stability -= 1
         self.update_politics()
 
     def conscription(self):
@@ -1744,27 +1841,29 @@ class Politics_Window(Window):
 
     def update_politics(self):
         self.game.players[self.game.player.side].recalculate_all()
-        self.texts[1][0] = str(self.game.players[self.game.player.side].tax)
-        self.texts[3][0] = str(self.game.players[self.game.player.side].stability)
-        self.texts[5][0] = str(self.game.players[self.game.player.side].reputation)
-        self.texts[7][0] = str(self.game.players[self.game.player.side].cities)
-        self.texts[9][0] = str(self.game.players[self.game.player.side].villages)
-        self.texts[11][0] = str(self.game.players[self.game.player.side].structures)
-        self.texts[13][0] = str(self.game.players[self.game.player.side].population)
-        self.texts[15][0] = str(self.game.players[self.game.player.side].citizens)
-        self.texts[17][0] = str(self.game.players[self.game.player.side].soldiers)
-        self.texts[19][0] = str(self.game.players[self.game.player.side].reserve)
+        self.texts[1][0] = str(self.game.players[self.game.player.side].pop_tax)
+        self.texts[3][0] = str(self.game.players[self.game.player.side].build_tax)
+        self.texts[5][0] = str(self.game.players[self.game.player.side].stability)
+        self.texts[7][0] = str(self.game.players[self.game.player.side].reputation)
+        self.texts[9][0] = str(self.game.players[self.game.player.side].cities)
+        self.texts[11][0] = str(self.game.players[self.game.player.side].villages)
+        self.texts[13][0] = str(self.game.players[self.game.player.side].structures)
+        self.texts[15][0] = str(self.game.players[self.game.player.side].population)
+        self.texts[17][0] = str(self.game.players[self.game.player.side].citizens)
+        self.texts[19][0] = str(self.game.players[self.game.player.side].soldiers)
+        self.texts[21][0] = str(self.game.players[self.game.player.side].reserve)
 
-        self.texts[21][0] = str(self.game.players[self.game.player.side].tax_from_pop)
-        self.texts[23][0] = str(self.game.players[self.game.player.side].export_goods)
-        self.texts[25][0] = str(self.game.players[self.game.player.side].import_goods)
-        self.texts[27][0] = str(self.game.players[self.game.player.side].upkeep_of_buildings)
-        self.texts[29][0] = str(self.game.players[self.game.player.side].salary)
-        self.texts[31][0] = str(self.game.players[self.game.player.side].weekly_change)
+        self.texts[23][0] = str(self.game.players[self.game.player.side].tax_from_pop)
+        self.texts[25][0] = str(self.game.players[self.game.player.side].tax_from_buildings)
+        self.texts[27][0] = str(self.game.players[self.game.player.side].export_goods)
+        self.texts[29][0] = str(self.game.players[self.game.player.side].import_goods)
+        self.texts[31][0] = str(self.game.players[self.game.player.side].upkeep_of_buildings)
+        self.texts[33][0] = str(self.game.players[self.game.player.side].salary)
+        self.texts[35][0] = str(self.game.players[self.game.player.side].weekly_change)
         if self.game.players[self.game.player.side].weekly_change >= 0:
-            self.texts[31][2] = DARKGREEN
+            self.texts[35][2] = DARKGREEN
         else:
-            self.texts[31][2] = DARKRED
+            self.texts[35][2] = DARKRED
 
         
     def show(self):
@@ -1789,7 +1888,7 @@ class Diplomacy_Window(Window):
         size=(300, 400),
         color=DARKGREY,
         text="Text",
-        textsize=15,
+        textsize=FONT_MENU_TEXT_SIZE,
         textcolor=LIGHTGREY,
         textpos=(50, 10),
         border_size=3,
@@ -1835,13 +1934,16 @@ class Diplomacy_Window(Window):
         self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (420, 205)])
 
         for a in range(len(self.game.players)):
-            self.texts.append(["side", 16, LIGHTGREY, (55, 250 + (a * 20))])
-            self.texts.append(["relations", 16, LIGHTGREY, (200, 250 + (a * 20))])
-            self.texts.append(["peace", 16, LIGHTGREY, (270, 250 + (a * 20))])
-            self.texts.append(["trade", 16, LIGHTGREY, (350, 250 + (a * 20))])
-            self.texts.append(["ally", 16, LIGHTGREY, (430, 250 + (a * 20))])
+            self.texts.append(["side", 16, LIGHTGREY, (55, 270 + (a * 20))])
+            self.texts.append(["relations", 16, LIGHTGREY, (200, 270 + (a * 20))])
+            self.texts.append(["peace", 16, LIGHTGREY, (270, 270 + (a * 20))])
+            self.texts.append(["trade", 16, LIGHTGREY, (370, 270 + (a * 20))])
+            self.texts.append(["ally", 16, LIGHTGREY, (450, 270 + (a * 20))])
 
-        # draw window
+        self.texts.append([self.game.language.DIPLOMACY[6], 16, LIGHTGREY, (200, 250)])
+        self.texts.append([self.game.language.DIPLOMACY[7], 16, LIGHTGREY, (270, 250)])
+        self.texts.append([self.game.language.DIPLOMACY[8], 16, LIGHTGREY, (370, 250)])
+        self.texts.append([self.game.language.DIPLOMACY[9], 16, LIGHTGREY, (450, 250)])
 
         self.image = pg.Surface(self.size)
         pg.draw.rect(self.image, self.textcolor, (0, 0, size[0], size[1]))
@@ -2021,7 +2123,6 @@ class Diplomacy_Window(Window):
                     self.game.player.side
                 ][5] = self.game.idn
 
-
                 self.game.diplomacy.relations[self.game.player.side][
                     self.status_player
                 ][2] = False
@@ -2035,6 +2136,7 @@ class Diplomacy_Window(Window):
                 ][1] -= self.game.idn
 
                 self.game.players[self.game.player.side].reputation -= LOSE_REP_WAR
+                self.game.politics.window.update_politics()
                 self.trade()
                 self.alliance()
 
@@ -2198,7 +2300,7 @@ class Diplomacy_Window(Window):
     def show_flags_and_names(self):
         self.check_number_of_players()
         for a in range(self.number_of_players):
-            self.image.blit(self.game.players[a].image, (20, 240 + (a * 20)))
+            self.image.blit(self.game.players[a].image, (20, 260 + (a * 20)))
             # self.texts.append([self.game.players[a].name, 16, LIGHTGREY, (50, 68 + (a * 20))])
 
     def show_relations(self):
@@ -2253,7 +2355,7 @@ class Decision_Window(Window):
         size=(300, 400),
         color=DARKGREY,
         text="Text",
-        textsize=15,
+        textsize=FONT_MENU_TEXT_SIZE,
         textcolor=LIGHTGREY,
         textpos=(50, 10),
         border_size=3,
@@ -2364,7 +2466,7 @@ class New_Building_Window(Window):
         size=(300, 400),
         color=DARKGREY,
         text="Text",
-        textsize=15,
+        textsize=FONT_MENU_TEXT_SIZE,
         textcolor=LIGHTGREY,
         textpos=(40, 10),
         border_size=3,
@@ -2528,7 +2630,7 @@ class Unit_Window(pg.sprite.Sprite):
         size=(300, 400),
         color=DARKGREY,
         text="Text",
-        textsize=15,
+        textsize=FONT_MENU_TEXT_SIZE,
         textcolor=LIGHTGREY,
         textpos=(50, 10),
         border_size=3,
@@ -2576,210 +2678,232 @@ class Unit_Window(pg.sprite.Sprite):
         )
 
         # draw buttons
-        self.buttons.append(CW_Button(self.game, self, pos=[10, 10]))
-        self.buttons.append(
-            Switch_Button(
-                self.game,
-                self,
-                pos=[560, 40],
-                size=(20, 20),
-                color=LIGHTGREY,
-                text="X",
-                textsize=10,
-                textcolor=BLACK,
-                variable="mobilized",
+        if 1==1:
+            self.buttons.append(CW_Button(self.game, self, pos=[10, 10]))
+            self.buttons.append(
+                Switch_Button(
+                    self.game,
+                    self,
+                    pos=[560, 40],
+                    size=(20, 20),
+                    color=LIGHTGREY,
+                    text="X",
+                    textsize=10,
+                    textcolor=BLACK,
+                    variable="mobilized",
+                )
             )
-        )
-        self.buttons.append(
-            Switch_Button(
-                self.game,
-                self,
-                pos=[560, 60],
-                size=(20, 20),
-                color=LIGHTGREY,
-                text="X",
-                textsize=10,
-                textcolor=BLACK,
-                variable="training",
+            self.buttons.append(
+                Switch_Button(
+                    self.game,
+                    self,
+                    pos=[560, 60],
+                    size=(20, 20),
+                    color=LIGHTGREY,
+                    text="X",
+                    textsize=10,
+                    textcolor=BLACK,
+                    variable="training",
+                )
             )
-        )
-        self.buttons.append(
-            Switch_Button(
-                self.game,
-                self,
-                pos=[560, 80],
-                size=(20, 20),
-                color=LIGHTGREY,
-                text="X",
-                textsize=10,
-                textcolor=BLACK,
-                variable="refill_equipment",
+            self.buttons.append(
+                Switch_Button(
+                    self.game,
+                    self,
+                    pos=[560, 80],
+                    size=(20, 20),
+                    color=LIGHTGREY,
+                    text="X",
+                    textsize=10,
+                    textcolor=BLACK,
+                    variable="refill_equipment",
+                )
             )
-        )
-        self.buttons.append(
-            Switch_Button(
-                self.game,
-                self,
-                pos=[560, 100],
-                size=(20, 20),
-                color=LIGHTGREY,
-                text="X",
-                textsize=10,
-                textcolor=BLACK,
-                variable="refill_crew",
+            self.buttons.append(
+                Switch_Button(
+                    self.game,
+                    self,
+                    pos=[560, 100],
+                    size=(20, 20),
+                    color=LIGHTGREY,
+                    text="X",
+                    textsize=10,
+                    textcolor=BLACK,
+                    variable="refill_crew",
+                )
             )
-        )
-        self.buttons.append(
-            Switch_Button(
-                self.game,
-                self,
-                pos=[560, 120],
-                size=(20, 20),
-                color=LIGHTGREY,
-                text="X",
-                textsize=10,
-                textcolor=BLACK,
-                variable="building",
+            self.buttons.append(
+                Switch_Button(
+                    self.game,
+                    self,
+                    pos=[560, 120],
+                    size=(20, 20),
+                    color=LIGHTGREY,
+                    text="X",
+                    textsize=10,
+                    textcolor=BLACK,
+                    variable="building",
+                )
             )
-        )
-        self.buttons.append(
-            Switch_Button(
-                self.game,
-                self,
-                pos=[560, 140],
-                size=(20, 20),
-                color=LIGHTGREY,
-                text="X",
-                textsize=10,
-                textcolor=BLACK,
-                variable="repeat",
+            self.buttons.append(
+                Switch_Button(
+                    self.game,
+                    self,
+                    pos=[560, 140],
+                    size=(20, 20),
+                    color=LIGHTGREY,
+                    text="X",
+                    textsize=10,
+                    textcolor=BLACK,
+                    variable="repeat",
+                )
             )
-        )
-        self.buttons.append(
-            Switch_Button(
-                self.game,
-                self,
-                pos=[560, 160],
-                size=(20, 20),
-                color=LIGHTGREY,
-                text="X",
-                textsize=10,
-                textcolor=BLACK,
-                variable="engage",
+            self.buttons.append(
+                Switch_Button(
+                    self.game,
+                    self,
+                    pos=[560, 160],
+                    size=(20, 20),
+                    color=LIGHTGREY,
+                    text="X",
+                    textsize=10,
+                    textcolor=BLACK,
+                    variable="engage",
+                )
             )
-        )
-        self.buttons.append(
-            Switch_Button(
-                self.game,
-                self,
-                pos=[560, 180],
-                size=(20, 20),
-                color=LIGHTGREY,
-                text="X",
-                textsize=10,
-                textcolor=BLACK,
-                variable="conquest",
+            self.buttons.append(
+                Switch_Button(
+                    self.game,
+                    self,
+                    pos=[560, 180],
+                    size=(20, 20),
+                    color=LIGHTGREY,
+                    text="X",
+                    textsize=10,
+                    textcolor=BLACK,
+                    variable="conquest",
+                )
             )
-        )
-        self.buttons.append(
-            Function_Button(
-                self.game,
-                self,
-                pos=(20, 450),
-                text=self.game.language.DECISIONS[3],
-                function="give_bonus",
+            self.buttons.append(
+                Function_Button(
+                    self.game,
+                    self,
+                    pos=(20, 450),
+                    text=self.game.language.DECISIONS[3],
+                    function="give_bonus",
+                )
             )
-        )
-        self.buttons.append(
-            Function_Button(
-                self.game,
-                self,
-                pos=(440, 300),
-                text=self.game.language.BASIC[4],
-                function="prev_order",
+            self.buttons.append(
+                Function_Button(
+                    self.game,
+                    self,
+                    pos=(440, 300),
+                    text=self.game.language.BASIC[4],
+                    function="prev_order",
+                )
             )
-        )
-        self.buttons.append(
-            Function_Button(
-                self.game,
-                self,
-                pos=(600, 300),
-                text=self.game.language.BASIC[5],
-                function="next_order",
+            self.buttons.append(
+                Function_Button(
+                    self.game,
+                    self,
+                    pos=(600, 300),
+                    text=self.game.language.BASIC[5],
+                    function="next_order",
+                )
             )
-        )
-        self.buttons.append(
-            Function_Button(
-                self.game,
-                self,
-                pos=(520, 300),
-                text=self.game.language.BASIC[9],
-                function="adding_task",
+            self.buttons.append(
+                Function_Button(
+                    self.game,
+                    self,
+                    pos=(520, 300),
+                    text=self.game.language.BASIC[9],
+                    function="adding_task",
+                )
             )
-        )
-        self.buttons.append(
-            Function_Button(
-                self.game,
-                self,
-                pos=(600, 350),
-                text=self.game.language.BASIC[16],
-                function="delete_task",
+            self.buttons.append(
+                Function_Button(
+                    self.game,
+                    self,
+                    pos=(600, 350),
+                    text=self.game.language.BASIC[16],
+                    function="delete_task",
+                )
             )
-        )
-        self.buttons.append(
-            Mini_Function_Button(
-                self.game,
-                self,
-                pos=(440, 360),
-                text=self.game.language.BASIC[4],
-                function="prev_task",
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(440, 360),
+                    text=self.game.language.BASIC[4],
+                    function="prev_task",
+                )
             )
-        )
-        self.buttons.append(
-            Mini_Function_Button(
-                self.game,
-                self,
-                pos=(480, 360),
-                text=self.game.language.BASIC[5],
-                function="next_task",
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(480, 360),
+                    text=self.game.language.BASIC[5],
+                    function="next_task",
+                )
             )
-        )
-        self.buttons.append(
-            Mini_Function_Button(
-                self.game,
-                self,
-                pos=(440, 380),
-                text=self.game.language.BASIC[4],
-                function="task_line_1_prev",
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(440, 380),
+                    text=self.game.language.BASIC[4],
+                    function="task_line_1_prev",
+                )
             )
-        )
-        self.buttons.append(
-            Mini_Function_Button(
-                self.game,
-                self,
-                pos=(480, 380),
-                text=self.game.language.BASIC[5],
-                function="task_line_1_next",
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(480, 380),
+                    text=self.game.language.BASIC[5],
+                    function="task_line_1_next",
+                )
             )
-        )
-        self.buttons.append(
-            Mini_Function_Button(
-                self.game,
-                self,
-                pos=(440, 400),
-                text=self.game.language.BASIC[4],
-                function="task_line_2_prev",
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(440, 400),
+                    text=self.game.language.BASIC[4],
+                    function="task_line_2_prev",
+                )
             )
-        )
-        self.buttons.append(
-            Mini_Function_Button(
-                self.game,
-                self,
-                pos=(480, 400),
-                text=self.game.language.BASIC[5],
-                function="task_line_2_next",
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(480, 400),
+                    text=self.game.language.BASIC[5],
+                    function="task_line_2_next",
+                )
             )
-        )
+        
+        #change company composition
+        if 1==1:
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(110, 40),
+                    text=self.game.language.BASIC[17],
+                    function="+men",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(130, 40),
+                    text=self.game.language.BASIC[18],
+                    function="-men",
+                )
+            )
         
 
         # draw eq names
@@ -3051,8 +3175,6 @@ class Unit_Window(pg.sprite.Sprite):
         if self.selected_order < 0:
             self.selected_order = len(self.thing.order_list)
         task = self.thing.order_list[self.selected_order - 1]
-        print(len(self.thing.order_list))
-        print(task)
         if self.selected_order == 0:
             #new task
             self.new_task_properties = [0, 0, [0, 0], ""]
@@ -3060,11 +3182,13 @@ class Unit_Window(pg.sprite.Sprite):
             if task[0] == "go_to":
                 self.new_task_properties = [0, 0, [task[1][0], task[1][1]], ""]
             elif task[0] == "wait_time":
-                self.new_task_properties = [1, 0, task[1], ""]
+                self.new_task_properties = [1, 0, task[1][0], ""]
             elif task[0] == "pick_up":
-                self.new_task_properties = [2, 0, task[1], ""]
+                self.selected_goods = self.int_of_goods(task[1][0])
+                self.new_task_properties = [2, 0, self.name_of_goods(), task[1][1]]
             elif task[0] == "leave":
-                self.new_task_properties = [3, 0, task[1][0], task[1][1]]
+                self.selected_goods = self.int_of_goods(task[1][0])
+                self.new_task_properties = [3, 0, self.name_of_goods(), task[1][1]]
 
 
     def next_order(self):
@@ -3074,8 +3198,6 @@ class Unit_Window(pg.sprite.Sprite):
         task = self.thing.order_list[self.selected_order - 1]
         if self.selected_order == 0:
             pass
-        print(len(self.thing.order_list))
-        print(task)
         if self.selected_order == 0:
             #new task
             self.new_task_properties = [0, 0, [0, 0], ""]
@@ -3109,6 +3231,8 @@ class Unit_Window(pg.sprite.Sprite):
                 else:
                     pass
             else:
+                if self.selected_order == 1:
+                    self.thing.stop()
                 if self.new_task_properties[0] == 0:   #0 == go_to
                     self.thing.order_list[self.selected_order - 1] = ["go_to", OffsetCoord(self.new_task_properties[2][0], self.new_task_properties[2][1])]
                 elif self.new_task_properties[0] == 1: #1 == wait
@@ -3122,6 +3246,8 @@ class Unit_Window(pg.sprite.Sprite):
 
 
     def delete_task(self):
+        if self.selected_order == 1:
+            self.thing.stop()
         if self.selected_order > len(self.thing.order_list) or self.selected_order == 0:
             print("Problem, order larger then lenght of order list")
             print("or selected is new order.")
@@ -3238,7 +3364,7 @@ class Building_Window(pg.sprite.Sprite):
         size=(700, 500),
         color=DARKGREY,
         text="",
-        textsize=16,
+        textsize=FONT_WINDOW_SIZE,
         textcolor=LIGHTGREY,
         textpos=(35, 10),
         border_size=2,
@@ -3319,6 +3445,8 @@ class Building_Window(pg.sprite.Sprite):
             self.func_next_unit()
         elif function == "grant_money":
             self.grant_money()
+        elif function == "calling_up":
+            self.calling_up()
         else:
             pass
 
@@ -3351,6 +3479,18 @@ class Building_Window(pg.sprite.Sprite):
             self.thing.owner.money -= self.thing.population
             self.thing.loyalty += 5
 
+    def calling_up(self):
+        if self.thing.nationality == self.thing.owner.nation:
+            if self.thing.population >= 25 and self.thing.loyalty >= 30:
+                self.thing.population -= 25
+                self.thing.loyalty -= 10
+
+                self.game.adding_unit(self.thing.x, self.thing.y, 
+                    self.thing.loyalty, 
+                    self.thing.nationality.id_num,
+                    self.thing.owner.id_num, 15, "Volunteers")
+                    
+
 
     def show(self):
         self.visible = True
@@ -3374,7 +3514,7 @@ class Trade_Window(Window):
         size=(800, 650),
         color=DARKGREY,
         text="Trade",
-        textsize=15,
+        textsize=FONT_MENU_TEXT_SIZE,
         textcolor=LIGHTGREY,
         textpos=(40, 10),
         border_size=3,
@@ -3415,16 +3555,18 @@ class Trade_Window(Window):
         self.resources = []
         self.texts = []
         self.building_typ = 1
+        self.selected_trade_contract = None
+        self.selected_trade_building = None
+        self.num_ava_ord = len(self.thing.available_orders)
+        self.active_trade_contract = None
+        self.num_active_ord = len(self.thing.active_orders)
 
-        # self.buttons.append(Function_Button(self.game, self, pos=(20, 600), size=(len(self.game.language.BASIC[4])*11+15, 30), color=DARKGREY, text=self.game.language.BASIC[4], textsize=20, textcolor=LIGHTGREY, function="func_1"))
-        # self.buttons.append(Function_Button(self.game, self, pos=(170, 600), size=(len(self.game.language.BASIC[6])*11+15, 30), color=DARKGREY, text=self.game.language.BASIC[6], textsize=20, textcolor=LIGHTGREY, function="func_2"))
-        # self.buttons.append(Function_Button(self.game, self, pos=(320, 600), size=(len(self.game.language.BASIC[7])*11+15, 30), color=DARKGREY, text=self.game.language.BASIC[7], textsize=20, textcolor=LIGHTGREY, function="func_3"))
-        # self.buttons.append(Function_Button(self.game, self, pos=(470, 600), size=(len(self.game.language.BASIC[5])*11+15, 30), color=DARKGREY, text=self.game.language.BASIC[5], textsize=20, textcolor=LIGHTGREY, function="func_4"))
+
         self.buttons.append(
             Function_Button(
                 self.game,
                 self,
-                pos=(720, 400),
+                pos=(710, 210),
                 text=self.game.language.BASIC[8],
                 function="show_graph",
             )
@@ -3449,73 +3591,73 @@ class Trade_Window(Window):
             )
         )
         self.buttons.append(
-            Function_Button(
+            Mini_Function_Button(
                 self.game,
                 self,
-                pos=(200, 400),
+                pos=(170, 400),
                 text=self.game.language.BASIC[4],
                 function="prev_trade_building",
             )
         )
         self.buttons.append(
-            Function_Button(
+            Mini_Function_Button(
                 self.game,
                 self,
-                pos=(300, 400),
+                pos=(210, 400),
                 text=self.game.language.BASIC[5],
                 function="next_trade_building",
             )
         )
         self.buttons.append(
-            Function_Button(
+            Mini_Function_Button(
                 self.game,
                 self,
-                pos=(200, 460),
+                pos=(170, 460),
                 text=self.game.language.BASIC[4],
                 function="prev_trade_goods",
             )
         )
         self.buttons.append(
-            Function_Button(
+            Mini_Function_Button(
                 self.game,
                 self,
-                pos=(300, 460),
+                pos=(210, 460),
                 text=self.game.language.BASIC[5],
                 function="next_trade_goods",
             )
         )
         self.buttons.append(
-            Function_Button(
+            Mini_Function_Button(
                 self.game,
                 self,
-                pos=(175, 520),
+                pos=(170, 500),
                 text=self.game.language.TRADE[4],
                 function="quantity-10",
             )
         )
         self.buttons.append(
-            Function_Button(
+            Mini_Function_Button(
                 self.game,
                 self,
-                pos=(235, 520),
+                pos=(210, 500),
                 text=self.game.language.TRADE[5],
                 function="quantity-1",
             )
         )
         self.buttons.append(
-            Function_Button(
+            Mini_Function_Button(
                 self.game,
                 self,
-                pos=(290, 520),
+                pos=(250, 500),
                 text=self.game.language.TRADE[6],
                 function="quantity+1",
             )
         )
         self.buttons.append(
-            Function_Button(
+            Mini_Function_Button(
                 self.game,
                 self,
-                pos=(340, 520),
+                pos=(290, 500),
                 text=self.game.language.TRADE[7],
                 function="quantity+10",
             )
@@ -3529,9 +3671,57 @@ class Trade_Window(Window):
                 function="buy_trade_goods",
             )
         )
+        self.buttons.append(
+            Mini_Function_Button(
+                self.game,
+                self,
+                pos=(540, 400),
+                text=self.game.language.BASIC[4],
+                function="prev_ava_order",
+            )
+        )
+        self.buttons.append(
+            Mini_Function_Button(
+                self.game,
+                self,
+                pos=(580, 400),
+                text=self.game.language.BASIC[5],
+                function="next_ava_order",
+            )
+        )
+        self.buttons.append(
+            Function_Button(
+                self.game,
+                self,
+                pos=(620, 400),
+                text=self.game.language.BASIC[9],
+                function="accept_trade_offer",
+            )
+        )
+        self.buttons.append(
+            Mini_Function_Button(
+                self.game,
+                self,
+                pos=(540, 520),
+                text=self.game.language.BASIC[4],
+                function="prev_active_order",
+            )
+        )
+        self.buttons.append(
+            Mini_Function_Button(
+                self.game,
+                self,
+                pos=(580, 520),
+                text=self.game.language.BASIC[5],
+                function="next_active_order",
+            )
+        )
+        
 
+
+        #draw window
         if 1 == 1:
-            # draw window
+            
             self.image = pg.Surface(self.size)
             pg.draw.rect(self.image, self.textcolor, (0, 0, size[0], size[1]))
             pg.draw.rect(
@@ -3545,37 +3735,37 @@ class Trade_Window(Window):
                 ),
             )
             self.image.blit(
-                pg.font.Font(FONT_NAME, self.textsize).render(
+                pg.font.Font(FONT_NAME, FONT_WINDOW_SIZE).render(
                     self.text, False, self.textcolor
                 ),
                 self.textpos,
             )
             self.image.blit(
-                pg.font.Font(FONT_NAME, self.textsize).render(
+                pg.font.Font(FONT_NAME, FONT_WINDOW_SIZE).render(
                     self.game.language.BASIC[10], False, self.textcolor
                 ),
                 (500, 20),
             )
             self.image.blit(
-                pg.font.Font(FONT_NAME, self.textsize).render(
+                pg.font.Font(FONT_NAME, FONT_WINDOW_SIZE).render(
                     self.game.language.TRADE[0], False, self.textcolor
                 ),
                 (30, 400),
             )
             self.image.blit(
-                pg.font.Font(FONT_NAME, self.textsize).render(
+                pg.font.Font(FONT_NAME, FONT_WINDOW_SIZE).render(
                     self.game.language.TRADE[2], False, self.textcolor
                 ),
                 (30, 460),
             )
             self.image.blit(
-                pg.font.Font(FONT_NAME, self.textsize).render(
+                pg.font.Font(FONT_NAME, FONT_WINDOW_SIZE).render(
                     self.game.language.TRADE[3], False, self.textcolor
                 ),
                 (30, 500),
             )
             self.image.blit(
-                pg.font.Font(FONT_NAME, self.textsize).render(
+                pg.font.Font(FONT_NAME, FONT_WINDOW_SIZE).render(
                     self.game.language.TRADE[8], False, self.textcolor
                 ),
                 (30, 560),
@@ -3588,7 +3778,7 @@ class Trade_Window(Window):
             c = 0
             for a in self.game.language.RES1:
                 self.image.blit(
-                    pg.font.Font(FONT_NAME, self.textsize).render(
+                    pg.font.Font(FONT_NAME, FONT_WINDOW_SIZE).render(
                         a, False, self.textcolor
                     ),
                     (110 + c, 60 + (b * 20)),
@@ -3602,7 +3792,7 @@ class Trade_Window(Window):
             c = 0
             for a in self.game.language.RES2:
                 self.image.blit(
-                    pg.font.Font(FONT_NAME, self.textsize).render(
+                    pg.font.Font(FONT_NAME, FONT_WINDOW_SIZE).render(
                         a, False, self.textcolor
                     ),
                     (110 + c, 280 + (b * 20)),
@@ -3653,58 +3843,90 @@ class Trade_Window(Window):
                     c += 270
                     b = 0
 
-        self.image.blit(self.game.players[self.game.player.side].image, (112, 0))
-        self.image.blit(self.game.money_img, (110, 30))
-        self.image.blit(self.game.global_img, (263, 8))
-        self.image.blit(self.game.money_img, (260, 30))
-        self.image.blit(self.game.players[self.game.player.side].image, (400, -4))
-        self.image.blit(self.game.exchange_img, (400, 15))
-        self.image.blit(self.game.global_img, (402, 35))
+        #draw texts in window
+        if 1 == 1:
+            self.image.blit(self.game.players[self.game.player.side].image, (112, 0))
+            self.image.blit(self.game.money_img, (110, 30))
+            self.image.blit(self.game.global_img, (263, 8))
+            self.image.blit(self.game.money_img, (260, 30))
+            self.image.blit(self.game.players[self.game.player.side].image, (400, -4))
+            self.image.blit(self.game.exchange_img, (400, 15))
+            self.image.blit(self.game.global_img, (402, 35))
 
-        self.texts.append(
-            [
-                "$ " + str(self.game.players[self.game.player.side].money),
-                16,
-                DARKGREEN,
-                (140, 20),
-            ]
-        )
-        self.texts.append(
-            [
-                "$ " + str(self.game.players[self.game.player.side].global_money),
-                16,
-                DARKGREEN,
-                (290, 20),
-            ]
-        )
-        self.texts.append(
-            [
-                str(self.game.players[self.game.player.side].exc_rt),
-                16,
-                LIGHTGREY,
-                (430, 20),
-            ]
-        )
-        self.texts.append([self.game.language.TRADE[1], 16, LIGHTGREY, (10, 420)])
-        self.texts.append([self.game.language.TRADE[1], 16, LIGHTGREY, (10, 440)])
-        self.texts.append(
-            [self.game.language.RES1[self.trade_goods], 16, LIGHTGREY, (10, 480)]
-        )
-        self.texts.append([str(self.trade_quantity), 16, LIGHTGREY, (10, 520)])
-        self.texts.append([self.game.language.TRADE[9], 16, LIGHTGREY, (10, 580)])
-        self.texts.append([str(self.trade_transport_cost), 16, LIGHTGREY, (120, 580)])
-        self.texts.append([self.game.language.TRADE[10], 16, LIGHTGREY, (10, 600)])
-        self.texts.append([str(self.trade_goods_cost), 16, LIGHTGREY, (120, 600)])
-        self.texts.append([self.game.language.TRADE[11], 16, LIGHTGREY, (10, 620)])
-        self.texts.append([str(self.trade_total_cost), 16, LIGHTGREY, (120, 620)])
-        self.texts.append([self.game.language.TRADE[12], 16, LIGHTGREY, (200, 620)])
-        self.texts.append([self.game.language.TRADE[1], 16, LIGHTGREY, (300, 620)])
+            self.texts.append(
+                [
+                    "$ " + str(self.game.players[self.game.player.side].money),
+                    16,
+                    DARKGREEN,
+                    (140, 20),
+                ]
+            )
+            self.texts.append(
+                [
+                    "$ " + str(self.game.players[self.game.player.side].global_money),
+                    16,
+                    DARKGREEN,
+                    (290, 20),
+                ]
+            )
+            self.texts.append(
+                [
+                    str(self.game.players[self.game.player.side].exc_rt),
+                    16,
+                    LIGHTGREY,
+                    (430, 20),
+                ]
+            )
+            self.texts.append([self.game.language.TRADE[1], 16, LIGHTGREY, (10, 420)])
+            self.texts.append([self.game.language.TRADE[1], 16, LIGHTGREY, (10, 440)])
+            self.texts.append(
+                [self.game.language.RES1[self.trade_goods], 16, LIGHTGREY, (10, 480)]
+            )
+            self.texts.append([str(self.trade_quantity), 16, LIGHTGREY, (10, 520)])
+            self.texts.append([self.game.language.TRADE[9], 16, LIGHTGREY, (10, 580)])
+            self.texts.append([str(self.trade_transport_cost), 16, LIGHTGREY, (120, 580)])
+            self.texts.append([self.game.language.TRADE[10], 16, LIGHTGREY, (10, 600)])
+            self.texts.append([str(self.trade_goods_cost), 16, LIGHTGREY, (120, 600)])
+            self.texts.append([self.game.language.TRADE[11], 16, LIGHTGREY, (10, 620)])
+            self.texts.append([str(self.trade_total_cost), 16, LIGHTGREY, (120, 620)])
+            self.texts.append([self.game.language.TRADE[12], 16, LIGHTGREY, (200, 620)])
+            self.texts.append([self.game.language.TRADE[1], 16, LIGHTGREY, (300, 620)])
+
+            #draw available trade offers
+            self.texts.append([self.game.language.TRADE_ORDER[0], 16, LIGHTGREY, (350, 400)])
+            self.texts.append([str(self.num_ava_ord), 16, LIGHTGREY, (520, 400)])
+            self.texts.append([self.game.language.TRADE_ORDER[1], 16, LIGHTGREY, (350, 420)])
+            self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (500, 420)])
+            self.texts.append([self.game.language.TRADE_ORDER[2], 16, LIGHTGREY, (350, 440)])
+            self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (500, 440)])
+            self.texts.append([self.game.language.TRADE_ORDER[3], 16, LIGHTGREY, (350, 460)])
+            self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (500, 460)])
+            self.texts.append([self.game.language.TRADE_ORDER[4], 16, LIGHTGREY, (350, 480)])
+            self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (500, 480)])
+            self.texts.append([self.game.language.TRADE_ORDER[5], 16, LIGHTGREY, (350, 500)])
+            self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (500, 500)])
+
+            #draw active trade offers
+            self.texts.append([self.game.language.TRADE_ORDER[6], 16, LIGHTGREY, (350, 520)])
+            self.texts.append([str(self.num_ava_ord), 16, LIGHTGREY, (520, 520)])
+            self.texts.append([self.game.language.TRADE_ORDER[1], 16, LIGHTGREY, (350, 540)])
+            self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (500, 540)])
+            self.texts.append([self.game.language.TRADE_ORDER[2], 16, LIGHTGREY, (350, 560)])
+            self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (500, 560)])
+            self.texts.append([self.game.language.TRADE_ORDER[3], 16, LIGHTGREY, (350, 580)])
+            self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (500, 580)])
+            self.texts.append([self.game.language.TRADE_ORDER[4], 16, LIGHTGREY, (350, 600)])
+            self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (500, 600)])
+            self.texts.append([self.game.language.TRADE_ORDER[5], 16, LIGHTGREY, (350, 620)])
+            self.texts.append([self.game.language.BASIC[12], 16, LIGHTGREY, (500, 620)])
+
+
 
         b = 0
         c = 0
-        for a in self.game.trade.resource_exchange_rate1:
+        for a in self.thing.resource_exchange_rate1:
             self.variables.append(
-                [a, 16, self.game.trade.rating(randint(1, 3)), (20 + c, 60 + (b * 20))]
+                [a, 16, self.thing.rating(randint(1, 3)), (20 + c, 60 + (b * 20))]
             )
 
             b += 1
@@ -3713,29 +3935,21 @@ class Trade_Window(Window):
                 b = 0
         b = 0
         c = 0
-        for a in self.game.trade.resource_exchange_rate2:
+        for a in self.thing.resource_exchange_rate2:
             self.variables.append(
-                [a, 16, self.game.trade.rating(randint(1, 3)), (20 + c, 280 + (b * 20))]
+                [a, 16, self.thing.rating(randint(1, 3)), (20 + c, 280 + (b * 20))]
             )
-            # self.game.trade.rating(randint(1,3))
+            # self.thing.rating(randint(1,3))
             b += 1
             if b > 4:
                 c += 270
                 b = 0
 
     def dayli(self):
-        pass
+        self.update_trade_offers()
 
     def function_list(self, function=None):
-        if function == "func_1":
-            self.func_1()
-        elif function == "func_2":
-            self.func_2()
-        elif function == "func_3":
-            self.func_3()
-        elif function == "func_4":
-            self.func_4()
-        elif function == "show_graph":
+        if function == "show_graph":
             self.show_graph()
         elif function == "sell_global_currency":
             self.sell_global_currency()
@@ -3759,23 +3973,21 @@ class Trade_Window(Window):
             self.quantity_plus_10()
         elif function == "buy_trade_goods":
             self.buy_trade_goods()
+        elif function == "next_ava_order":
+            self.next_ava_order()
+        elif function == "prev_ava_order":
+            self.prev_ava_order()
+        elif function == "accept_trade_offer":
+            self.accept_trade_offer()
+        elif function == "prev_active_order":
+            self.prev_active_order()
+        elif function == "next_active_order":
+            self.next_active_order()
         else:
             pass
 
-    def func_1(self):
-        print("prev")
-
-    def func_2(self):
-        print("sell")
-
-    def func_3(self):
-        print("buy")
-
-    def func_4(self):
-        print("next")
-
     def show_graph(self):
-        self.game.trade.show_graph(which=0)
+        self.thing.show_graph(which=0)
 
     def sell_global_currency(self):
         if self.owner.global_money > 100:
@@ -3921,14 +4133,14 @@ class Trade_Window(Window):
     def update_trade_goods_cost(self):
         if self.trade_goods < len(RES1_LIST):
             self.trade_goods_cost = (
-                self.game.trade.resource_exchange_rate1[self.trade_goods]
+                self.thing.resource_exchange_rate1[self.trade_goods]
                 * self.trade_quantity
             )
             self.trade_goods_cost = round(self.trade_goods_cost, 2)
             self.texts[10][0] = str(self.trade_goods_cost)
         else:
             self.trade_goods_cost = (
-                self.game.trade.resource_exchange_rate2[
+                self.thing.resource_exchange_rate2[
                     (self.trade_goods - len(RES1_LIST))
                 ]
                 * self.trade_quantity
@@ -3946,17 +4158,19 @@ class Trade_Window(Window):
             ):
                 if a.owner == self.owner:
                     self.trade_building_list.append(a)
-        self.trade_building = None
-        self.trade_building_counter = None
+        
 
     def buy_trade_goods(self):
+        #if check text color is darkgreen / you have more money
         if self.texts[14][2] == DARKGREEN:
             self.owner.global_money -= self.trade_total_cost
             d = 0
+            #checking shipping time
             if self.trade_building.name == self.game.language.BUILDINGS1[3]:
                 d = HARBOR_SHIPING_TIME
             elif self.trade_building.name == self.game.language.BUILDINGS1[4]:
                 d = AIRPORT_SHIPING_TIME
+            #adding 
             self.game.event_list.add_event(
                 [
                     self.game.idn + d,
@@ -3966,27 +4180,157 @@ class Trade_Window(Window):
                     self.trade_quantity,
                 ]
             )
+            self.owner.import_goods += self.trade_total_cost
+            self.game.politics.window.update_politics()
             t = []
             t.append(self.game.language.INFO_TEXTS[0] + self.trade_goods_name)
             t.append(self.game.language.INFO_TEXTS[1] + str(self.trade_quantity))
-            t.append(self.game.language.INFO_TEXTS[2] + self.trade_building.name)
+            t.append(self.game.language.INFO_TEXTS[2] + self.trade_building.name + 
+            ": " + str(self.trade_building.x) + "/" + str(self.trade_building.y))
             t.append(self.game.language.INFO_TEXTS[3] + str(d))
 
             self.game.event_list.show_new_info(t)
         else:
             pass
 
+    def update_trade_offers(self):
+        self.num_ava_ord = len(self.thing.available_orders)
+        self.texts[16][0] = str(self.num_ava_ord)
+        self.num_active_ord = len(self.thing.active_orders)
+        self.texts[28][0] = str(self.num_active_ord)
+
+    def prev_ava_order(self):
+        self.update_trade_offers()
+        if self.num_ava_ord > 0:
+            if self.selected_trade_contract == None:
+                self.selected_trade_contract = 0
+            self.selected_trade_contract -= 1
+            if self.selected_trade_contract < 0:
+                self.selected_trade_contract = self.num_ava_ord - 1
+            b = self.thing.available_orders[self.selected_trade_contract]
+            self.selected_trade_building = b[3]
+            self.texts[18][0] = str(b[0])
+            self.texts[20][0] = str(b[1])
+            self.texts[22][0] = str(b[2])
+            self.texts[24][0] = str(self.selected_trade_building.name) + ": " + str(self.selected_trade_building.x) + "/" + str(self.selected_trade_building.y)
+            self.texts[26][0] = self.game.conv_idn_to_data(b[4])
+        else:
+            self.selected_trade_contract = None
+            self.selected_trade_building = None
+            self.texts[18][0] = self.game.language.BASIC[12]
+            self.texts[20][0] = self.game.language.BASIC[12]
+            self.texts[22][0] = self.game.language.BASIC[12]
+            self.texts[24][0] = self.game.language.BASIC[12]
+            self.texts[26][0] = self.game.language.BASIC[12]
+
+    def next_ava_order(self):
+        self.update_trade_offers()
+        if self.num_ava_ord > 0:
+            if self.selected_trade_contract == None:
+                self.selected_trade_contract = 0
+            self.selected_trade_contract += 1
+            if self.selected_trade_contract > self.num_ava_ord - 1:
+                self.selected_trade_contract = 0
+            b = self.thing.available_orders[self.selected_trade_contract]
+            self.selected_trade_building = b[3]
+            self.texts[18][0] = str(b[0])
+            self.texts[20][0] = str(b[1])
+            self.texts[22][0] = str(b[2])
+            self.texts[24][0] = str(self.selected_trade_building.name) + ": " + str(self.selected_trade_building.x) + "/" + str(self.selected_trade_building.y)
+            self.texts[26][0] = self.game.conv_idn_to_data(b[4])
+        else:
+            self.selected_trade_contract = None
+            self.selected_trade_building = None
+            self.texts[18][0] = self.game.language.BASIC[12]
+            self.texts[20][0] = self.game.language.BASIC[12]
+            self.texts[22][0] = self.game.language.BASIC[12]
+            self.texts[24][0] = self.game.language.BASIC[12]
+            self.texts[26][0] = self.game.language.BASIC[12]
+
+    def prev_active_order(self):
+        self.update_trade_offers()
+        if self.num_active_ord > 0:
+            if self.active_trade_contract == None:
+                self.active_trade_contract = 0
+            self.active_trade_contract -= 1
+            if self.active_trade_contract < 0:
+                self.active_trade_contract = self.num_active_ord - 1
+            b = self.thing.active_orders[self.active_trade_contract]
+            self.texts[30][0] = str(b[0])
+            self.texts[32][0] = str(b[1])
+            self.texts[34][0] = str(b[2])
+            self.texts[36][0] = str(b[3].name) + ": " + str(b[3].x) + "/" + str(b[3].y)
+            self.texts[38][0] = self.game.conv_idn_to_data(b[4])
+        else:
+            self.active_trade_contract = None
+            self.texts[30][0] = self.game.language.BASIC[12]
+            self.texts[32][0] = self.game.language.BASIC[12]
+            self.texts[34][0] = self.game.language.BASIC[12]
+            self.texts[36][0] = self.game.language.BASIC[12]
+            self.texts[38][0] = self.game.language.BASIC[12]
+
+    def next_active_order(self):
+        self.update_trade_offers()
+        if self.num_active_ord > 0:
+            if self.active_trade_contract == None:
+                self.active_trade_contract = 0
+            self.active_trade_contract += 1
+            if self.active_trade_contract > self.num_active_ord - 1:
+                self.active_trade_contract = 0
+            b = self.thing.active_orders[self.active_trade_contract]
+            self.texts[30][0] = str(b[0])
+            self.texts[32][0] = str(b[1])
+            self.texts[34][0] = str(b[2])
+            self.texts[36][0] = str(b[3].name) + ": " + str(b[3].x) + "/" + str(b[3].y)
+            self.texts[38][0] = self.game.conv_idn_to_data(b[4])
+        else:
+            self.active_trade_contract = None
+            self.texts[30][0] = self.game.language.BASIC[12]
+            self.texts[32][0] = self.game.language.BASIC[12]
+            self.texts[34][0] = self.game.language.BASIC[12]
+            self.texts[36][0] = self.game.language.BASIC[12]
+            self.texts[38][0] = self.game.language.BASIC[12]
+
+    def accept_trade_offer(self):
+        if self.selected_trade_contract != None:
+            self.thing.active_orders.append(self.thing.available_orders[self.selected_trade_contract])
+            self.thing.available_orders.remove(self.thing.available_orders[self.selected_trade_contract])
+            self.update_trade_offers()
+            self.selected_trade_contract = None
+            self.selected_trade_building = None
+            self.texts[18][0] = self.game.language.BASIC[12]
+            self.texts[20][0] = self.game.language.BASIC[12]
+            self.texts[22][0] = self.game.language.BASIC[12]
+            self.texts[24][0] = self.game.language.BASIC[12]
+            self.texts[26][0] = self.game.language.BASIC[12]
+
     def show(self):
         self.texts[3][0] = self.game.language.TRADE[1]
         self.texts[4][0] = self.game.language.TRADE[1]
 
         self.update_trade_building_list()
+        self.trade_building = None
+        self.trade_building_counter = None
         self.visible = True
         self.game.window_display = True
 
     def hide(self):
         self.visible = False
         self.game.window_display = False
+        self.selected_trade_contract = None
+        self.selected_trade_building = None
+        self.texts[18][0] = self.game.language.BASIC[12]
+        self.texts[20][0] = self.game.language.BASIC[12]
+        self.texts[22][0] = self.game.language.BASIC[12]
+        self.texts[24][0] = self.game.language.BASIC[12]
+        self.texts[26][0] = self.game.language.BASIC[12]
+        self.active_trade_contract = None
+        self.texts[30][0] = self.game.language.BASIC[12]
+        self.texts[32][0] = self.game.language.BASIC[12]
+        self.texts[34][0] = self.game.language.BASIC[12]
+        self.texts[36][0] = self.game.language.BASIC[12]
+        self.texts[38][0] = self.game.language.BASIC[12]
+
 
     def update(self):
         self.rect.x = self.pos[0]
@@ -4007,7 +4351,7 @@ class OU_Button(Button):
         size=(20, 20),
         color=LIGHTGREY,
         text="X",
-        textsize=10,
+        textsize=FONT_MENU_TEXT_SIZE,
         textcolor=BLACK,
     ):
         self.groups = game.buttons
@@ -4052,7 +4396,7 @@ class OB_Button(Button):
         size=(20, 20),
         color=LIGHTGREY,
         text="X",
-        textsize=10,
+        textsize=FONT_MENU_TEXT_SIZE,
         textcolor=BLACK,
     ):
         self.groups = game.buttons
@@ -4097,7 +4441,7 @@ class OT_Button(Button):
         size=(20, 20),
         color=DARKGREY,
         text="X",
-        textsize=24,
+        textsize=FONT_MENU_TEXT_SIZE,
         textcolor=LIGHTGREY,
     ):
         self.groups = game.buttons
