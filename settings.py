@@ -218,20 +218,57 @@ TANK_FUEL_USAGE = 3
 HELI_FUEL_USAGE = 2
 AIRCRAFT_FUEL_USAGE = 5
 
-TRUCK_FUEL_CAP = 50
-ROCKET_TRUCK_FUEL_CAP = 50
-APC_FUEL_CAP = 150
-TANK_FUEL_CAP = 200
-HELI_FUEL_CAP = 100
+TRUCK_FUEL_CAP = 100
+ROCKET_TRUCK_FUEL_CAP = 100
+APC_FUEL_CAP = 250
+TANK_FUEL_CAP = 300
+HELI_FUEL_CAP = 200
 AIRCRAFT_FUEL_CAP = 300
 
-MEN_TRANSPORT_CAP = 2
+MEN_TRANSPORT_CAP = 4
 TRUCK_TRANSPORT_CAP = 400
-ROCKET_TRANSPORT_CAP = 40
-APC_TRANSPORT_CAP = 50
-TANK_TRANSPORT_CAP = 50
+ROCKET_TRANSPORT_CAP = 100
+APC_TRANSPORT_CAP = 100
+TANK_TRANSPORT_CAP = 100
 HELI_TRANSPORT_CAP = 50
-AIRCRAFT_TRANSPORT_CAP = 50
+AIRCRAFT_TRANSPORT_CAP = 400
+
+MEN_MAX_SUPPLY = 4
+MAX_UNIFORMS = 2
+
+MAX_CARRY_LIGHT_AMMO_MEN = 10
+MAX_CARRY_LIGHT_AMMO_APC = 400
+MAX_CARRY_LIGHT_AMMO_TANK = 200
+MAX_CARRY_LIGHT_AMMO_HELI = 200
+MAX_CARRY_LIGHT_AMMO_AIRCRAFT = 0
+
+MAX_CARRY_HEAVY_AMMO_MEN = 0
+MAX_CARRY_HEAVY_AMMO_APC = 0
+MAX_CARRY_HEAVY_AMMO_TANK = 60
+MAX_CARRY_HEAVY_AMMO_HELI = 6
+MAX_CARRY_HEAVY_AMMO_AIRCRAFT = 12
+
+MAX_CARRY_ROCKETS_MEN = 1
+MAX_CARRY_ROCKETS_APC = 3
+MAX_CARRY_ROCKETS_TANK = 0
+MAX_CARRY_ROCKETS_HELI = 6
+MAX_CARRY_ROCKETS_AIRCRAFT = 12
+MAX_CARRY_ROCKETS_ROCKET_TRUCK = 40
+
+SUPPLY_WEIGHT = 1
+UNIFORMS_WEIGHT = 1
+FUEL_WEIGHT = 1
+LIGHT_AMMO_WEIGHT = 1
+HEAVY_AMMO_WEIGHT = 3
+ROCKETS_WEIGHT = 5
+RIFLE_WEIGHT = 1
+ARTILLERIES_WEIGHT = 100
+TRUCK_WEIGHT = 200
+APC_WEIGHT = 200
+TANK_WEIGHT = 400
+HELI_WEIGHT = 400
+AIRCRAFT_WEIGHT = 800
+ROCKET_TRUCK_WEIGHT = 200
 
 
 
@@ -459,64 +496,50 @@ BUILDING_COST = [
     SHIPYARD_COST,
 ]
 
+UPKEEP_BUILDING = {"construction": 10, "village": 10, "city": 20, "harbor": 25, "airport": 100, "warehouse": 20, 
+"barrack": 50, "mine": 200, "smelter": 100, "oil_well": 100, "rafinery": 100, "power_plant": 200, 
+"light_industry_plant": 200, "heavy_industry_plant":300, "chemical_plant":200, "high_tech_plant":500, 
+"mechanical_plant":300, "armament_plant":500, "aviation_plant":500, "shipyard":300}
+
 # Production Cost
-# Time 1=15 min, 4=1h, 96=1day, 480=5 work days
-CEMENT_COST = {}
-STEEL_COST = {}
+# Time 1=15(?) min, 4=1h, 96=1day, 480=5 work days
+CEMENT_COST = {"calcium": 1, "coal": 1, "output": 1}#coal min max = 1
+STEEL_COST = {"iron": 1, "coal": 1, "output": 2}
 TOOL_COST = {"steel": 3, "plastic": 1, "output": 1}
 PARTS_COST = {"steel": 4, "aluminum": 4, "output": 1}
-ALUMINUM_COST = {}
-FUEL_COST = {}
-PLASTIC_COST = {"oil": 2, "output": 1}
-CHEM_COMP_COST = {"oil": 2, "output": 1}
+ALUMINUM_COST = {"bauxite": 2, "output": 1}
+FUEL_COST = {"oil": 4, "output": 2}
+PLASTIC_COST = {"oil": 4, "output": 2}
+CHEM_COMP_COST = {"oil": 4, "output": 2}
 FERTILIZER_COST = {"calcium": 3, "chem_comp": 1, "output": 2}
 ELEC_COMP_COST = {"aluminum": 3, "chem_comp": 3, "silicon": 3, "output": 2}
 ELECTRONICS_COST = {"steel": 3, "plastic": 3, "elec_comp": 2, "output": 1}
-PET_TEXTILSE_COST = {"plastic": 4, "output": 1}
-SYNTHETIC_RUBBER_COST = {}
-FURNITURE_COST = {}
+PET_TEXTILES_COST = {"plastic": 4, "output": 1}
+TEXTILES_COST = {"cotton": 4, "output": 1}
+SYNTHETIC_RUBBER_COST = {"oil": 4, "output": 1}
+FURNITURE_COST = {"wood": 3, "output": 1}
 CIV_MACH_COST = {"steel": 100, "aluminum": 30, "plastic": 20, "parts": 10, "time": 100}
 
-SUPPLY_COST = {"food": 2, "steel": 1}  # ns
-UNIFORMS_COST = {}
-LIGHT_AMMO_COST = {}
-HEAVY_AMMO_COST = {}
-ROCKETS_COST = {}
-RILFE_COST = {"steel": 4, "plastic": 1, "time": 4}
-ARTILLERIES_COST = {
-    "steel": 100,
-    "rubber": 50,
-    "parts": 10,
-    "electronics": 5,
-    "time": 100,
-}
-TRUCK_COST = {
-    "steel": 200,
-    "rubber": 100,
-    "parts": 20,
-    "tools": 5,
-    "textiles": 200,
-    "electronics": 10,
-    "time": 200,
-}
-APC_COST = {
-    "steel": 1000,
-    "rubber": 100,
-    "parts": 20,
-    "tools": 5,
-    "textiles": 100,
-    "electronics": 20,
-    "time": 500,
-}
-TANK_COST = {"steel": 3000, "rubber": 400, "parts": 30, "electronics": 30, "time": 1200}
-HELICOPTERS_COST = {}
-AIRCRAFT_COST = {}
+SUPPLY_COST = {"food": 4, "steel": 1, "output": 3}  # ns
+UNIFORMS_COST = {"textiles": 4, "output": 1}
+LIGHT_AMMO_COST = {"steel": 1, "textiles": 1, "chem_comp": 1, "output": 2, "time": 1}
+HEAVY_AMMO_COST = {"steel": 5, "plastic": 5, "chem_comp": 5, "output": 1, "time": 4}
+ROCKETS_COST = {"aluminum": 5, "chem_comp": 10, "plastic": 5, "parts": 1, "output": 1, "time": 12}
+RIFLE_COST = {"steel": 4, "plastic": 1, "time": 4}
+ARTILLERIES_COST = {"steel": 100,"rubber": 50,"parts": 10,"electronics": 5,"time": 100}
+TRUCK_COST = {"steel": 200,"rubber": 100,"parts": 20,"tools": 5,"textiles": 200,"electronics": 10,"time": 200,}
+APC_COST = {"steel": 1000,"rubber": 100,"parts": 20,"tools": 5,"textiles": 100,"electronics": 20,"time": 500}
+TANK_COST = {"steel": 3000, "rubber": 400, "parts": 30, "tools": 10, "electronics": 30, "time": 1200}
+HELICOPTERS_COST = {"aluminum": 1000, "rubber": 200, "parts": 50, "tools": 10, "elec_comp": 200, "time": 1000}
+AIRCRAFT_COST = {"aluminum": 1800, "rubber": 400, "parts": 100, "tools": 25, "elec_comp": 500, "time": 2000}
 
-HARBOR_TRANSPORT_COST = 1
-AIRPORT_TRANSPORT_COST = 10
 
+HARBOR_TRANSPORT_COST = 200
+AIRPORT_TRANSPORT_COST = 500
 HARBOR_SHIPING_TIME = 10
-AIRPORT_SHIPING_TIME = 3
+AIRPORT_SHIPING_TIME = 2
+HARBOR_TRANSPORT_MAX = 1000
+AIRPORT_TRANSPORT_MAX = 100
 
 PEACE_TREATY = 20
 TRADE_TREATY = 50

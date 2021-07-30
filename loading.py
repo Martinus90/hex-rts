@@ -32,7 +32,7 @@ class Event_List(pg.sprite.Sprite):
             self.game,
             size=(500, 500),
             text="Scenario Window",
-            textpos=(150, 10),
+            textpos=(120, 10),
             border_size=3,
             display_text=[],
             visible=False,
@@ -41,7 +41,7 @@ class Event_List(pg.sprite.Sprite):
             self.game,
             size=(500, 500),
             text="Info Window",
-            textpos=(150, 10),
+            textpos=(120, 10),
             border_size=3,
             display_text=[],
             visible=False,
@@ -149,13 +149,13 @@ class Event_List(pg.sprite.Sprite):
         self.check = None
 
 
-class Politics(pg.sprite.Sprite):
+class Int_Politics(pg.sprite.Sprite):
     def __init__(self, game):
         self.game = game
-        self.window = Politics_Window(
+        self.window = Int_Politics_Window(
             self.game,
             pos=[100, 100],
-            text="Internal and external policy",
+            text="Internal policy",
         )
     
     def update_window_value(self):
@@ -335,8 +335,6 @@ class Trade(pg.sprite.Sprite):
         
         for a in self.active_orders:
             #if goods are in building
-            print("READ HERE .... .... ....")
-            print(a[3].storage[a[0]])
             if a[3].storage[a[0]] >= a[2]:
                 a[3].storage[a[0]] -= a[2]
                 self.game.players[self.game.player.side].global_money += a[1]
@@ -345,11 +343,12 @@ class Trade(pg.sprite.Sprite):
                 t.append(self.game.language.TRADE_ORDER[7] + str(a[2]) + " " + a[0])
                 t.append("+$ " + str(a[1]))
                 self.game.event_list.show_new_info(t)
+                self.active_orders.remove(a)
 
             #if its too late
             if a[4] <= self.game.idn:
                 self.game.players[self.game.player.side].reputation_change(TRADE_LOSE_REP)
-                self.available_orders.remove(a)
+                self.active_orders.remove(a)
 
         #changing goods price
         if 1 == 1:
@@ -725,12 +724,20 @@ class Unit_Type(pg.sprite.Sprite):
         money_usage=1,
         max_men=0,
         max_art=0,
-        max_truck=5,
+        max_truck=0,
         max_apc=0,
         max_tank=0,
         max_heli=0,
         max_aircraft=0,
         max_rocket_truck=0,
+        min_men=0,
+        min_art=0,
+        min_truck=0,
+        min_apc=0,
+        min_tank=0,
+        min_heli=0,
+        min_aircraft=0,
+        min_rocket_truck=0,
     ):
 
         self.game = game
@@ -746,6 +753,7 @@ class Unit_Type(pg.sprite.Sprite):
         self.money_usage = money_usage
         self.equipment = []
         self.max_men = max_men
+        self.min_men = min_men
 
         self.equipment.append("supply")
         self.equipment.append("uniforms")
@@ -753,16 +761,19 @@ class Unit_Type(pg.sprite.Sprite):
         self.equipment.append("light_ammo")
 
         self.max_art = max_art
+        self.min_art = min_art
         if self.max_art > 0:
             self.equipment.append("artilleries")
             if not "heavy_ammo" in self.equipment:
                 self.equipment.append("heavy_ammo")
         self.max_truck = max_truck
+        self.min_truck = min_truck
         if self.max_truck > 0:
             self.equipment.append("truck")
             if not "fuel" in self.equipment:
                 self.equipment.append("fuel")
         self.max_apc = max_apc
+        self.min_apc = min_apc
         if self.max_apc > 0:
             self.equipment.append("apc")
             if not "fuel" in self.equipment:
@@ -770,6 +781,7 @@ class Unit_Type(pg.sprite.Sprite):
             if not "light_ammo" in self.equipment:
                 self.equipment.append("light_ammo")
         self.max_tank = max_tank
+        self.min_tank = min_tank
         if self.max_tank > 0:
             self.equipment.append("tank")
             if not "fuel" in self.equipment:
@@ -777,6 +789,7 @@ class Unit_Type(pg.sprite.Sprite):
             if not "heavy_ammo" in self.equipment:
                 self.equipment.append("heavy_ammo")
         self.max_heli = max_heli
+        self.min_heli = min_heli
         if self.max_heli > 0:
             self.equipment.append("heli")
             if not "fuel" in self.equipment:
@@ -784,6 +797,7 @@ class Unit_Type(pg.sprite.Sprite):
             if not "heavy_ammo" in self.equipment:
                 self.equipment.append("heavy_ammo")
         self.max_aircraft = max_aircraft
+        self.min_aircraft = min_aircraft
         if self.max_aircraft > 0:
             self.equipment.append("aircraft")
             if not "fuel" in self.equipment:
@@ -791,6 +805,7 @@ class Unit_Type(pg.sprite.Sprite):
             if not "heavy_ammo" in self.equipment:
                 self.equipment.append("heavy_ammo")
         self.max_rocket_truck = max_rocket_truck
+        self.min_rocket_truck = min_rocket_truck
         if self.max_rocket_truck > 0:
             self.equipment.append("rocket_truck")
             if not "fuel" in self.equipment:
@@ -861,8 +876,6 @@ class Menu(pg.sprite.Sprite):
         self.new_building_button = NB_Button(
             self.game,
             self.new_building_window,
-            pos=[WIDTH - MENU_RIGHT[0] + 70, 425],
-            text="New",
         )
         self.open_diplomacy_button = OT_Button(
             self.game.diplomacy.window,
@@ -889,11 +902,11 @@ class Menu(pg.sprite.Sprite):
         )
         self.buttons.append(self.open_info_button)
         self.open_politics_button = OT_Button(
-            self.game.politics.window,
+            self.game.int_politics.window,
             self.game,
             pos=[WIDTH - MENU_RIGHT[0] - 200, HEIGHT - 45],
             size=(110, 30),
-            text="Politics",
+            text="Internal",
         )
         self.buttons.append(self.open_politics_button)
 
@@ -1034,7 +1047,7 @@ class Button(pg.sprite.Sprite):  # regular button
         game,
         window,
         pos=[6, 6],
-        size=(20, 20),
+        size=(100, 30),
         color=DARKGREY,
         text="X",
         textsize=FONT_BUTTON_SIZE,
@@ -1057,15 +1070,40 @@ class Button(pg.sprite.Sprite):  # regular button
         self.visible = self.window.visible
         # self.image = self.game.new_b_button.copy()
 
+
+        self.image = pg.Surface(self.size)
+        pg.draw.rect(self.image, self.textcolor, (0, 0, self.size[0], self.size[1]))
+        pg.draw.rect(
+            self.image,
+            self.color,
+            (
+                0 + BUTTON_BORDER_SIZE,
+                0 + BUTTON_BORDER_SIZE,
+                size[0] - BUTTON_BORDER_SIZE * 2 - 1,
+                size[1] - BUTTON_BORDER_SIZE * 2 - 1,
+            ),
+        )
+        self.image.blit(
+            pg.font.Font(FONT_NAME, self.textsize).render(
+                self.text, False, self.textcolor
+            ),
+            (5, 1),
+        )
+        self.rect = self.image.get_rect()
+
+
+
+        '''
         self.image = self.game.button_1_img.copy()
         self.image.blit(
             pg.font.Font(FONT_NAME, self.textsize).render(
                 self.text, False, self.textcolor
             ),
-            (8, 4),
+            (16, 4),
         )
         self.image.set_colorkey(VIOLET)
         self.rect = self.image.get_rect()
+        '''
 
     def click(self):
         self.window.visible = True
@@ -1126,7 +1164,7 @@ class Function_Button(Button):
             pg.font.Font(FONT_NAME, self.textsize).render(
                 self.text, False, self.textcolor
             ),
-            (4, 4),
+            (4, 2),
         )
         # self.image.set_colorkey(VIOLET)
         self.rect = self.image.get_rect()
@@ -1161,7 +1199,7 @@ class Mini_Function_Button(Button):
         self.game = game
         self.window = window
         self.pos = pos
-        self.size = (len(text) * 9 + 8, 15)
+        self.size = (len(text) * 8 + 10, 15)
         self.color = color
         self.text = text
         self.textsize = textsize
@@ -1377,11 +1415,11 @@ class NB_Button(Button):  # new building button
         self,
         game,
         window,
-        pos=[6, 6],
-        size=(56, 30),
+        pos=[WIDTH - MENU_RIGHT[0] + 70, 425],
+        size=(60, 30),
         color=DARKGREY,
-        text="X",
-        textsize=24,
+        text="New",
+        textsize=28,
         textcolor=LIGHTGREY,
     ):
         self.groups = game.buttons
@@ -1400,22 +1438,22 @@ class NB_Button(Button):  # new building button
         self.visible = True
 
         self.image = pg.Surface(self.size)
-        pg.draw.rect(self.image, self.textcolor, (0, 0, size[0], size[1]))
+        pg.draw.rect(self.image, self.textcolor, (0, 0, self.size[0], self.size[1]))
         pg.draw.rect(
             self.image,
             self.color,
             (
                 0 + BUTTON_BORDER_SIZE,
                 0 + BUTTON_BORDER_SIZE,
-                size[0] - BUTTON_BORDER_SIZE * 2 - 1,
-                size[1] - BUTTON_BORDER_SIZE * 2 - 1,
+                self.size[0] - BUTTON_BORDER_SIZE * 2 - 1,
+                self.size[1] - BUTTON_BORDER_SIZE * 2 - 1,
             ),
         )
         self.image.blit(
             pg.font.Font(FONT_NAME, self.textsize).render(
                 self.text, False, self.textcolor
             ),
-            (5, 5),
+            (7, 1),
         )
 
         self.rect = self.image.get_rect()
@@ -1515,7 +1553,7 @@ class Info_Window(Window):
         text="Text",
         textsize=FONT_MENU_TEXT_SIZE,
         textcolor=LIGHTGREY,
-        textpos=(50, 10),
+        textpos=(40, 10),
         border_size=3,
         display_text=[],
         visible=False,
@@ -1594,13 +1632,17 @@ class Info_Window(Window):
         self.which_text_display += 1
         if self.which_text_display > len(self.all_texts) - 1:
             self.which_text_display = 0
-        self.texts = self.all_texts[self.which_text_display]
+        
+        if len(self.all_texts) > 0:
+            self.texts = self.all_texts[self.which_text_display]
 
     def prev_texts(self):
         self.which_text_display -= 1
         if self.which_text_display < 0:
             self.which_text_display = len(self.all_texts) - 1
-        self.texts = self.all_texts[self.which_text_display]
+            
+        if len(self.all_texts) > 0:
+            self.texts = self.all_texts[self.which_text_display]
 
     def new_text_to_display(self, display_text):
         #self.old_texts.pop()
@@ -1624,7 +1666,7 @@ class Info_Window(Window):
         self.rect.y = self.pos[1]
 
 
-class Politics_Window(Window):
+class Int_Politics_Window(Window):
     def __init__(
         self,
         game,
@@ -1731,7 +1773,7 @@ class Politics_Window(Window):
             Mini_Function_Button(
                 self.game,
                 self,
-                pos=(310, 45),
+                pos=(350, 45),
                 text=self.game.language.POLITICS[10],
                 function="tax_pop_inc",
             )
@@ -1749,7 +1791,7 @@ class Politics_Window(Window):
             Mini_Function_Button(
                 self.game,
                 self,
-                pos=(310, 65),
+                pos=(350, 65),
                 text=self.game.language.POLITICS[10],
                 function="tax_build_inc",
             )
@@ -1767,7 +1809,7 @@ class Politics_Window(Window):
             Function_Button(
                 self.game,
                 self,
-                pos=(410, 20),
+                pos=(500, 20),
                 text=self.game.language.POLITICS[19],
                 function="print_money",
             )
@@ -2136,7 +2178,7 @@ class Diplomacy_Window(Window):
                 ][1] -= self.game.idn
 
                 self.game.players[self.game.player.side].reputation -= LOSE_REP_WAR
-                self.game.politics.window.update_politics()
+                self.game.int_politics.window.update_politics()
                 self.trade()
                 self.alliance()
 
@@ -2716,7 +2758,7 @@ class Unit_Window(pg.sprite.Sprite):
                     text="X",
                     textsize=10,
                     textcolor=BLACK,
-                    variable="refill_equipment",
+                    variable="repeat",
                 )
             )
             self.buttons.append(
@@ -2729,7 +2771,7 @@ class Unit_Window(pg.sprite.Sprite):
                     text="X",
                     textsize=10,
                     textcolor=BLACK,
-                    variable="refill_crew",
+                    variable="building",
                 )
             )
             self.buttons.append(
@@ -2742,32 +2784,6 @@ class Unit_Window(pg.sprite.Sprite):
                     text="X",
                     textsize=10,
                     textcolor=BLACK,
-                    variable="building",
-                )
-            )
-            self.buttons.append(
-                Switch_Button(
-                    self.game,
-                    self,
-                    pos=[560, 140],
-                    size=(20, 20),
-                    color=LIGHTGREY,
-                    text="X",
-                    textsize=10,
-                    textcolor=BLACK,
-                    variable="repeat",
-                )
-            )
-            self.buttons.append(
-                Switch_Button(
-                    self.game,
-                    self,
-                    pos=[560, 160],
-                    size=(20, 20),
-                    color=LIGHTGREY,
-                    text="X",
-                    textsize=10,
-                    textcolor=BLACK,
                     variable="engage",
                 )
             )
@@ -2775,7 +2791,7 @@ class Unit_Window(pg.sprite.Sprite):
                 Switch_Button(
                     self.game,
                     self,
-                    pos=[560, 180],
+                    pos=[560, 140],
                     size=(20, 20),
                     color=LIGHTGREY,
                     text="X",
@@ -2833,7 +2849,7 @@ class Unit_Window(pg.sprite.Sprite):
                 Mini_Function_Button(
                     self.game,
                     self,
-                    pos=(440, 360),
+                    pos=(420, 360),
                     text=self.game.language.BASIC[4],
                     function="prev_task",
                 )
@@ -2842,7 +2858,7 @@ class Unit_Window(pg.sprite.Sprite):
                 Mini_Function_Button(
                     self.game,
                     self,
-                    pos=(480, 360),
+                    pos=(470, 360),
                     text=self.game.language.BASIC[5],
                     function="next_task",
                 )
@@ -2851,7 +2867,7 @@ class Unit_Window(pg.sprite.Sprite):
                 Mini_Function_Button(
                     self.game,
                     self,
-                    pos=(440, 380),
+                    pos=(420, 380),
                     text=self.game.language.BASIC[4],
                     function="task_line_1_prev",
                 )
@@ -2860,7 +2876,7 @@ class Unit_Window(pg.sprite.Sprite):
                 Mini_Function_Button(
                     self.game,
                     self,
-                    pos=(480, 380),
+                    pos=(470, 380),
                     text=self.game.language.BASIC[5],
                     function="task_line_1_next",
                 )
@@ -2869,7 +2885,7 @@ class Unit_Window(pg.sprite.Sprite):
                 Mini_Function_Button(
                     self.game,
                     self,
-                    pos=(440, 400),
+                    pos=(420, 400),
                     text=self.game.language.BASIC[4],
                     function="task_line_2_prev",
                 )
@@ -2878,13 +2894,13 @@ class Unit_Window(pg.sprite.Sprite):
                 Mini_Function_Button(
                     self.game,
                     self,
-                    pos=(480, 400),
+                    pos=(470, 400),
                     text=self.game.language.BASIC[5],
                     function="task_line_2_next",
                 )
             )
         
-        #change company composition
+        # change company composition
         if 1==1:
             self.buttons.append(
                 Mini_Function_Button(
@@ -2892,7 +2908,7 @@ class Unit_Window(pg.sprite.Sprite):
                     self,
                     pos=(110, 40),
                     text=self.game.language.BASIC[17],
-                    function="+men",
+                    function="-max_men",
                 )
             )
             self.buttons.append(
@@ -2901,166 +2917,407 @@ class Unit_Window(pg.sprite.Sprite):
                     self,
                     pos=(130, 40),
                     text=self.game.language.BASIC[18],
-                    function="-men",
+                    function="+max_men",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(110, 60),
+                    text=self.game.language.BASIC[17],
+                    function="-max_supply",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(130, 60),
+                    text=self.game.language.BASIC[18],
+                    function="+max_supply",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(110, 80),
+                    text=self.game.language.BASIC[17],
+                    function="-max_uniforms",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(130, 80),
+                    text=self.game.language.BASIC[18],
+                    function="+max_uniforms",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(110, 100),
+                    text=self.game.language.BASIC[17],
+                    function="-max_fuel",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(130, 100),
+                    text=self.game.language.BASIC[18],
+                    function="+max_fuel",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(110, 140),
+                    text=self.game.language.BASIC[17],
+                    function="-max_light_ammo",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(130, 140),
+                    text=self.game.language.BASIC[18],
+                    function="+max_light_ammo",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(110, 160),
+                    text=self.game.language.BASIC[17],
+                    function="-max_heavy_ammo",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(130, 160),
+                    text=self.game.language.BASIC[18],
+                    function="+max_heavy_ammo",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(110, 180),
+                    text=self.game.language.BASIC[17],
+                    function="-max_rockets",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(130, 180),
+                    text=self.game.language.BASIC[18],
+                    function="+max_rockets",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(110, 220),
+                    text=self.game.language.BASIC[17],
+                    function="-max_rifle",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(130, 220),
+                    text=self.game.language.BASIC[18],
+                    function="+max_rifle",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(110, 240),
+                    text=self.game.language.BASIC[17],
+                    function="-max_artilleries",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(130, 240),
+                    text=self.game.language.BASIC[18],
+                    function="+max_artilleries",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(110, 260),
+                    text=self.game.language.BASIC[17],
+                    function="-max_truck",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(130, 260),
+                    text=self.game.language.BASIC[18],
+                    function="+max_truck",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(110, 280),
+                    text=self.game.language.BASIC[17],
+                    function="-max_apc",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(130, 280),
+                    text=self.game.language.BASIC[18],
+                    function="+max_apc",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(110, 300),
+                    text=self.game.language.BASIC[17],
+                    function="-max_tank",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(130, 300),
+                    text=self.game.language.BASIC[18],
+                    function="+max_tank",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(110, 320),
+                    text=self.game.language.BASIC[17],
+                    function="-max_heli",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(130, 320),
+                    text=self.game.language.BASIC[18],
+                    function="+max_heli",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(110, 340),
+                    text=self.game.language.BASIC[17],
+                    function="-max_aircraft",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(130, 340),
+                    text=self.game.language.BASIC[18],
+                    function="+max_aircraft",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(110, 360),
+                    text=self.game.language.BASIC[17],
+                    function="-max_rocket_truck",
+                )
+            )
+            self.buttons.append(
+                Mini_Function_Button(
+                    self.game,
+                    self,
+                    pos=(130, 360),
+                    text=self.game.language.BASIC[18],
+                    function="+max_rocket_truck",
                 )
             )
         
-
         # draw eq names
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.DESCRIPTION[3], False, self.textcolor
-            ),
-            (150, 40),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.RES2[0], False, self.textcolor
-            ),
-            (150, 60),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.RES2[1], False, self.textcolor
-            ),
-            (150, 80),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.RES2[2], False, self.textcolor
-            ),
-            (150, 100),
-        )
+        if 1==1:
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.DESCRIPTION[3], False, self.textcolor
+                ),
+                (150, 40),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.RES2[0], False, self.textcolor
+                ),
+                (150, 60),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.RES2[1], False, self.textcolor
+                ),
+                (150, 80),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.RES2[2], False, self.textcolor
+                ),
+                (150, 100),
+            )
 
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.RES2[3], False, self.textcolor
-            ),
-            (150, 140),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.RES2[4], False, self.textcolor
-            ),
-            (150, 160),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.RES2[5], False, self.textcolor
-            ),
-            (150, 180),
-        )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.RES2[3], False, self.textcolor
+                ),
+                (150, 140),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.RES2[4], False, self.textcolor
+                ),
+                (150, 160),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.RES2[5], False, self.textcolor
+                ),
+                (150, 180),
+            )
 
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.RES2[6], False, self.textcolor
-            ),
-            (150, 220),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.RES2[7], False, self.textcolor
-            ),
-            (150, 240),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.RES2[8], False, self.textcolor
-            ),
-            (150, 260),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.RES2[9], False, self.textcolor
-            ),
-            (150, 280),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.RES2[10], False, self.textcolor
-            ),
-            (150, 300),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.RES2[11], False, self.textcolor
-            ),
-            (150, 320),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.RES2[12], False, self.textcolor
-            ),
-            (150, 340),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.RES2[13], False, self.textcolor
-            ),
-            (150, 360),
-        )
-
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.RES2[6], False, self.textcolor
+                ),
+                (150, 220),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.RES2[7], False, self.textcolor
+                ),
+                (150, 240),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.RES2[8], False, self.textcolor
+                ),
+                (150, 260),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.RES2[9], False, self.textcolor
+                ),
+                (150, 280),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.RES2[10], False, self.textcolor
+                ),
+                (150, 300),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.RES2[11], False, self.textcolor
+                ),
+                (150, 320),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.RES2[12], False, self.textcolor
+                ),
+                (150, 340),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.RES2[13], False, self.textcolor
+                ),
+                (150, 360),
+            )
+        
         # draw gui text
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.DESCRIPTION[1], False, self.textcolor
-            ),
-            (580, 42),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.DESCRIPTION[4], False, self.textcolor
-            ),
-            (580, 60),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.DESCRIPTION[5], False, self.textcolor
-            ),
-            (580, 80),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.DESCRIPTION[6], False, self.textcolor
-            ),
-            (580, 100),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.DESCRIPTION[8], False, self.textcolor
-            ),
-            (580, 120),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.DESCRIPTION[9], False, self.textcolor
-            ),
-            (580, 140),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.DESCRIPTION[10], False, self.textcolor
-            ),
-            (580, 160),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.DESCRIPTION[11], False, self.textcolor
-            ),
-            (580, 180),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.GUI[11], False, self.textcolor
-            ),
-            (400, 40),
-        )
-        self.image.blit(
-            pg.font.Font(FONT_NAME, self.textsize).render(
-                self.game.language.GUI[15], False, RED#self.textcolor
-            ),
-            (300, 220),
-        )
+        if 1==1:
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.DESCRIPTION[1], False, self.textcolor
+                ),
+                (580, 42),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.DESCRIPTION[4], False, self.textcolor
+                ),
+                (580, 60),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.DESCRIPTION[9], False, self.textcolor
+                ),
+                (580, 80),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.DESCRIPTION[8], False, self.textcolor
+                ),
+                (580, 100),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.DESCRIPTION[10], False, self.textcolor
+                ),
+                (580, 120),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.DESCRIPTION[11], False, self.textcolor
+                ),
+                (580, 140),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.GUI[11], False, self.textcolor
+                ),
+                (400, 60),
+            )
+            self.image.blit(
+                pg.font.Font(FONT_NAME, self.textsize).render(
+                    self.game.language.GUI[15], False, RED#self.textcolor
+                ),
+                (300, 220),
+            )
 
 
         self.rect = self.image.get_rect()
@@ -3069,6 +3326,15 @@ class Unit_Window(pg.sprite.Sprite):
         # self.rect.y = 600
 
     def function_list(self, function=None):
+        # tasks
+        # 0 go_to
+        # 1 wait_time
+        # 2 pick_up
+        # 3 leave
+        # 4 refill_eq
+        # 5 refill_cr
+
+
         if function == "give_bonus":
             self.give_bonus()
         elif function == "prev_order":
@@ -3093,11 +3359,11 @@ class Unit_Window(pg.sprite.Sprite):
                     self.new_pos(0, -10)
                 else:
                     self.new_pos(0, -1)
-            elif self.new_task_properties[0] == 1:
+            elif self.new_task_properties[0] == 1 or self.new_task_properties[0] == 4 or self.new_task_properties[0] == 5:
                 if self.game.multi_task == True:
-                    self.add_time(-4)
+                    self.add_int(-4)
                 else:
-                    self.add_time(-1)
+                    self.add_int(-1)
             elif self.new_task_properties[0] == 2 or self.new_task_properties[0] == 3:
                 if self.game.multi_task == True:
                     self.prev_goods()
@@ -3105,6 +3371,7 @@ class Unit_Window(pg.sprite.Sprite):
                     self.prev_goods()
                 else:
                     self.prev_goods()
+
         #task var line 1 button next
         elif function == "task_line_1_next":
             if self.new_task_properties[0] == 0:
@@ -3112,11 +3379,11 @@ class Unit_Window(pg.sprite.Sprite):
                     self.new_pos(0, 10)
                 else:
                     self.new_pos(0, 1)
-            elif self.new_task_properties[0] == 1:
+            elif self.new_task_properties[0] == 1 or self.new_task_properties[0] == 4 or self.new_task_properties[0] == 5:
                 if self.game.multi_task == True:
-                    self.add_time(4)#1h
+                    self.add_int(4)
                 else:
-                    self.add_time(1)#15 min
+                    self.add_int(1)
             elif self.new_task_properties[0] == 2 or self.new_task_properties[0] == 3:
                 if self.game.multi_task == True:
                     self.next_goods()
@@ -3131,11 +3398,11 @@ class Unit_Window(pg.sprite.Sprite):
                     self.new_pos(1, -10)
                 else:
                     self.new_pos(1, -1)
-            elif self.new_task_properties[0] == 1:
+            elif self.new_task_properties[0] == 1 or self.new_task_properties[0] == 4 or self.new_task_properties[0] == 5:
                 if self.game.multi_task == True:
-                    self.add_time(-48)#-12h
+                    self.add_int(-48)
                 else:
-                    self.add_time(-12)#-3h
+                    self.add_int(-12)
             elif self.new_task_properties[0] == 2 or self.new_task_properties[0] == 3:
                 if self.game.multi_task == True:
                     self.new_task_properties[3] -= 25
@@ -3150,16 +3417,314 @@ class Unit_Window(pg.sprite.Sprite):
                     self.new_pos(1, 5)
                 else:
                     self.new_pos(1, 1)
-            elif self.new_task_properties[0] == 1:
+            elif self.new_task_properties[0] == 1 or self.new_task_properties[0] == 4 or self.new_task_properties[0] == 5:
                 if self.game.multi_task == True:
-                    self.add_time(48)#12h
+                    self.add_int(48)
                 else:
-                    self.add_time(12)#3h
+                    self.add_int(12)
             elif self.new_task_properties[0] == 2 or self.new_task_properties[0] == 3:
                 if self.game.multi_task == True:
                     self.new_task_properties[3] += 25
                 else:    
                     self.new_task_properties[3] += 5
+        #funciont with +
+        elif function[0] == "+":
+            if function[1:] == "max_men":
+                print(self.thing.unit_typ.name)
+                if self.game.multi_task == True:
+                    self.thing.max_men += 5
+                else:
+                    self.thing.max_men += 1
+
+                if self.thing.max_men > self.thing.unit_typ.max_men:
+                    self.thing.max_men = self.thing.unit_typ.max_men
+            if function[1:] == "max_supply":
+                if self.game.multi_task == True:
+                    self.thing.max_supply += 5
+                else:
+                    self.thing.max_supply += 1
+
+                if self.thing.max_supply > self.thing.max_men * MEN_MAX_SUPPLY:
+                    self.thing.max_supply = self.thing.max_men * MEN_MAX_SUPPLY
+            if function[1:] == "max_uniforms":
+                if self.game.multi_task == True:
+                    self.thing.max_uniforms += 5
+                else:
+                    self.thing.max_uniforms += 1
+
+                if self.thing.max_uniforms > self.thing.max_men * MAX_UNIFORMS:
+                    self.thing.max_uniforms = self.thing.max_men * MAX_UNIFORMS
+            if function[1:] == "max_fuel":
+                if self.game.multi_task == True:
+                    self.thing.max_fuel += 5
+                else:
+                    self.thing.max_fuel += 1
+
+                if self.thing.max_fuel > (
+                    (self.thing.truck * TRUCK_FUEL_CAP)
+                    + (self.thing.apc * APC_FUEL_CAP)
+                    + (self.thing.tank * TANK_FUEL_CAP)
+                    + (self.thing.heli * HELI_FUEL_CAP)
+                    + (self.thing.aircraft * AIRCRAFT_FUEL_CAP)
+                    + (self.thing.rocket_truck * ROCKET_TRUCK_FUEL_CAP)
+                ):
+                    self.thing.max_fuel = (
+                    (self.thing.truck * TRUCK_FUEL_CAP)
+                    + (self.thing.apc * APC_FUEL_CAP)
+                    + (self.thing.tank * TANK_FUEL_CAP)
+                    + (self.thing.heli * HELI_FUEL_CAP)
+                    + (self.thing.aircraft * AIRCRAFT_FUEL_CAP)
+                    + (self.thing.rocket_truck * ROCKET_TRUCK_FUEL_CAP)
+                )
+            if function[1:] == "max_light_ammo":
+                if self.game.multi_task == True:
+                    self.thing.max_light_ammo += 5
+                else:
+                    self.thing.max_light_ammo += 1
+
+                if self.thing.max_light_ammo > (
+                    (self.thing.men * MAX_CARRY_LIGHT_AMMO_MEN)
+                    + (self.thing.apc * MAX_CARRY_LIGHT_AMMO_APC)
+                    + (self.thing.tank * MAX_CARRY_LIGHT_AMMO_TANK)
+                    + (self.thing.heli * MAX_CARRY_LIGHT_AMMO_HELI)
+                    + (self.thing.aircraft * MAX_CARRY_LIGHT_AMMO_AIRCRAFT)
+                ):
+                    self.thing.max_light_ammo = (
+                    (self.thing.men * MAX_CARRY_LIGHT_AMMO_MEN)
+                    + (self.thing.apc * MAX_CARRY_LIGHT_AMMO_APC)
+                    + (self.thing.tank * MAX_CARRY_LIGHT_AMMO_TANK)
+                    + (self.thing.heli * MAX_CARRY_LIGHT_AMMO_HELI)
+                    + (self.thing.aircraft * MAX_CARRY_LIGHT_AMMO_AIRCRAFT)
+                )
+            if function[1:] == "max_heavy_ammo":
+                if self.game.multi_task == True:
+                    self.thing.max_heavy_ammo += 5
+                else:
+                    self.thing.max_heavy_ammo += 1
+
+                if self.thing.max_heavy_ammo > (
+                    (self.thing.men * MAX_CARRY_HEAVY_AMMO_MEN)
+                    + (self.thing.apc * MAX_CARRY_HEAVY_AMMO_APC)
+                    + (self.thing.tank * MAX_CARRY_HEAVY_AMMO_TANK)
+                    + (self.thing.heli * MAX_CARRY_HEAVY_AMMO_HELI)
+                    + (self.thing.aircraft * MAX_CARRY_HEAVY_AMMO_AIRCRAFT)
+                ):
+                    self.thing.max_heavy_ammo = (
+                    (self.thing.men * MAX_CARRY_HEAVY_AMMO_MEN)
+                    + (self.thing.apc * MAX_CARRY_HEAVY_AMMO_APC)
+                    + (self.thing.tank * MAX_CARRY_HEAVY_AMMO_TANK)
+                    + (self.thing.heli * MAX_CARRY_HEAVY_AMMO_HELI)
+                    + (self.thing.aircraft * MAX_CARRY_HEAVY_AMMO_AIRCRAFT)
+                )
+            if function[1:] == "max_rockets":
+                if self.game.multi_task == True:
+                    self.thing.max_rockets += 5
+                else:
+                    self.thing.max_rockets += 1
+
+                if self.thing.max_rockets > (
+                    (self.thing.men * MAX_CARRY_ROCKETS_MEN)
+                    + (self.thing.apc * MAX_CARRY_ROCKETS_APC)
+                    + (self.thing.tank * MAX_CARRY_ROCKETS_TANK)
+                    + (self.thing.heli * MAX_CARRY_ROCKETS_HELI)
+                    + (self.thing.aircraft * MAX_CARRY_ROCKETS_AIRCRAFT)
+                    + (self.thing.rocket_truck * MAX_CARRY_ROCKETS_ROCKET_TRUCK)
+                ):
+                    self.thing.max_rockets = (
+                    (self.thing.men * MAX_CARRY_ROCKETS_MEN)
+                    + (self.thing.apc * MAX_CARRY_ROCKETS_APC)
+                    + (self.thing.tank * MAX_CARRY_ROCKETS_TANK)
+                    + (self.thing.heli * MAX_CARRY_ROCKETS_HELI)
+                    + (self.thing.aircraft * MAX_CARRY_ROCKETS_AIRCRAFT)
+                    + (self.thing.rocket_truck * MAX_CARRY_ROCKETS_ROCKET_TRUCK)
+                )
+            if function[1:] == "max_rifle":
+                if self.game.multi_task == True:
+                    self.thing.max_rifle += 5
+                else:
+                    self.thing.max_rifle += 1
+
+                if self.thing.max_rifle > self.thing.men:
+                    self.thing.max_rifle = self.thing.men
+            if function[1:] == "max_artilleries":
+                if self.game.multi_task == True:
+                    self.thing.max_artilleries += 5
+                else:
+                    self.thing.max_artilleries += 1
+
+                if self.thing.max_artilleries > self.thing.unit_typ.max_art:
+                    self.thing.max_artilleries = self.thing.unit_typ.max_art
+            if function[1:] == "max_truck":
+                if self.game.multi_task == True:
+                    self.thing.max_truck += 5
+                else:
+                    self.thing.max_truck += 1
+
+                if self.thing.max_truck > self.thing.unit_typ.max_truck:
+                    self.thing.max_truck = self.thing.unit_typ.max_truck
+            if function[1:] == "max_apc":
+                if self.game.multi_task == True:
+                    self.thing.max_apc += 5
+                else:
+                    self.thing.max_apc += 1
+
+                if self.thing.max_apc > self.thing.unit_typ.max_apc:
+                    self.thing.max_apc = self.thing.unit_typ.max_apc
+            if function[1:] == "max_tank":
+                if self.game.multi_task == True:
+                    self.thing.max_tank += 5
+                else:
+                    self.thing.max_tank += 1
+
+                if self.thing.max_tank > self.thing.unit_typ.max_tank:
+                    self.thing.max_tank = self.thing.unit_typ.max_tank
+            if function[1:] == "max_heli":
+                if self.game.multi_task == True:
+                    self.thing.max_heli += 5
+                else:
+                    self.thing.max_heli += 1
+
+                if self.thing.max_heli > self.thing.unit_typ.max_heli:
+                    self.thing.max_heli = self.thing.unit_typ.max_heli
+            if function[1:] == "max_aircraft":
+                if self.game.multi_task == True:
+                    self.thing.max_aircraft += 5
+                else:
+                    self.thing.max_aircraft += 1
+
+                if self.thing.max_aircraft > self.thing.unit_typ.max_aircraft:
+                    self.thing.max_aircraft = self.thing.unit_typ.max_aircraft
+            if function[1:] == "max_rocket_truck":
+                if self.game.multi_task == True:
+                    self.thing.max_rocket_truck += 5
+                else:
+                    self.thing.max_rocket_truck += 1
+
+                if self.thing.max_rocket_truck > self.thing.unit_typ.max_rocket_truck:
+                    self.thing.max_rocket_truck = self.thing.unit_typ.max_rocket_truck
+     
+        #function with -
+        elif function[0] == "-":
+            if function[1:] == "max_men":
+                if self.game.multi_task == True:
+                    self.thing.max_men -= 5
+                else:
+                    self.thing.max_men -= 1
+                    
+                if self.thing.max_men < self.thing.unit_typ.min_men:
+                    self.thing.max_men = self.thing.unit_typ.min_men   
+            if function[1:] == "max_supply":
+                if self.game.multi_task == True:
+                    self.thing.max_supply -= 5
+                else:
+                    self.thing.max_supply -= 1
+                    
+                if self.thing.max_supply < self.thing.max_men:
+                    self.thing.max_supply = self.thing.max_men
+            if function[1:] == "max_uniforms":
+                if self.game.multi_task == True:
+                    self.thing.max_uniforms -= 5
+                else:
+                    self.thing.max_uniforms -= 1
+                    
+                if self.thing.max_uniforms < self.thing.men:
+                    self.thing.max_uniforms = self.thing.men
+            if function[1:] == "max_fuel":
+                if self.game.multi_task == True:
+                    self.thing.max_fuel -= 5
+                else:
+                    self.thing.max_fuel -= 1
+                    
+                if self.thing.max_fuel < 0:
+                    self.thing.max_fuel = 0
+            if function[1:] == "max_light_ammo":
+                if self.game.multi_task == True:
+                    self.thing.max_light_ammo -= 5
+                else:
+                    self.thing.max_light_ammo -= 1
+                    
+                if self.thing.max_light_ammo < 0:
+                    self.thing.max_light_ammo = 0
+            if function[1:] == "max_heavy_ammo":
+                if self.game.multi_task == True:
+                    self.thing.max_heavy_ammo -= 5
+                else:
+                    self.thing.max_heavy_ammo -= 1
+                    
+                if self.thing.max_heavy_ammo < 0:
+                    self.thing.max_heavy_ammo = 0
+            if function[1:] == "max_rockets":
+                if self.game.multi_task == True:
+                    self.thing.max_rockets -= 5
+                else:
+                    self.thing.max_rockets -= 1
+                    
+                if self.thing.max_rockets < 0:
+                    self.thing.max_rockets = 0
+            if function[1:] == "max_rifle":
+                if self.game.multi_task == True:
+                    self.thing.max_rifle -= 5
+                else:
+                    self.thing.max_rifle -= 1
+                    
+                if self.thing.max_rifle < 0:
+                    self.thing.max_rifle = 0
+            if function[1:] == "max_artilleries":
+                if self.game.multi_task == True:
+                    self.thing.max_artilleries -= 5
+                else:
+                    self.thing.max_artilleries -= 1
+                    
+                if self.thing.max_artilleries < self.thing.unit_typ.min_art:
+                    self.thing.max_artilleries = self.thing.unit_typ.min_art
+            if function[1:] == "max_truck":
+                if self.game.multi_task == True:
+                    self.thing.max_truck -= 5
+                else:
+                    self.thing.max_truck -= 1
+                    
+                if self.thing.max_truck < self.thing.unit_typ.min_truck:
+                    self.thing.max_truck = self.thing.unit_typ.min_truck
+            if function[1:] == "max_apc":
+                if self.game.multi_task == True:
+                    self.thing.max_apc -= 5
+                else:
+                    self.thing.max_apc -= 1
+                    
+                if self.thing.max_apc < self.thing.unit_typ.min_apc:
+                    self.thing.max_apc = self.thing.unit_typ.min_apc
+            if function[1:] == "max_tank":
+                if self.game.multi_task == True:
+                    self.thing.max_tank -= 5
+                else:
+                    self.thing.max_tank -= 1
+                    
+                if self.thing.max_tank < self.thing.unit_typ.min_tank:
+                    self.thing.max_tank = self.thing.unit_typ.min_tank
+            if function[1:] == "max_heli":
+                if self.game.multi_task == True:
+                    self.thing.max_heli -= 5
+                else:
+                    self.thing.max_heli -= 1
+                    
+                if self.thing.max_heli < self.thing.unit_typ.min_heli:
+                    self.thing.max_heli = self.thing.unit_typ.min_heli
+            if function[1:] == "max_aircraft":
+                if self.game.multi_task == True:
+                    self.thing.max_aircraft -= 5
+                else:
+                    self.thing.max_aircraft -= 1
+                    
+                if self.thing.max_aircraft < self.thing.unit_typ.min_aircraft:
+                    self.thing.max_aircraft = self.thing.unit_typ.min_aircraft
+            if function[1:] == "max_rocket_truck":
+                if self.game.multi_task == True:
+                    self.thing.max_rocket_truck -= 5
+                else:
+                    self.thing.max_rocket_truck -= 1
+                    
+                if self.thing.max_rocket_truck < self.thing.unit_typ.min_rocket_truck:
+                    self.thing.max_rocket_truck = self.thing.unit_typ.min_rocket_truck
         else:
             pass
 
@@ -3189,6 +3754,12 @@ class Unit_Window(pg.sprite.Sprite):
             elif task[0] == "leave":
                 self.selected_goods = self.int_of_goods(task[1][0])
                 self.new_task_properties = [3, 0, self.name_of_goods(), task[1][1]]
+            elif task[0] == "refill_eq":
+                self.new_task_properties = [4, 0, task[1][0], ""]
+            elif task[0] == "refill_cr":
+                self.new_task_properties = [5, 0, task[1][0], ""]
+            elif task[0] == "reorganize":
+                self.new_task_properties = [6, 0, task[1][0], ""]
 
 
     def next_order(self):
@@ -3212,6 +3783,12 @@ class Unit_Window(pg.sprite.Sprite):
             elif task[0] == "leave":
                 self.selected_goods = self.int_of_goods(task[1][0])
                 self.new_task_properties = [3, 0, self.name_of_goods(), task[1][1]]
+            elif task[0] == "refill_eq":
+                self.new_task_properties = [4, 0, task[1][0], ""]
+            elif task[0] == "refill_cr":
+                self.new_task_properties = [5, 0, task[1][0], ""]
+            elif task[0] == "reorganize":
+                self.new_task_properties = [6, 0, task[1][0], ""]
 
 
     def adding_task(self):
@@ -3228,6 +3805,12 @@ class Unit_Window(pg.sprite.Sprite):
                     self.thing.order_list.append(["pick_up", [self.new_task_properties[2], self.new_task_properties[3]]])
                 elif self.new_task_properties[0] == 3: #3 == leave goods
                     self.thing.order_list.append(["leave", [self.new_task_properties[2], self.new_task_properties[3]]])
+                elif self.new_task_properties[0] == 4: #4 == refill equpment
+                    self.thing.order_list.append(["refill_eq", [self.new_task_properties[2], ""]])
+                elif self.new_task_properties[0] == 5: #5 == refill crew
+                    self.thing.order_list.append(["refill_cr", [self.new_task_properties[2], ""]])
+                elif self.new_task_properties[0] == 6: #6 == reorganize
+                    self.thing.order_list.append(["reorganize", ["", ""]])
                 else:
                     pass
             else:
@@ -3241,6 +3824,13 @@ class Unit_Window(pg.sprite.Sprite):
                     self.thing.order_list[self.selected_order - 1] = ["pick_up", [self.new_task_properties[2], self.new_task_properties[3]]]
                 elif self.new_task_properties[0] == 3: #3 == leave goods
                     self.thing.order_list[self.selected_order - 1] = ["leave", [self.new_task_properties[2], self.new_task_properties[3]]]
+                elif self.new_task_properties[0] == 4: #4 == refill equipment
+                    self.thing.order_list[self.selected_order - 1] = ["refill_eq", [self.new_task_properties[2], ""]]
+                elif self.new_task_properties[0] == 5: #5 == refill crew
+                    self.thing.order_list[self.selected_order - 1] = ["refill_cr", [self.new_task_properties[2], ""]]
+                elif self.new_task_properties[0] == 6: #6 == reorganize crew
+                    self.thing.order_list[self.selected_order - 1] = ["reorganize", ["", ""]]
+                
                 else:
                     pass
 
@@ -3261,7 +3851,7 @@ class Unit_Window(pg.sprite.Sprite):
         self.new_task_properties[2][axis] += val
 
 
-    def add_time(self, time):
+    def add_int(self, time):
         self.new_task_properties[2] += time
         if self.new_task_properties[2] < 0:
             self.new_task_properties[2] = 0
@@ -3318,6 +3908,13 @@ class Unit_Window(pg.sprite.Sprite):
             self.new_task_properties = [2, 0, self.name_of_goods(), 0]
         elif self.new_task_properties[0] == 3:
             self.new_task_properties = [3, 0, self.name_of_goods(), 0]
+        elif self.new_task_properties[0] == 4:
+            self.new_task_properties = [4, 0, 0, ""]
+        elif self.new_task_properties[0] == 5:
+            self.new_task_properties = [5, 0, 0, ""]
+        elif self.new_task_properties[0] == 6:
+            self.new_task_properties = [6, 0, "", ""]
+        
 
     def next_task(self):
         self.new_task_properties[0] += 1
@@ -3332,6 +3929,12 @@ class Unit_Window(pg.sprite.Sprite):
             self.new_task_properties = [2, 0, self.name_of_goods(), 0]
         elif self.new_task_properties[0] == 3:
             self.new_task_properties = [3, 0, self.name_of_goods(), 0]
+        elif self.new_task_properties[0] == 4:
+            self.new_task_properties = [4, 0, 0, ""]
+        elif self.new_task_properties[0] == 5:
+            self.new_task_properties = [5, 0, 0, ""]
+        elif self.new_task_properties[0] == 6:
+            self.new_task_properties = [6, 0, "", ""]
 
     def recalc_new_task(self):
         pass
@@ -3488,7 +4091,7 @@ class Building_Window(pg.sprite.Sprite):
                 self.game.adding_unit(self.thing.x, self.thing.y, 
                     self.thing.loyalty, 
                     self.thing.nationality.id_num,
-                    self.thing.owner.id_num, 15, "Volunteers")
+                    self.thing.owner.id_num, 15, "Volunteers", 25)
                     
 
 
@@ -3603,7 +4206,7 @@ class Trade_Window(Window):
             Mini_Function_Button(
                 self.game,
                 self,
-                pos=(210, 400),
+                pos=(220, 400),
                 text=self.game.language.BASIC[5],
                 function="next_trade_building",
             )
@@ -3621,7 +4224,7 @@ class Trade_Window(Window):
             Mini_Function_Button(
                 self.game,
                 self,
-                pos=(210, 460),
+                pos=(220, 460),
                 text=self.game.language.BASIC[5],
                 function="next_trade_goods",
             )
@@ -3639,7 +4242,7 @@ class Trade_Window(Window):
             Mini_Function_Button(
                 self.game,
                 self,
-                pos=(210, 500),
+                pos=(220, 500),
                 text=self.game.language.TRADE[5],
                 function="quantity-1",
             )
@@ -3648,7 +4251,7 @@ class Trade_Window(Window):
             Mini_Function_Button(
                 self.game,
                 self,
-                pos=(250, 500),
+                pos=(260, 500),
                 text=self.game.language.TRADE[6],
                 function="quantity+1",
             )
@@ -3657,7 +4260,7 @@ class Trade_Window(Window):
             Mini_Function_Button(
                 self.game,
                 self,
-                pos=(290, 500),
+                pos=(300, 500),
                 text=self.game.language.TRADE[7],
                 function="quantity+10",
             )
@@ -3684,7 +4287,7 @@ class Trade_Window(Window):
             Mini_Function_Button(
                 self.game,
                 self,
-                pos=(580, 400),
+                pos=(590, 400),
                 text=self.game.language.BASIC[5],
                 function="next_ava_order",
             )
@@ -3693,7 +4296,7 @@ class Trade_Window(Window):
             Function_Button(
                 self.game,
                 self,
-                pos=(620, 400),
+                pos=(640, 400),
                 text=self.game.language.BASIC[9],
                 function="accept_trade_offer",
             )
@@ -3711,7 +4314,7 @@ class Trade_Window(Window):
             Mini_Function_Button(
                 self.game,
                 self,
-                pos=(580, 520),
+                pos=(590, 520),
                 text=self.game.language.BASIC[5],
                 function="next_active_order",
             )
@@ -3889,8 +4492,8 @@ class Trade_Window(Window):
             self.texts.append([str(self.trade_goods_cost), 16, LIGHTGREY, (120, 600)])
             self.texts.append([self.game.language.TRADE[11], 16, LIGHTGREY, (10, 620)])
             self.texts.append([str(self.trade_total_cost), 16, LIGHTGREY, (120, 620)])
-            self.texts.append([self.game.language.TRADE[12], 16, LIGHTGREY, (200, 620)])
-            self.texts.append([self.game.language.TRADE[1], 16, LIGHTGREY, (300, 620)])
+            self.texts.append([self.game.language.TRADE[12], 16, LIGHTGREY, (200, 600)])
+            self.texts.append([self.game.language.TRADE[1], 16, LIGHTGREY, (200, 620)])
 
             #draw available trade offers
             self.texts.append([self.game.language.TRADE_ORDER[0], 16, LIGHTGREY, (350, 400)])
@@ -4100,13 +4703,13 @@ class Trade_Window(Window):
             self.trade_building_list[self.trade_building_counter].name
             == self.game.language.BUILDINGS1[3]
         ):
-            self.trade_transport_cost = HARBOR_TRANSPORT_COST * self.trade_quantity
+            self.trade_transport_cost = HARBOR_TRANSPORT_COST
             self.texts[8][0] = str(self.trade_transport_cost)
         if (
             self.trade_building_list[self.trade_building_counter].name
             == self.game.language.BUILDINGS1[4]
         ):
-            self.trade_transport_cost = AIRPORT_TRANSPORT_COST * self.trade_quantity
+            self.trade_transport_cost = AIRPORT_TRANSPORT_COST
             self.texts[8][0] = str(self.trade_transport_cost)
         self.trade_building = self.trade_building_list[self.trade_building_counter]
         self.update_trade_transport_cost()
@@ -4117,13 +4720,13 @@ class Trade_Window(Window):
                 self.trade_building_list[self.trade_building_counter].name
                 == self.game.language.BUILDINGS1[3]
             ):
-                self.trade_transport_cost = HARBOR_TRANSPORT_COST * self.trade_quantity
+                self.trade_transport_cost = HARBOR_TRANSPORT_COST
                 self.texts[8][0] = str(self.trade_transport_cost)
             if (
                 self.trade_building_list[self.trade_building_counter].name
                 == self.game.language.BUILDINGS1[4]
             ):
-                self.trade_transport_cost = AIRPORT_TRANSPORT_COST * self.trade_quantity
+                self.trade_transport_cost = AIRPORT_TRANSPORT_COST
                 self.texts[8][0] = str(self.trade_transport_cost)
         else:
             self.trade_transport_cost = 0
@@ -4181,7 +4784,7 @@ class Trade_Window(Window):
                 ]
             )
             self.owner.import_goods += self.trade_total_cost
-            self.game.politics.window.update_politics()
+            self.game.int_politics.window.update_politics()
             t = []
             t.append(self.game.language.INFO_TEXTS[0] + self.trade_goods_name)
             t.append(self.game.language.INFO_TEXTS[1] + str(self.trade_quantity))
@@ -4347,12 +4950,12 @@ class OU_Button(Button):
         self,
         unit,
         game,
-        pos=[6, 6],
-        size=(20, 20),
-        color=LIGHTGREY,
-        text="X",
+        pos=[WIDTH - MENU_RIGHT[0] + 130, 230],
+        size=(68, 30),
+        color=DARKGREY,
+        text="Open",
         textsize=FONT_MENU_TEXT_SIZE,
-        textcolor=BLACK,
+        textcolor=LIGHTGREY,
     ):
         self.groups = game.buttons
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -4369,11 +4972,26 @@ class OU_Button(Button):
         self.textsize = textsize
         self.textcolor = textcolor
         self.visible = True
-        self.image = self.game.o_window_img.copy()
-        self.image.set_colorkey(VIOLET)
 
+        self.image = pg.Surface(self.size)
+        pg.draw.rect(self.image, self.textcolor, (0, 0, self.size[0], self.size[1]))
+        pg.draw.rect(
+            self.image,
+            self.color,
+            (
+                0 + BUTTON_BORDER_SIZE,
+                0 + BUTTON_BORDER_SIZE,
+                size[0] - BUTTON_BORDER_SIZE * 2 - 1,
+                size[1] - BUTTON_BORDER_SIZE * 2 - 1,
+            ),
+        )
+        self.image.blit(
+            pg.font.Font(FONT_NAME, self.textsize).render(
+                self.text, False, self.textcolor
+            ),
+            (7, 1),
+        )
         self.rect = self.image.get_rect()
-        # self.rect.x =
 
     def check_col(self, mouse):
         if self.rect.collidepoint(mouse):
@@ -4392,12 +5010,12 @@ class OB_Button(Button):
         self,
         building,
         game,
-        pos=[6, 6],
-        size=(20, 20),
-        color=LIGHTGREY,
-        text="X",
+        pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
+        size=(68, 30),
+        color=DARKGREY,
+        text="Open",
         textsize=FONT_MENU_TEXT_SIZE,
-        textcolor=BLACK,
+        textcolor=LIGHTGREY,
     ):
         self.groups = game.buttons
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -4414,12 +5032,26 @@ class OB_Button(Button):
         self.textsize = textsize
         self.textcolor = textcolor
         self.visible = True
-        self.image = self.game.o_window_img.copy()
-        self.image.set_colorkey(VIOLET)
 
+        self.image = pg.Surface(self.size)
+        pg.draw.rect(self.image, self.textcolor, (0, 0, self.size[0], self.size[1]))
+        pg.draw.rect(
+            self.image,
+            self.color,
+            (
+                0 + BUTTON_BORDER_SIZE,
+                0 + BUTTON_BORDER_SIZE,
+                size[0] - BUTTON_BORDER_SIZE * 2 - 1,
+                size[1] - BUTTON_BORDER_SIZE * 2 - 1,
+            ),
+        )
+        self.image.blit(
+            pg.font.Font(FONT_NAME, self.textsize).render(
+                self.text, False, self.textcolor
+            ),
+            (7, 1),
+        )
         self.rect = self.image.get_rect()
-        # self.rect.x =
-
     def check_col(self, mouse):
         if self.rect.collidepoint(mouse):
             self.click()
@@ -4459,7 +5091,7 @@ class OT_Button(Button):
         self.textcolor = textcolor
         self.visible = True
         self.image = pg.Surface(self.size)
-        pg.draw.rect(self.image, self.textcolor, (0, 0, size[0], size[1]))
+        pg.draw.rect(self.image, self.textcolor, (0, 0, self.size[0], self.size[1]))
         pg.draw.rect(
             self.image,
             self.color,
@@ -4474,7 +5106,7 @@ class OT_Button(Button):
             pg.font.Font(FONT_NAME, self.textsize).render(
                 self.text, False, self.textcolor
             ),
-            (5, 5),
+            (5, 1),
         )
         self.rect = self.image.get_rect()
 

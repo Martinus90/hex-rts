@@ -6,8 +6,8 @@ class Language:
     def __init__(self):
         if LANGUAGE == "EN":
             self.BASIC = [
-                "True",
-                "False",
+                "--X--",
+                "--O--",
                 "Yes",
                 "No",
                 "Prev",
@@ -17,7 +17,7 @@ class Language:
                 "Graph",
                 "Done",
                 "Global currency:",
-                "Self",
+                "--- ---",
                 "None",
                 "Change",
                 "Give $1000",
@@ -168,6 +168,9 @@ class Language:
                 "Civilian Tasks",
                 "Picking up goods",
                 "Leaving goods",
+                "Refill equipment",
+                "Refill crew",
+                "Reorganize",
             ]
             self.DESCRIPTION = [
                 "Experience",
@@ -202,7 +205,8 @@ class Language:
                 "Starving:",
                 "Run Away:",
                 "Loyalty: ",
-                "Orders: "
+                "Orders: ",
+                "Prosperity: ",
             ]
             self.TRADE = [
                 "Trade building:",
@@ -296,6 +300,9 @@ class Language:
                 "Wait: ",
                 "Pick up: ",
                 "Leave: ",
+                "Refill e.",
+                "Refill c.",
+                "Reorg.",
             ]
             self.TRADE_ORDER = [
                 "Available orders:",
@@ -310,18 +317,18 @@ class Language:
 
         elif LANGUAGE == "PL":
             self.BASIC = [
-                "Prawda",
-                "Fałsz",
+                "--X--",
+                "--O--",
                 "Tak",
                 "Nie",
-                "Wstecz",
-                "Następny",
+                "<---",
+                "--->",
                 "Sprzedaj",
                 "Kup",
                 "Wykres",
                 "Ok",
                 "Waluta globalna:",
-                "Sam siebie",
+                "--- ---",
                 "Brak",
                 "Zmień",
                 "Daj $1000",
@@ -473,6 +480,9 @@ class Language:
                 "Zadania Cywilne",
                 "Podnosi zasoby",
                 "Zostawia zasoby",
+                "Uzupełnij ekwip.",
+                "Uzupełnij załoge.",
+                "Reorganizacja",
             ]
             self.DESCRIPTION = [
                 "Doswiadczenie",
@@ -508,6 +518,7 @@ class Language:
                 "Ucieka: ",
                 "Lojalnosc: ",
                 "Zadania: ",
+                "Dobrobyt",
             ]
             self.TRADE = [
                 "Budynek wymiany:",
@@ -529,7 +540,7 @@ class Language:
             self.DECISIONS = ["Decyzja", "Opcja", "Dotacja", "Premia", "Pobór"]
 
             self.DIPLOMACY = [
-                "Status dyplomatyczny strony:",
+                "Status dyplomatyczny:",
                 "Relacje z tobą",
                 "Układ pokojowy",
                 "Układ handlowy",
@@ -602,6 +613,9 @@ class Language:
                 "Czekaj",
                 "Podnies",
                 "Zostaw",
+                "Uzupenij",
+                "Rekrutuj",
+                "Reorg.",
             ]
             self.TRADE_ORDER = [
                 "Lista zleceń:",

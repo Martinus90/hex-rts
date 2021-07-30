@@ -437,6 +437,7 @@ class TiledMap:
                                 obj.properties["owner"],
                                 obj.properties["oil"],
                                 obj.properties["fuel"],
+                                obj.properties["rubber"],
                                 obj.properties["calcium"],
                                 obj.properties["cement"],
                                 obj.properties["coal"],
@@ -460,14 +461,16 @@ class TiledMap:
                                 math.floor(obj.y / 48),
                                 obj.properties["typ"],
                                 obj.properties["owner"],
-                                obj.properties["steel"],
-                                obj.properties["food"],
-                                obj.properties["supply"],
-                                obj.properties["wood"],
-                                obj.properties["furniture"],
-                                obj.properties["cotton"],
-                                obj.properties["textiles"],
-                                obj.properties["uniforms"],
+                                obj.properties["steel"],#
+                                obj.properties["food"],#
+                                obj.properties["supply"],#
+                                obj.properties["wood"],#
+                                obj.properties["furniture"],#
+                                obj.properties["cotton"],#
+                                obj.properties["textiles"],#
+                                obj.properties["uniforms"],#
+                                obj.properties["chem_comp"],#
+                                obj.properties["light_ammo"],#
                             ]
                         )
                     elif obj.properties["typ"] == "HEAVY_INDUSTRY_PLANT":
@@ -477,13 +480,17 @@ class TiledMap:
                                 math.floor(obj.y / 48),
                                 obj.properties["typ"],
                                 obj.properties["owner"],
-                                obj.properties["steel"],
-                                obj.properties["aluminum"],
-                                obj.properties["plastic"],
-                                obj.properties["parts"],
-                                obj.properties["tools"],
-                                obj.properties["civ_mach"],
-                                obj.properties["rifle"],
+                                obj.properties["steel"],#
+                                obj.properties["aluminum"],#
+                                obj.properties["plastic"],#
+                                obj.properties["parts"],#
+                                obj.properties["tools"],#
+                                obj.properties["civ_mach"],#
+                                obj.properties["rifle"],#
+                                obj.properties["chem_comp"],#
+                                obj.properties["textiles"],#
+                                obj.properties["light_ammo"],#
+                                obj.properties["heavy_ammo"],#
                             ]
                         )
                     elif obj.properties["typ"] == "CHEMICAL_PLANT":
@@ -493,11 +500,13 @@ class TiledMap:
                                 math.floor(obj.y / 48),
                                 obj.properties["typ"],
                                 obj.properties["owner"],
-                                obj.properties["oil"],
-                                obj.properties["plastic"],
-                                obj.properties["chem_comp"],
-                                obj.properties["textiles"],
-                                obj.properties["fertilizer"],
+                                obj.properties["oil"],#
+                                obj.properties["plastic"],#
+                                obj.properties["chem_comp"],#
+                                obj.properties["textiles"],#
+                                obj.properties["fertilizer"],#
+                                obj.properties["steel"],#
+                                obj.properties["light_ammo"],#
                             ]
                         )
                     elif obj.properties["typ"] == "HIGH_TECH_PLANT":
@@ -523,14 +532,16 @@ class TiledMap:
                                 math.floor(obj.y / 48),
                                 obj.properties["typ"],
                                 obj.properties["owner"],
-                                obj.properties["steel"],
-                                obj.properties["rubber"],
-                                obj.properties["parts"],
-                                obj.properties["tools"],
-                                obj.properties["textiles"],
-                                obj.properties["electronics"],
-                                obj.properties["truck"],
-                                obj.properties["apc"],
+                                obj.properties["steel"],#
+                                obj.properties["rubber"],#
+                                obj.properties["plastic"],#
+                                obj.properties["parts"],#
+                                obj.properties["tools"],#
+                                obj.properties["textiles"],#
+                                obj.properties["electronics"],#
+                                obj.properties["rifle"],
+                                obj.properties["truck"],#
+                                obj.properties["apc"],#
                             ]
                         )
                     elif obj.properties["typ"] == "ARMAMENT_PLANT":
@@ -540,14 +551,17 @@ class TiledMap:
                                 math.floor(obj.y / 48),
                                 obj.properties["typ"],
                                 obj.properties["owner"],
-                                obj.properties["steel"],
-                                obj.properties["rubber"],
-                                obj.properties["plastic"],
-                                obj.properties["parts"],
-                                obj.properties["electronics"],
-                                obj.properties["rifle"],
-                                obj.properties["artilleries"],
-                                obj.properties["tank"],
+                                obj.properties["steel"],#
+                                obj.properties["rubber"],#
+                                obj.properties["plastic"],#
+                                obj.properties["parts"],#
+                                obj.properties["tools"],#
+                                obj.properties["textiles"],
+                                obj.properties["electronics"],#
+                                obj.properties["rifle"],#
+                                obj.properties["truck"],
+                                obj.properties["artilleries"],#
+                                obj.properties["tank"],#
                             ]
                         )
                     elif obj.properties["typ"] == "AVIATION_PLANT":
@@ -557,14 +571,19 @@ class TiledMap:
                                 math.floor(obj.y / 48),
                                 obj.properties["typ"],
                                 obj.properties["owner"],
-                                obj.properties["aluminum"],
-                                obj.properties["rubber"],
-                                obj.properties["plastic"],
-                                obj.properties["parts"],
-                                obj.properties["electronics"],
-                                obj.properties["rockets"],
-                                obj.properties["helicopters"],
-                                obj.properties["aircraft"],
+                                obj.properties["steel"],
+                                obj.properties["aluminum"],#
+                                obj.properties["textiles"],#
+                                obj.properties["rubber"],#
+                                obj.properties["plastic"],#
+                                obj.properties["parts"],#
+                                obj.properties["tools"],#
+                                obj.properties["elec_comp"],#
+                                obj.properties["chem_comp"],#
+                                obj.properties["rockets"],#
+                                obj.properties["helicopters"],#
+                                obj.properties["aircraft"],#
+                                obj.properties["light_ammo"],#
                             ]
                         )
 

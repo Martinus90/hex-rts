@@ -578,7 +578,7 @@ class CONSTRUCTION(pg.sprite.Sprite):
 
     
 
-        self.upkeep = 10
+        self.upkeep = UPKEEP_BUILDING["construction"]
         self.side = self.owner.side
         self.grid = self.game.map.grids[
             self.col + self.row * self.game.map.tmxdata.height
@@ -767,7 +767,7 @@ class SETTLEMENT(pg.sprite.Sprite):
         self.storage = {}
         self.window = None
 
-        self.upkeep = 10
+        self.upkeep = 0
         self.side = self.owner.side
         self.grid = self.game.map.grids[
             self.col + self.row * self.game.map.tmxdata.height
@@ -875,28 +875,14 @@ class VILLAGE(SETTLEMENT):
         self.sum_res = []
         self.food_source = False
 
-        self.upkeep = 10
+        self.upkeep = UPKEEP_BUILDING["village"]
         self.window = ld.Building_Window(
             self,
             self.game,
-            #[300, 200],
-            #(700, 500),
-            #DARKGREY,
-            #"",
-            #16,
-            #LIGHTGREY,
-            #(35, 10),
-            #2,
         )
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         g = self.storage.keys()
@@ -972,7 +958,7 @@ class VILLAGE(SETTLEMENT):
             self.game.language.RESOURCES[8] + ":",
             self.game.language.RESOURCES[9] + ":",
             self.game.language.GUI[14] + str(self.loyalty),
-            "",
+            self.game.language.GUI[16] + str(self.prosperity),
             "",
             "",
         ]
@@ -995,6 +981,7 @@ class VILLAGE(SETTLEMENT):
         for a in self.game.map.grids[self.hexid].neighbors:
             if a.resource != None:
                 if a.resource.name == self.game.language.RESOURCES[2]:
+                    self.food_source = True
                     self.grid_with_res.append(a)
                     self.sum_res[0] += a.resource.value
 
@@ -1145,8 +1132,8 @@ class VILLAGE(SETTLEMENT):
         #people pay taxes to settlement
         self.owner.money += round(self.population * self.owner.pop_tax / 10, 2)
         self.population += int(self.population * self.prosperity / 100)
-        if self.population > 100:
-            self.population = 100
+        if self.population > 200:
+            self.population = 200
         if self.storage["food"] >= self.population:
             if self.prosperity <= 1:
                 self.prosperity += 1
@@ -1169,7 +1156,7 @@ class VILLAGE(SETTLEMENT):
             self.game.language.RESOURCES[8] + ":",
             self.game.language.RESOURCES[9] + ":",
             self.game.language.GUI[14] + str(self.loyalty),
-            "",
+            self.game.language.GUI[16] + str(self.prosperity),
             "",
             "",
         ]
@@ -1232,7 +1219,7 @@ class CITY(SETTLEMENT):
         self.grid_with_res = []
         self.sum_res = []
 
-        self.upkeep = 20
+        self.upkeep = UPKEEP_BUILDING["city"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -1248,12 +1235,6 @@ class CITY(SETTLEMENT):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         self.window.buttons.append(
@@ -1295,7 +1276,7 @@ class CITY(SETTLEMENT):
             self.settlement_name,
             "Pop: " + str(self.population),
             self.game.language.GUI[14] + str(self.loyalty),
-            "",
+            self.game.language.GUI[16] + str(self.prosperity),
             "",
             "",
             "",
@@ -1411,7 +1392,7 @@ class CITY(SETTLEMENT):
             "Pop: " + str(self.population),
             self.game.language.GUI[0],
             self.game.language.GUI[14] + str(self.loyalty),
-            "",
+            self.game.language.GUI[16] + str(self.prosperity),
             "",
             "",
             "",
@@ -1437,7 +1418,7 @@ class BUILDING(pg.sprite.Sprite):
         self.storage = {}
         self.orders = []
 
-        self.upkeep = 25
+        self.upkeep = 0
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -1453,12 +1434,6 @@ class BUILDING(pg.sprite.Sprite):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         self.col = x
@@ -1602,7 +1577,7 @@ class HARBOR(BUILDING):
             c += 1
             # print(b)
 
-        self.upkeep = 25
+        self.upkeep = UPKEEP_BUILDING["harbor"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -1618,12 +1593,6 @@ class HARBOR(BUILDING):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         g = self.storage.keys()
@@ -1746,7 +1715,7 @@ class AIRPORT(BUILDING):
             c += 1
             # print(b)
 
-        self.upkeep = 100
+        self.upkeep = UPKEEP_BUILDING["airport"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -1762,12 +1731,6 @@ class AIRPORT(BUILDING):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         g = self.storage.keys()
@@ -1890,7 +1853,7 @@ class WAREHOUSE(BUILDING):
             c += 1
             # print(b)
 
-        self.upkeep = 25
+        self.upkeep = UPKEEP_BUILDING["warehouse"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -1906,12 +1869,6 @@ class WAREHOUSE(BUILDING):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         g = self.storage.keys()
@@ -1988,7 +1945,7 @@ class BARRACK(BUILDING):
         self.rect = self.image.get_rect()
         self.storage = {"cadets": cadets, "graduates": graduates}
 
-        self.upkeep = 25
+        self.upkeep = UPKEEP_BUILDING["barrack"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -2004,12 +1961,6 @@ class BARRACK(BUILDING):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
         self.window.buttons.append(
             ld.Function_Button(
@@ -2143,7 +2094,7 @@ class MINE(BUILDING):
         self.grid_with_res = []
         self.sum_res = 0
 
-        self.upkeep = 25
+        self.upkeep = UPKEEP_BUILDING["mine"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -2159,12 +2110,6 @@ class MINE(BUILDING):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         g = self.storage.keys()
@@ -2347,12 +2292,34 @@ class MINE(BUILDING):
             else:
                 e = int(60 / jobs)
             self.resources_near_building()
+            #mining resources
             for d in self.grid_with_res:
                 if d.resource.value > e:
-                    if d.resource.name == self.game.language.RESOURCES[3]:  # food
-                        if self.state["oil"] == True:
-                            self.storage["oil"] += e
+                    if d.resource.name == self.game.language.RESOURCES[4]:
+                        if self.state["iron"] == True:
+                            self.storage["iron"] += e
                             d.resource.value -= e
+                    elif d.resource.name == self.game.language.RESOURCES[5]:
+                        if self.state["coal"] == True:
+                            self.storage["coal"] += e
+                            d.resource.value -= e
+                    elif d.resource.name == self.game.language.RESOURCES[6]:
+                        if self.state["calcium"] == True:
+                            self.storage["calcium"] += e
+                            d.resource.value -= e
+                    elif d.resource.name == self.game.language.RESOURCES[7]:
+                        if self.state["silicon"] == True:
+                            self.storage["silicon"] += e
+                            d.resource.value -= e
+                    elif d.resource.name == self.game.language.RESOURCES[10]:
+                        if self.state["bauxite"] == True:
+                            self.storage["bauxite"] += e
+                            d.resource.value -= e
+                    elif d.resource.name == self.game.language.RESOURCES[11]:
+                        if self.state["uranium"] == True:
+                            self.storage["uranium"] += e
+                            d.resource.value -= e
+
 
     def hourly(self):
         pass
@@ -2399,7 +2366,7 @@ class SMELTER(BUILDING):
             "aluminum": aluminum,
         }
 
-        self.upkeep = 25
+        self.upkeep = UPKEEP_BUILDING["smelter"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -2415,12 +2382,6 @@ class SMELTER(BUILDING):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         g = self.storage.keys()
@@ -2505,23 +2466,23 @@ class SMELTER(BUILDING):
             if self.state[aa] == True:
                 jobs += 1
 
-        if jobs > 0:
-            if self.owner.electricity == False:
-                e = int(12 / jobs)
-            else:
-                e = int(60 / jobs)
+        if jobs > 0 and self.owner.electricity == True:
+            e = int(60 / jobs)
 
+            #steel production/casting
             if (
-                self.storage["iron"] >= e
-                and self.storage["coal"] >= e
+                self.storage["iron"] >= STEEL_COST["iron"] * e
+                and self.storage["coal"] >= STEEL_COST["coal"] * e
                 and self.state["steel"] == True
-            ):
-                self.storage["iron"] -= e
-                self.storage["coal"] -= e
-                self.storage["steel"] += e
-            if self.storage["bauxite"] >= e and self.state["aluminum"] == True:
-                self.storage["bauxite"] -= e
-                self.storage["aluminum"] += e * 2
+                ):
+                    self.storage["iron"] -= STEEL_COST["iron"] * e
+                    self.storage["coal"] -= STEEL_COST["coal"] * e
+                    self.storage["steel"] += STEEL_COST["output"] * e
+
+            #aluminum production/casting
+            if self.storage["bauxite"] >= ALUMINUM_COST["bauxite"] * e and self.state["aluminum"] == True:
+                self.storage["bauxite"] -= ALUMINUM_COST["bauxite"] * e
+                self.storage["aluminum"] += ALUMINUM_COST["output"] * e
 
         self.description[4] = (
             self.game.language.RES1[3] + ": " + str(self.storage["iron"])
@@ -2578,7 +2539,7 @@ class OIL_WELL(BUILDING):
         self.grid_with_res = []
         self.sum_res = 0
 
-        self.upkeep = 25
+        self.upkeep = UPKEEP_BUILDING["oil_well"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -2594,12 +2555,6 @@ class OIL_WELL(BUILDING):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         g = self.storage.keys()
@@ -2737,7 +2692,7 @@ class OIL_WELL(BUILDING):
 
 
 class RAFINERY(BUILDING):
-    def __init__(self, game, x, y, owner=0, oil=0, fuel=0, calcium=0, cement=0, coal=0):
+    def __init__(self, game, x, y, owner=0, oil=0, fuel=0, rubber=0, calcium=0, cement=0, coal=0):
         self.groups = game.all_sprites, game.buildings
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -2745,7 +2700,7 @@ class RAFINERY(BUILDING):
         self.y = y
         self.owner = self.game.players[owner]
         self.name = game.language.BUILDINGS1[10]
-        self.state = {"fuel": False, "cement": False}
+        self.state = {"fuel": False, "cement": False, "rubber": False}
         self.orders = []
 
         self.image = self.game.rafinery_img.copy()
@@ -2755,12 +2710,13 @@ class RAFINERY(BUILDING):
         self.storage = {
             "oil": oil,
             "fuel": fuel,
+            "rubber": rubber,
             "calcium": calcium,
-            "cement": cement,
             "coal": coal,
+            "cement": cement,
         }
 
-        self.upkeep = 25
+        self.upkeep = UPKEEP_BUILDING["rafinery"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -2776,12 +2732,6 @@ class RAFINERY(BUILDING):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         g = self.storage.keys()
@@ -2845,20 +2795,15 @@ class RAFINERY(BUILDING):
         # here near resources
 
         self.description[4] = (
-            self.game.language.RES1[10] + ": " + str(self.storage["oil"])
-        )
-        self.description[5] = (
             self.game.language.RES1[11] + ": " + str(self.storage["fuel"])
         )
-        self.description[6] = (
-            self.game.language.RES1[16] + ": " + str(self.storage["calcium"])
-        )
-        self.description[7] = (
+        self.description[5] = (
             self.game.language.RES1[2] + ": " + str(self.storage["cement"])
         )
-        self.description[8] = (
-            self.game.language.RES1[4] + ": " + str(self.storage["coal"])
+        self.description[6] = (
+            self.game.language.RES1[20] + ": " + str(self.storage["rubber"])
         )
+
 
     def do(self):
         jobs = 0
@@ -2872,32 +2817,33 @@ class RAFINERY(BUILDING):
             else:
                 e = int(60 / jobs)
 
-            if self.storage["oil"] >= e and self.state["fuel"] == True:
-                self.storage["oil"] -= e
-                self.storage["fuel"] += e * 2
-            if (
-                self.storage["calcium"] >= e
-                and self.storage["coal"] >= 1
+            #fuel
+            if self.storage["oil"] >= FUEL_COST["oil"] * e and self.state["fuel"] == True:
+                self.storage["oil"] -= FUEL_COST["oil"] * e
+                self.storage["fuel"] += FUEL_COST["output"] * e
+
+            #sythetic rubber
+            if self.storage["oil"] >= SYNTHETIC_RUBBER_COST["oil"] * e and self.state["rubber"] == True:
+                self.storage["oil"] -= SYNTHETIC_RUBBER_COST["oil"] * e
+                self.storage["rubber"] += SYNTHETIC_RUBBER_COST["output"] * e
+
+            #cement
+            if (self.storage["calcium"] >= CEMENT_COST["calcium"] * e
+                and self.storage["coal"] >= CEMENT_COST["coal"]
                 and self.state["cement"] == True
-            ):
-                self.storage["calcium"] -= e
-                self.storage["coal"] -= 1
-                self.storage["cement"] += e
+                ):
+                    self.storage["calcium"] -= CEMENT_COST["calcium"] * e
+                    self.storage["coal"] -= CEMENT_COST["coal"]
+                    self.storage["cement"] += CEMENT_COST["output"] * e
 
         self.description[4] = (
-            self.game.language.RES1[10] + ": " + str(self.storage["oil"])
-        )
-        self.description[5] = (
             self.game.language.RES1[11] + ": " + str(self.storage["fuel"])
         )
-        self.description[6] = (
-            self.game.language.RES1[16] + ": " + str(self.storage["calcium"])
-        )
-        self.description[7] = (
+        self.description[5] = (
             self.game.language.RES1[2] + ": " + str(self.storage["cement"])
         )
-        self.description[8] = (
-            self.game.language.RES1[4] + ": " + str(self.storage["coal"])
+        self.description[6] = (
+            self.game.language.RES1[20] + ": " + str(self.storage["rubber"])
         )
 
     def hourly(self):
@@ -2938,7 +2884,7 @@ class POWER_PLANT(BUILDING):
         self.storage = {"oil": oil, "coal": coal}
         self.orders = []
 
-        self.upkeep = 50
+        self.upkeep = UPKEEP_BUILDING["power_plant"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -2954,12 +2900,6 @@ class POWER_PLANT(BUILDING):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         g = self.storage.keys()
@@ -3085,6 +3025,8 @@ class LIGHT_INDUSTRY_PLANT(BUILDING):
         cotton=0,
         textiles=0,
         uniforms=0,
+        chem_comp=0,
+        light_ammo=0,
     ):
         self.groups = game.all_sprites, game.buildings
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -3098,6 +3040,7 @@ class LIGHT_INDUSTRY_PLANT(BUILDING):
             "furniture": False,
             "textiles": False,
             "uniforms": False,
+            "light_ammo": False,
         }
         self.orders = []
 
@@ -3114,9 +3057,11 @@ class LIGHT_INDUSTRY_PLANT(BUILDING):
             "cotton": cotton,
             "textiles": textiles,
             "uniforms": uniforms,
+            "chem_comp": chem_comp,
+            "light_ammo": light_ammo,
         }
 
-        self.upkeep = 25
+        self.upkeep = UPKEEP_BUILDING["light_industry_plant"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -3132,12 +3077,6 @@ class LIGHT_INDUSTRY_PLANT(BUILDING):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         g = self.storage.keys()
@@ -3201,28 +3140,19 @@ class LIGHT_INDUSTRY_PLANT(BUILDING):
         # here resources
 
         self.description[4] = (
-            self.game.language.RES1[5] + ": " + str(self.storage["steel"])
-        )
-        self.description[5] = (
-            self.game.language.RES1[1] + ": " + str(self.storage["food"])
-        )
-        self.description[6] = (
             self.game.language.RES2[0] + ": " + str(self.storage["supply"])
         )
-        self.description[7] = (
-            self.game.language.RES1[0] + ": " + str(self.storage["wood"])
-        )
-        self.description[8] = (
+        self.description[5] = (
             self.game.language.RES1[22] + ": " + str(self.storage["furniture"])
         )
-        self.description[9] = (
-            self.game.language.RES1[18] + ": " + str(self.storage["cotton"])
-        )
-        self.description[10] = (
+        self.description[6] = (
             self.game.language.RES1[19] + ": " + str(self.storage["textiles"])
         )
-        self.description[11] = (
+        self.description[7] = (
             self.game.language.RES2[1] + ": " + str(self.storage["uniforms"])
+        )
+        self.description[8] = (
+            self.game.language.RES2[3] + ": " + str(self.storage["light_ammo"])
         )
 
     def do(self):
@@ -3237,47 +3167,51 @@ class LIGHT_INDUSTRY_PLANT(BUILDING):
             else:
                 e = int(60 / jobs)
 
-            if (
-                self.storage["steel"] >= e
-                and self.storage["food"] >= e * 4
+            #supply
+            if (self.storage["steel"] >= e * SUPPLY_COST["steel"]
+                and self.storage["food"] >= e * SUPPLY_COST["food"]
                 and self.state["supply"] == True
-            ):
-                self.storage["steel"] -= e
-                self.storage["food"] -= e * 4
-                self.storage["supply"] += e * 3
-            if self.storage["wood"] >= e * 2 and self.state["furniture"] == True:
-                self.storage["wood"] -= e * 2
-                self.storage["furniture"] += e
-            if self.storage["cotton"] >= e * 2 and self.state["textiles"] == True:
-                self.storage["cotton"] -= e * 2
-                self.storage["textiles"] += e
-            if self.storage["textiles"] >= e * 4 and self.state["uniforms"] == True:
-                self.storage["textiles"] -= e * 4
-                self.storage["uniforms"] += e
+                ):
+                self.storage["steel"] -= e * SUPPLY_COST["steel"]
+                self.storage["food"] -= e * SUPPLY_COST["food"]
+                self.storage["supply"] += e * SUPPLY_COST["output"]
+
+            #furniture    
+            if self.storage["wood"] >= e * FURNITURE_COST["wood"] and self.state["furniture"] == True:
+                self.storage["wood"] -= e * FURNITURE_COST["wood"]
+                self.storage["furniture"] += e * FURNITURE_COST["output"]
+
+            #textiles
+            if self.storage["cotton"] >= e * TEXTILES_COST["cotton"] and self.state["textiles"] == True:
+                self.storage["cotton"] -= e * TEXTILES_COST["cotton"]
+                self.storage["textiles"] += e * TEXTILES_COST["output"]
+
+            #uniforms
+            if self.storage["textiles"] >= e * UNIFORMS_COST["textiles"] and self.state["uniforms"] == True:
+                self.storage["textiles"] -= e * UNIFORMS_COST["textiles"]
+                self.storage["uniforms"] += e * UNIFORMS_COST["output"]
+
+            #light_ammo
+            if self.storage["steel"] >= e * LIGHT_AMMO_COST["steel"] and self.storage["textiles"] >= e * LIGHT_AMMO_COST["textiles"] and self.storage["chem_comp"] >= e * LIGHT_AMMO_COST["chem_comp"] and self.state["light_ammo"] == True:
+                self.storage["steel"] -= e * LIGHT_AMMO_COST["steel"]
+                self.storage["textiles"] -= e * LIGHT_AMMO_COST["textiles"]
+                self.storage["chem_comp"] -= e * LIGHT_AMMO_COST["chem_comp"]
+                self.storage["light_ammo"] += e * LIGHT_AMMO_COST["output"]
 
         self.description[4] = (
-            self.game.language.RES1[5] + ": " + str(self.storage["steel"])
-        )
-        self.description[5] = (
-            self.game.language.RES1[1] + ": " + str(self.storage["food"])
-        )
-        self.description[6] = (
             self.game.language.RES2[0] + ": " + str(self.storage["supply"])
         )
-        self.description[7] = (
-            self.game.language.RES1[0] + ": " + str(self.storage["wood"])
-        )
-        self.description[8] = (
+        self.description[5] = (
             self.game.language.RES1[22] + ": " + str(self.storage["furniture"])
         )
-        self.description[9] = (
-            self.game.language.RES1[18] + ": " + str(self.storage["cotton"])
-        )
-        self.description[10] = (
+        self.description[6] = (
             self.game.language.RES1[19] + ": " + str(self.storage["textiles"])
         )
-        self.description[11] = (
+        self.description[7] = (
             self.game.language.RES2[1] + ": " + str(self.storage["uniforms"])
+        )
+        self.description[8] = (
+            self.game.language.RES2[3] + ": " + str(self.storage["light_ammo"])
         )
 
     def hourly(self):
@@ -3313,6 +3247,10 @@ class HEAVY_INDUSTRY_PLANT(BUILDING):
         tools=0,
         civ_mach=0,
         rifle=0,
+        chem_comp=0,
+        textiles=0,
+        light_ammo=0,
+        heavy_ammo=0,
     ):
         self.groups = game.all_sprites, game.buildings
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -3321,7 +3259,7 @@ class HEAVY_INDUSTRY_PLANT(BUILDING):
         self.y = y
         self.owner = self.game.players[owner]
         self.name = game.language.BUILDINGS1[13]
-        self.state = {"parts": False, "tools": False, "civ_mach": False, "rifle": False}
+        self.state = {"parts": False, "tools": False, "civ_mach": False, "rifle": False, "light_ammo": False, "heavy_ammo": False}
         self.orders = []
 
         self.image = self.game.heavy_industry_plant_img.copy()
@@ -3336,9 +3274,13 @@ class HEAVY_INDUSTRY_PLANT(BUILDING):
             "tools": tools,
             "civ_mach": civ_mach,
             "rifle": rifle,
+            "chem_comp": chem_comp,
+            "textiles": textiles,
+            "light_ammo": light_ammo,
+            "heavy_ammo": heavy_ammo,
         }
 
-        self.upkeep = 50
+        self.upkeep = UPKEEP_BUILDING["heavy_industry_plant"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -3354,12 +3296,6 @@ class HEAVY_INDUSTRY_PLANT(BUILDING):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         g = self.storage.keys()
@@ -3421,27 +3357,23 @@ class HEAVY_INDUSTRY_PLANT(BUILDING):
             "",
         ]
         # here resources
-
         self.description[4] = (
-            self.game.language.RES1[5] + ": " + str(self.storage["steel"])
-        )
-        self.description[5] = (
-            self.game.language.RES1[9] + ": " + str(self.storage["aluminum"])
-        )
-        self.description[6] = (
-            self.game.language.RES1[12] + ": " + str(self.storage["plastic"])
-        )
-        self.description[7] = (
             self.game.language.RES1[8] + ": " + str(self.storage["parts"])
         )
-        self.description[8] = (
+        self.description[5] = (
             self.game.language.RES1[7] + ": " + str(self.storage["tools"])
         )
-        self.description[9] = (
+        self.description[6] = (
             self.game.language.RES1[23] + ": " + str(self.storage["civ_mach"])
         )
-        self.description[10] = (
+        self.description[7] = (
             self.game.language.RES2[6] + ": " + str(self.storage["rifle"])
+        )
+        self.description[8] = (
+            self.game.language.RES2[3] + ": " + str(self.storage["light_ammo"])
+        )
+        self.description[9] = (
+            self.game.language.RES2[4] + ": " + str(self.storage["heavy_ammo"])
         )
 
     def do(self):
@@ -3455,74 +3387,94 @@ class HEAVY_INDUSTRY_PLANT(BUILDING):
                 e = int(12 / jobs)
             else:
                 e = int(60 / jobs)
-                if (
-                    self.storage["steel"] >= CIV_MACH_COST["steel"]
-                    and self.storage["aluminum"] >= CIV_MACH_COST["aluminum"]
-                    and self.storage["plastic"] >= CIV_MACH_COST["plastic"]
-                    and self.storage["parts"] >= CIV_MACH_COST["parts"]
-                    and self.state["civ_mach"] == True
-                ):
-                    self.storage["steel"] -= CIV_MACH_COST["steel"]
-                    self.storage["aluminum"] -= CIV_MACH_COST["aluminum"]
-                    self.storage["plastic"] -= CIV_MACH_COST["plastic"]
-                    self.storage["parts"] -= CIV_MACH_COST["parts"]
-                    self.orders.append(["civ_mach", CIV_MACH_COST["time"]])
 
+            #civ_mach
+            if (
+                self.storage["steel"] >= CIV_MACH_COST["steel"]
+                and self.storage["aluminum"] >= CIV_MACH_COST["aluminum"]
+                and self.storage["plastic"] >= CIV_MACH_COST["plastic"]
+                and self.storage["parts"] >= CIV_MACH_COST["parts"]
+                and self.state["civ_mach"] == True
+                ):
+                self.storage["steel"] -= CIV_MACH_COST["steel"]
+                self.storage["aluminum"] -= CIV_MACH_COST["aluminum"]
+                self.storage["plastic"] -= CIV_MACH_COST["plastic"]
+                self.storage["parts"] -= CIV_MACH_COST["parts"]
+                self.orders.append(["civ_mach", CIV_MACH_COST["time"]])
+
+            #parts
             if (
                 self.storage["steel"] >= PARTS_COST["steel"]
                 and self.storage["aluminum"] >= PARTS_COST["aluminum"]
                 and self.state["parts"] == True
-            ):
+                ):
                 self.storage["steel"] -= PARTS_COST["steel"]
                 self.storage["aluminum"] -= PARTS_COST["aluminum"]
                 self.storage["parts"] += PARTS_COST["output"]
+            
+            #tools
             if (
                 self.storage["steel"] >= TOOL_COST["steel"]
                 and self.storage["plastic"] >= TOOL_COST["plastic"]
                 and self.state["tools"] == True
-            ):
+                ):
                 self.storage["steel"] -= TOOL_COST["steel"]
                 self.storage["plastic"] -= TOOL_COST["plastic"]
                 self.storage["tools"] += TOOL_COST["output"]
 
+            #rifle
             if (
-                self.storage["steel"] >= RILFE_COST["steel"]
-                and self.storage["plastic"] >= RILFE_COST["plastic"]
+                self.storage["steel"] >= RIFLE_COST["steel"]
+                and self.storage["plastic"] >= RIFLE_COST["plastic"]
                 and self.state["rifle"] == True
-            ):
-                self.storage["steel"] -= RILFE_COST["steel"]
-                self.storage["plastic"] -= RILFE_COST["plastic"]
-                self.orders.append(["rifle", RILFE_COST["time"]])
+                ):
+                self.storage["steel"] -= RIFLE_COST["steel"]
+                self.storage["plastic"] -= RIFLE_COST["plastic"]
+                self.orders.append(["rifle", RIFLE_COST["time"]])
+
+            #light_ammo
+            if self.storage["steel"] >= e * LIGHT_AMMO_COST["steel"] and self.storage["textiles"] >= e * LIGHT_AMMO_COST["textiles"] and self.storage["chem_comp"] >= e * LIGHT_AMMO_COST["chem_comp"] and self.state["light_ammo"] == True:
+                self.storage["steel"] -= e * LIGHT_AMMO_COST["steel"]
+                self.storage["textiles"] -= e * LIGHT_AMMO_COST["textiles"]
+                self.storage["chem_comp"] -= e * LIGHT_AMMO_COST["chem_comp"]
+                self.storage["light_ammo"] += e * LIGHT_AMMO_COST["output"]
+
+            #heavy_ammo
+            if self.storage["steel"] >= e * HEAVY_AMMO_COST["steel"] and self.storage["plastic"] >= e * HEAVY_AMMO_COST["plastic"] and self.storage["chem_comp"] >= e * HEAVY_AMMO_COST["chem_comp"] and self.state["heavy_ammo"] == True:
+                self.storage["steel"] -= e * HEAVY_AMMO_COST["steel"]
+                self.storage["plastic"] -= e * HEAVY_AMMO_COST["plastic"]
+                self.storage["chem_comp"] -= e * HEAVY_AMMO_COST["chem_comp"]
+                self.orders.append(["heavy_ammo", HEAVY_AMMO_COST["time"]])
+                #self.storage["heavy_ammo"] += e * HEAVY_AMMO_COST["output"]
+
+
 
         if self.owner.electricity == True:
             if len(self.orders) > 0:
                 self.orders[0][1] = (
-                    self.orders[0][1] - 2
+                    self.orders[0][1] - (1 + self.storage["civ_mach"])
                 )  # 2 temporaly, normaly would be number of civilian machines
                 if self.orders[0][1] <= 0:
                     self.storage[self.orders[0][0]] += 1
                     del self.orders[0]
 
         self.description[4] = (
-            self.game.language.RES1[5] + ": " + str(self.storage["steel"])
-        )
-        self.description[5] = (
-            self.game.language.RES1[9] + ": " + str(self.storage["aluminum"])
-        )
-        self.description[6] = (
-            self.game.language.RES1[12] + ": " + str(self.storage["plastic"])
-        )
-        self.description[7] = (
             self.game.language.RES1[8] + ": " + str(self.storage["parts"])
         )
-        self.description[8] = (
+        self.description[5] = (
             self.game.language.RES1[7] + ": " + str(self.storage["tools"])
         )
-        self.description[9] = (
+        self.description[6] = (
             self.game.language.RES1[23] + ": " + str(self.storage["civ_mach"])
         )
-        self.description[10] = (
+        self.description[7] = (
             self.game.language.RES2[6] + ": " + str(self.storage["rifle"])
+        )
+        self.description[8] = (
+            self.game.language.RES2[3] + ": " + str(self.storage["light_ammo"])
+        )
+        self.description[9] = (
+            self.game.language.RES2[4] + ": " + str(self.storage["heavy_ammo"])
         )
 
     def hourly(self):
@@ -3557,6 +3509,8 @@ class CHEMICAL_PLANT(BUILDING):
         textiles=0,
         calcium=0,
         fertilizer=0,
+        steel=0,
+        light_ammo=0,
     ):
         self.groups = game.all_sprites, game.buildings
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -3570,6 +3524,7 @@ class CHEMICAL_PLANT(BUILDING):
             "chem_comp": False,
             "textiles": False,
             "fertilizer": False,
+            "light_ammo": False,
         }
         self.orders = []
 
@@ -3584,9 +3539,11 @@ class CHEMICAL_PLANT(BUILDING):
             "textiles": textiles,
             "calcium": calcium,
             "fertilizer": fertilizer,
+            "steel": steel,
+            "light_ammo": light_ammo,
         }
 
-        self.upkeep = 50
+        self.upkeep = UPKEEP_BUILDING["chemical_plant"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -3602,12 +3559,6 @@ class CHEMICAL_PLANT(BUILDING):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         g = self.storage.keys()
@@ -3671,22 +3622,19 @@ class CHEMICAL_PLANT(BUILDING):
         # here resources
 
         self.description[4] = (
-            self.game.language.RES1[10] + ": " + str(self.storage["oil"])
-        )
-        self.description[5] = (
             self.game.language.RES1[12] + ": " + str(self.storage["plastic"])
         )
-        self.description[6] = (
+        self.description[5] = (
             self.game.language.RES1[13] + ": " + str(self.storage["chem_comp"])
         )
-        self.description[7] = (
+        self.description[6] = (
             self.game.language.RES1[19] + ": " + str(self.storage["textiles"])
         )
-        self.description[8] = (
-            self.game.language.RES1[16] + ": " + str(self.storage["calcium"])
-        )
-        self.description[9] = (
+        self.description[7] = (
             self.game.language.RES1[14] + ": " + str(self.storage["fertilizer"])
+        )
+        self.description[8] = (
+            self.game.language.RES2[3] + ": " + str(self.storage["light_ammo"])
         )
 
     def do(self):
@@ -3701,50 +3649,64 @@ class CHEMICAL_PLANT(BUILDING):
             else:
                 e = int(60 / jobs)
 
+            #plastic
             if (
                 self.storage["oil"] >= PLASTIC_COST["oil"]
                 and self.state["plastic"] == True
-            ):
+                ):
                 self.storage["oil"] -= PLASTIC_COST["oil"]
                 self.storage["plastic"] += PLASTIC_COST["output"]
+            
+            #chem_comp
             if (
                 self.storage["oil"] >= CHEM_COMP_COST["oil"]
                 and self.state["chem_comp"] == True
-            ):
+                ):
                 self.storage["oil"] -= CHEM_COMP_COST["oil"]
                 self.storage["chem_comp"] += CHEM_COMP_COST["output"]
+            
+            #textiles
             if (
-                self.storage["plastic"] >= PET_TEXTILSE_COST["plastic"]
+                self.storage["plastic"] >= PET_TEXTILES_COST["plastic"]
                 and self.state["textiles"] == True
-            ):
-                self.storage["plastic"] -= PET_TEXTILSE_COST["plastic"]
-                self.storage["textiles"] += PET_TEXTILSE_COST["output"]
+                ):
+                self.storage["plastic"] -= PET_TEXTILES_COST["plastic"]
+                self.storage["textiles"] += PET_TEXTILES_COST["output"]
+            
+            #fertilizer
             if (
                 self.storage["calcium"] >= FERTILIZER_COST["calcium"]
                 and self.storage["chem_comp"] >= FERTILIZER_COST["chem_comp"]
                 and self.state["fertilizer"] == True
-            ):
+                ):
                 self.storage["calcium"] -= FERTILIZER_COST["calcium"]
                 self.storage["chem_comp"] -= FERTILIZER_COST["chem_comp"]
                 self.storage["fertilizer"] += FERTILIZER_COST["output"]
 
+            #light_ammo
+            if (self.storage["steel"] >= e * LIGHT_AMMO_COST["steel"] 
+                and self.storage["textiles"] >= e * LIGHT_AMMO_COST["textiles"] 
+                and self.storage["chem_comp"] >= e * LIGHT_AMMO_COST["chem_comp"] 
+                and self.state["light_ammo"] == True):
+                self.storage["steel"] -= e * LIGHT_AMMO_COST["steel"]
+                self.storage["textiles"] -= e * LIGHT_AMMO_COST["textiles"]
+                self.storage["chem_comp"] -= e * LIGHT_AMMO_COST["chem_comp"]
+                self.storage["light_ammo"] += e * LIGHT_AMMO_COST["output"]
+
         self.description[4] = (
-            self.game.language.RES1[10] + ": " + str(self.storage["oil"])
-        )
-        self.description[5] = (
             self.game.language.RES1[12] + ": " + str(self.storage["plastic"])
         )
-        self.description[6] = (
+        self.description[5] = (
             self.game.language.RES1[13] + ": " + str(self.storage["chem_comp"])
         )
-        self.description[7] = (
+        self.description[6] = (
             self.game.language.RES1[19] + ": " + str(self.storage["textiles"])
         )
-        self.description[8] = (
-            self.game.language.RES1[16] + ": " + str(self.storage["calcium"])
-        )
-        self.description[9] = (
+        self.description[7] = (
             self.game.language.RES1[14] + ": " + str(self.storage["fertilizer"])
+        )
+        self.description[8] = (
+            self.game.language.RES2[3] + ": " + str(self.storage["light_ammo"])
         )
 
     def hourly(self):
@@ -3805,7 +3767,7 @@ class HIGH_TECH_PLANT(BUILDING):
             "electronics": electronics,
         }
 
-        self.upkeep = 100
+        self.upkeep = UPKEEP_BUILDING["high_tech_plant"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -3821,12 +3783,6 @@ class HIGH_TECH_PLANT(BUILDING):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         g = self.storage.keys()
@@ -3890,24 +3846,9 @@ class HIGH_TECH_PLANT(BUILDING):
         # here resources
 
         self.description[4] = (
-            self.game.language.RES1[5] + ": " + str(self.storage["steel"])
-        )
-        self.description[5] = (
-            self.game.language.RES1[9] + ": " + str(self.storage["aluminum"])
-        )
-        self.description[6] = (
-            self.game.language.RES1[12] + ": " + str(self.storage["plastic"])
-        )
-        self.description[7] = (
-            self.game.language.RES1[13] + ": " + str(self.storage["chem_comp"])
-        )
-        self.description[8] = (
-            self.game.language.RES1[15] + ": " + str(self.storage["silicon"])
-        )
-        self.description[9] = (
             self.game.language.RES1[24] + ": " + str(self.storage["elec_comp"])
         )
-        self.description[10] = (
+        self.description[5] = (
             self.game.language.RES1[17] + ": " + str(self.storage["electronics"])
         )
 
@@ -3919,47 +3860,35 @@ class HIGH_TECH_PLANT(BUILDING):
 
         if jobs > 0:
             if self.owner.electricity == True:
+
+                #elec_comp
                 if (
                     self.storage["aluminum"] >= ELEC_COMP_COST["aluminum"]
                     and self.storage["chem_comp"] >= ELEC_COMP_COST["chem_comp"]
                     and self.storage["silicon"] >= ELEC_COMP_COST["silicon"]
                     and self.state["elec_comp"] == True
-                ):
+                    ):
                     self.storage["aluminum"] -= ELEC_COMP_COST["aluminum"]
                     self.storage["chem_comp"] -= ELEC_COMP_COST["chem_comp"]
                     self.storage["silicon"] -= ELEC_COMP_COST["silicon"]
                     self.storage["elec_comp"] += ELEC_COMP_COST["output"]
 
+                #electronics
                 if (
                     self.storage["steel"] >= ELECTRONICS_COST["steel"]
                     and self.storage["plastic"] >= ELECTRONICS_COST["plastic"]
                     and self.storage["elec_comp"] >= ELECTRONICS_COST["elec_comp"]
                     and self.state["electronics"] == True
-                ):
+                    ):
                     self.storage["steel"] -= ELECTRONICS_COST["steel"]
                     self.storage["plastic"] -= ELECTRONICS_COST["plastic"]
                     self.storage["elec_comp"] -= ELECTRONICS_COST["elec_comp"]
                     self.storage["electronics"] += ELECTRONICS_COST["output"]
 
         self.description[4] = (
-            self.game.language.RES1[5] + ": " + str(self.storage["steel"])
-        )
-        self.description[5] = (
-            self.game.language.RES1[9] + ": " + str(self.storage["aluminum"])
-        )
-        self.description[6] = (
-            self.game.language.RES1[12] + ": " + str(self.storage["plastic"])
-        )
-        self.description[7] = (
-            self.game.language.RES1[13] + ": " + str(self.storage["chem_comp"])
-        )
-        self.description[8] = (
-            self.game.language.RES1[15] + ": " + str(self.storage["silicon"])
-        )
-        self.description[9] = (
             self.game.language.RES1[24] + ": " + str(self.storage["elec_comp"])
         )
-        self.description[10] = (
+        self.description[5] = (
             self.game.language.RES1[17] + ": " + str(self.storage["electronics"])
         )
 
@@ -3991,10 +3920,12 @@ class MECHANICAL_PLANT(BUILDING):
         owner=0,
         steel=0,
         rubber=0,
+        plastic=0,
         parts=0,
         tools=0,
         textiles=0,
         electronics=0,
+        rifle=0,
         truck=0,
         apc=0,
     ):
@@ -4005,7 +3936,7 @@ class MECHANICAL_PLANT(BUILDING):
         self.y = y
         self.owner = self.game.players[owner]
         self.name = game.language.BUILDINGS1[16]
-        self.state = {"truck": False, "apc": False}
+        self.state = {"rifle": False, "truck": False, "apc": False}
         self.orders = []
 
         self.image = self.game.mechanical_plant_img.copy()
@@ -4015,15 +3946,17 @@ class MECHANICAL_PLANT(BUILDING):
         self.storage = {
             "steel": steel,
             "rubber": rubber,
+            "plastic": plastic,
             "parts": parts,
             "tools": tools,
             "textiles": textiles,
             "electronics": electronics,
+            "rifle": rifle,
             "truck": truck,
             "apc": apc,
         }
 
-        self.upkeep = 50
+        self.upkeep = UPKEEP_BUILDING["mechanical_plant"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -4039,12 +3972,6 @@ class MECHANICAL_PLANT(BUILDING):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         g = self.storage.keys()
@@ -4108,32 +4035,28 @@ class MECHANICAL_PLANT(BUILDING):
         # here resources
 
         self.description[4] = (
-            self.game.language.RES1[5] + ": " + str(self.storage["steel"])
+            self.game.language.RES2[6] + ": " + str(self.storage["rifle"])
         )
         self.description[5] = (
-            self.game.language.RES1[20] + ": " + str(self.storage["rubber"])
-        )
-        self.description[6] = (
-            self.game.language.RES1[8] + ": " + str(self.storage["parts"])
-        )
-        self.description[7] = (
-            self.game.language.RES1[7] + ": " + str(self.storage["tools"])
-        )
-        self.description[8] = (
-            self.game.language.RES1[19] + ": " + str(self.storage["textiles"])
-        )
-        self.description[9] = (
-            self.game.language.RES1[24] + ": " + str(self.storage["electronics"])
-        )
-        self.description[10] = (
             self.game.language.RES2[8] + ": " + str(self.storage["truck"])
         )
-        self.description[11] = (
+        self.description[6] = (
             self.game.language.RES2[9] + ": " + str(self.storage["apc"])
         )
 
     def do(self):
 
+        #rifle
+        if (
+            self.storage["steel"] >= RIFLE_COST["steel"]
+            and self.storage["plastic"] >= RIFLE_COST["plastic"]
+            and self.state["rifle"] == True
+            ):
+            self.storage["steel"] -= RIFLE_COST["steel"]
+            self.storage["plastic"] -= RIFLE_COST["plastic"]
+            self.orders.append(["rifle", RIFLE_COST["time"]])
+
+        #truck
         if (
             self.storage["steel"] >= TRUCK_COST["steel"]
             and self.storage["rubber"] >= TRUCK_COST["rubber"]
@@ -4142,7 +4065,7 @@ class MECHANICAL_PLANT(BUILDING):
             and self.storage["textiles"] >= TRUCK_COST["textiles"]
             and self.storage["electronics"] >= TRUCK_COST["electronics"]
             and self.state["truck"] == True
-        ):
+            ):
             self.storage["steel"] -= TRUCK_COST["steel"]
             self.storage["rubber"] -= TRUCK_COST["rubber"]
             self.storage["parts"] -= TRUCK_COST["parts"]
@@ -4150,6 +4073,8 @@ class MECHANICAL_PLANT(BUILDING):
             self.storage["textiles"] -= TRUCK_COST["textiles"]
             self.storage["electronics"] -= TRUCK_COST["electronics"]
             self.orders.append(["truck", TRUCK_COST["time"]])
+        
+        #apc
         if (
             self.storage["steel"] >= APC_COST["steel"]
             and self.storage["rubber"] >= APC_COST["rubber"]
@@ -4158,7 +4083,7 @@ class MECHANICAL_PLANT(BUILDING):
             and self.storage["textiles"] >= APC_COST["textiles"]
             and self.storage["electronics"] >= APC_COST["electronics"]
             and self.state["apc"] == True
-        ):
+            ):
             self.storage["steel"] -= APC_COST["steel"]
             self.storage["rubber"] -= APC_COST["rubber"]
             self.storage["parts"] -= APC_COST["parts"]
@@ -4177,27 +4102,12 @@ class MECHANICAL_PLANT(BUILDING):
                     del self.orders[0]
 
         self.description[4] = (
-            self.game.language.RES1[5] + ": " + str(self.storage["steel"])
+            self.game.language.RES2[6] + ": " + str(self.storage["rifle"])
         )
         self.description[5] = (
-            self.game.language.RES1[20] + ": " + str(self.storage["rubber"])
-        )
-        self.description[6] = (
-            self.game.language.RES1[8] + ": " + str(self.storage["parts"])
-        )
-        self.description[7] = (
-            self.game.language.RES1[7] + ": " + str(self.storage["tools"])
-        )
-        self.description[8] = (
-            self.game.language.RES1[19] + ": " + str(self.storage["textiles"])
-        )
-        self.description[9] = (
-            self.game.language.RES1[24] + ": " + str(self.storage["electronics"])
-        )
-        self.description[10] = (
             self.game.language.RES2[8] + ": " + str(self.storage["truck"])
         )
-        self.description[11] = (
+        self.description[6] = (
             self.game.language.RES2[9] + ": " + str(self.storage["apc"])
         )
 
@@ -4231,8 +4141,11 @@ class ARMAMENT_PLANT(BUILDING):
         rubber=0,
         plastic=0,
         parts=0,
+        tools=0,
+        textiles=0,
         electronics=0,
         rifle=0,
+        truck=0,
         artilleries=0,
         tank=0,
     ):
@@ -4243,7 +4156,7 @@ class ARMAMENT_PLANT(BUILDING):
         self.y = y
         self.owner = self.game.players[owner]
         self.name = game.language.BUILDINGS1[17]
-        self.state = {"rifle": False, "artilleries": False, "tank": False}
+        self.state = {"rifle": False, "artilleries": False, "truck": False, "tank": False}
         self.orders = []
 
         self.image = self.game.armament_plant_img.copy()
@@ -4255,13 +4168,16 @@ class ARMAMENT_PLANT(BUILDING):
             "rubber": rubber,
             "plastic": plastic,
             "parts": parts,
+            "tools": tools,
+            "textiles": textiles,
             "electronics": electronics,
             "rifle": rifle,
             "artilleries": artilleries,
+            "truck": truck,
             "tank": tank,
         }
 
-        self.upkeep = 50
+        self.upkeep = UPKEEP_BUILDING["armament_plant"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -4277,12 +4193,6 @@ class ARMAMENT_PLANT(BUILDING):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         g = self.storage.keys()
@@ -4344,66 +4254,78 @@ class ARMAMENT_PLANT(BUILDING):
             "",
         ]
         # here resources
-
+        
         self.description[4] = (
-            self.game.language.RES1[5] + ": " + str(self.storage["steel"])
-        )
-        self.description[5] = (
-            self.game.language.RES1[20] + ": " + str(self.storage["rubber"])
-        )
-        self.description[6] = (
-            self.game.language.RES1[12] + ": " + str(self.storage["plastic"])
-        )
-        self.description[7] = (
-            self.game.language.RES1[8] + ": " + str(self.storage["parts"])
-        )
-        self.description[8] = (
-            self.game.language.RES1[24] + ": " + str(self.storage["electronics"])
-        )
-        self.description[9] = (
             self.game.language.RES2[6] + ": " + str(self.storage["rifle"])
         )
-        self.description[10] = (
+        self.description[5] = (
             self.game.language.RES2[7] + ": " + str(self.storage["artilleries"])
         )
-        self.description[11] = (
+        self.description[6] = (
+            self.game.language.RES2[8] + ": " + str(self.storage["truck"])
+        )
+        self.description[7] = (
             self.game.language.RES2[10] + ": " + str(self.storage["tank"])
         )
 
     def do(self):
+
+        #rifle
+        if (
+            self.storage["steel"] >= RIFLE_COST["steel"]
+            and self.storage["plastic"] >= RIFLE_COST["plastic"]
+            and self.state["rifle"] == True
+            ):
+            self.storage["steel"] -= RIFLE_COST["steel"]
+            self.storage["plastic"] -= RIFLE_COST["plastic"]
+            self.orders.append(["rifle", RIFLE_COST["time"]])
+
+        #artilleries
         if (
             self.storage["steel"] >= ARTILLERIES_COST["steel"]
             and self.storage["rubber"] >= ARTILLERIES_COST["rubber"]
             and self.storage["parts"] >= ARTILLERIES_COST["parts"]
             and self.storage["electronics"] >= ARTILLERIES_COST["electronics"]
             and self.state["artilleries"] == True
-        ):
+            ):
             self.storage["steel"] -= ARTILLERIES_COST["steel"]
             self.storage["rubber"] -= ARTILLERIES_COST["rubber"]
             self.storage["parts"] -= ARTILLERIES_COST["parts"]
             self.storage["electronics"] -= ARTILLERIES_COST["electronics"]
             self.orders.append(["artilleries", ARTILLERIES_COST["time"]])
+        
+        #truck
+        if (
+            self.storage["steel"] >= TRUCK_COST["steel"]
+            and self.storage["rubber"] >= TRUCK_COST["rubber"]
+            and self.storage["parts"] >= TRUCK_COST["parts"]
+            and self.storage["tools"] >= TRUCK_COST["tools"]
+            and self.storage["textiles"] >= TRUCK_COST["textiles"]
+            and self.storage["electronics"] >= TRUCK_COST["electronics"]
+            and self.state["truck"] == True
+            ):
+            self.storage["steel"] -= TRUCK_COST["steel"]
+            self.storage["rubber"] -= TRUCK_COST["rubber"]
+            self.storage["parts"] -= TRUCK_COST["parts"]
+            self.storage["tools"] -= TRUCK_COST["tools"]
+            self.storage["textiles"] -= TRUCK_COST["textiles"]
+            self.storage["electronics"] -= TRUCK_COST["electronics"]
+            self.orders.append(["truck", TRUCK_COST["time"]])
+        
+        #tank
         if (
             self.storage["steel"] >= TANK_COST["steel"]
             and self.storage["rubber"] >= TANK_COST["rubber"]
             and self.storage["parts"] >= TANK_COST["parts"]
             and self.storage["electronics"] >= TANK_COST["electronics"]
             and self.state["tank"] == True
-        ):
+            ):
             self.storage["steel"] -= TANK_COST["steel"]
             self.storage["rubber"] -= TANK_COST["rubber"]
             self.storage["parts"] -= TANK_COST["parts"]
             self.storage["electronics"] -= TANK_COST["electronics"]
             self.orders.append(["tank", TANK_COST["time"]])
-        if (
-            self.storage["steel"] >= RILFE_COST["steel"]
-            and self.storage["plastic"] >= RILFE_COST["plastic"]
-            and self.state["rifle"] == True
-        ):
-            self.storage["steel"] -= RILFE_COST["steel"]
-            self.storage["plastic"] -= RILFE_COST["plastic"]
-            self.orders.append(["rifle", RILFE_COST["time"]])
-
+        
         if self.owner.electricity == True:
             if len(self.orders) > 0:
                 self.orders[0][1] = (
@@ -4414,27 +4336,15 @@ class ARMAMENT_PLANT(BUILDING):
                     del self.orders[0]
 
         self.description[4] = (
-            self.game.language.RES1[5] + ": " + str(self.storage["steel"])
-        )
-        self.description[5] = (
-            self.game.language.RES1[20] + ": " + str(self.storage["rubber"])
-        )
-        self.description[6] = (
-            self.game.language.RES1[12] + ": " + str(self.storage["plastic"])
-        )
-        self.description[7] = (
-            self.game.language.RES1[8] + ": " + str(self.storage["parts"])
-        )
-        self.description[8] = (
-            self.game.language.RES1[24] + ": " + str(self.storage["electronics"])
-        )
-        self.description[9] = (
             self.game.language.RES2[6] + ": " + str(self.storage["rifle"])
         )
-        self.description[10] = (
+        self.description[5] = (
             self.game.language.RES2[7] + ": " + str(self.storage["artilleries"])
         )
-        self.description[11] = (
+        self.description[6] = (
+            self.game.language.RES2[8] + ": " + str(self.storage["truck"])
+        )
+        self.description[7] = (
             self.game.language.RES2[10] + ": " + str(self.storage["tank"])
         )
 
@@ -4464,14 +4374,20 @@ class AVIATION_PLANT(BUILDING):
         x,
         y,
         owner=0,
+        steel=0,
         aluminum=0,
+        textiles=0,
         rubber=0,
         plastic=0,
         parts=0,
-        electronics=0,
+        tools=0,
+        elec_comp=0,
+        chem_comp=0,
+        light_ammo=0,
         rockets=0,
         helicopters=0,
         aircraft=0,
+        
     ):
         self.groups = game.all_sprites, game.buildings
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -4480,7 +4396,7 @@ class AVIATION_PLANT(BUILDING):
         self.y = y
         self.owner = self.game.players[owner]
         self.name = game.language.BUILDINGS1[17]
-        self.state = {"rockets": True, "helicopters": True, "aircraft": True}
+        self.state = {"light_ammo": False, "rockets": False, "helicopters": False, "aircraft": False}
         self.orders = []
 
         self.image = self.game.aviation_plant_img.copy()
@@ -4488,17 +4404,22 @@ class AVIATION_PLANT(BUILDING):
         self.image.blit(self.owner.image, (44, 10))
         self.rect = self.image.get_rect()
         self.storage = {
+            "steel": steel,
             "aluminum": aluminum,
+            "textiles": textiles,
             "rubber": rubber,
             "plastic": plastic,
             "parts": parts,
-            "electronics": electronics,
+            "tools": tools,
+            "elec_comp": elec_comp,
+            "chem_comp": chem_comp,
+            "light_ammo": light_ammo,
             "rockets": rockets,
             "helicopters": helicopters,
             "aircraft": aircraft,
         }
 
-        self.upkeep = 50
+        self.upkeep = UPKEEP_BUILDING["aviation_plant"]
         self.window = ld.Building_Window(
             self,
             self.game,
@@ -4514,12 +4435,6 @@ class AVIATION_PLANT(BUILDING):
         self.button = ld.OB_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 430],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         g = self.storage.keys()
@@ -4583,101 +4498,97 @@ class AVIATION_PLANT(BUILDING):
         # here resources
 
         self.description[4] = (
-            self.game.language.RES1[9] + ": " + str(self.storage["aluminum"])
+            self.game.language.RES2[3] + ": " + str(self.storage["light_ammo"])
         )
         self.description[5] = (
-            self.game.language.RES1[20] + ": " + str(self.storage["rubber"])
-        )
-        self.description[6] = (
-            self.game.language.RES1[12] + ": " + str(self.storage["plastic"])
-        )
-        self.description[7] = (
-            self.game.language.RES1[8] + ": " + str(self.storage["parts"])
-        )
-        self.description[8] = (
-            self.game.language.RES1[24] + ": " + str(self.storage["electronics"])
-        )
-        self.description[9] = (
             self.game.language.RES2[5] + ": " + str(self.storage["rockets"])
         )
-        self.description[10] = (
+        self.description[6] = (
             self.game.language.RES2[11] + ": " + str(self.storage["helicopters"])
         )
-        self.description[11] = (
+        self.description[7] = (
             self.game.language.RES2[12] + ": " + str(self.storage["aircraft"])
         )
 
     def do(self):
-        jobs = 0
-        if self.state["helicopters"] == True:
-            jobs += 1
-        if self.state["aircraft"] == True:
-            jobs += 1
 
-        e = 4
-        if jobs > 0:
-            if self.owner.electricity == True:
-                e = int(2 / jobs)
+        #light_ammo
+        if (self.storage["steel"] >= LIGHT_AMMO_COST["steel"] 
+            and self.storage["textiles"] >= LIGHT_AMMO_COST["textiles"] 
+            and self.storage["chem_comp"] >= LIGHT_AMMO_COST["chem_comp"] 
+            and self.state["light_ammo"] == True):
+            self.storage["steel"] -= LIGHT_AMMO_COST["steel"]
+            self.storage["textiles"] -= LIGHT_AMMO_COST["textiles"]
+            self.storage["chem_comp"] -= LIGHT_AMMO_COST["chem_comp"]
+            self.storage["light_ammo"] += LIGHT_AMMO_COST["output"]
 
-                if (
-                    self.storage["aluminum"] >= e * 500
-                    and self.storage["rubber"] >= e * 50
-                    and self.storage["parts"] >= e * 20
-                    and self.storage["electronics"] >= e * 30
-                    and self.state["helicopters"] == True
-                ):
-                    self.storage["aluminum"] -= e * 500
-                    self.storage["rubber"] -= e * 50
-                    self.storage["parts"] -= e * 20
-                    self.storage["electronics"] -= e * 30
-                    self.storage["helicopters"] += e
-                if (
-                    self.storage["aluminum"] >= e * 1500
-                    and self.storage["rubber"] >= e * 200
-                    and self.storage["parts"] >= e * 300
-                    and self.storage["electronics"] >= e * 100
-                    and self.state["aircraft"] == True
-                ):
-                    self.storage["aluminum"] -= e * 1500
-                    self.storage["rubber"] -= e * 200
-                    self.storage["parts"] -= e * 300
-                    self.storage["electronics"] -= e * 100
-                    self.storage["aircraft"] += e
+        #rockets
         if (
-            self.storage["aluminum"] >= e * 60
-            and self.storage["rubber"] >= e * 20
-            and self.storage["parts"] >= e * 5
-            and self.storage["electronics"] >= e * 5
+            self.storage["aluminum"] >= ROCKETS_COST["aluminum"]
+            and self.storage["chem_comp"] >= ROCKETS_COST["chem_comp"]
+            and self.storage["plastic"] >= ROCKETS_COST["plastic"]
+            and self.storage["parts"] >= ROCKETS_COST["parts"]
             and self.state["rockets"] == True
-        ):
-            self.storage["aluminum"] -= e * 60
-            self.storage["rubber"] -= e * 20
-            self.storage["parts"] -= e * 5
-            self.storage["electronics"] -= e * 5
-            self.storage["rockets"] += e
+            ):
+            self.storage["aluminum"] -= ROCKETS_COST["aluminum"]
+            self.storage["chem_comp"] -= ROCKETS_COST["chem_comp"]
+            self.storage["plastic"] -= ROCKETS_COST["plastic"]
+            self.storage["parts"] -= ROCKETS_COST["parts"]
+            self.orders.append(["rockets", ROCKETS_COST["time"]])
+
+        #helicopters
+        if (
+            self.storage["aluminum"] >= HELICOPTERS_COST["aluminum"]
+            and self.storage["rubber"] >= HELICOPTERS_COST["rubber"]
+            and self.storage["parts"] >= HELICOPTERS_COST["parts"]
+            and self.storage["tools"] >= HELICOPTERS_COST["tools"]
+            and self.storage["elec_comp"] >= HELICOPTERS_COST["elec_comp"]
+            and self.state["helicopters"] == True
+            ):
+            self.storage["aluminum"] -= HELICOPTERS_COST["aluminum"]
+            self.storage["rubber"] -= HELICOPTERS_COST["rubber"]
+            self.storage["parts"] -= HELICOPTERS_COST["parts"]
+            self.storage["tools"] -= HELICOPTERS_COST["tools"]
+            self.storage["elec_comp"] -= HELICOPTERS_COST["elec_comp"]
+            self.orders.append(["helicopters", HELICOPTERS_COST["time"]])
+
+        #aircraft
+        if (
+            self.storage["aluminum"] >= AIRCRAFT_COST["aluminum"]
+            and self.storage["rubber"] >= AIRCRAFT_COST["rubber"]
+            and self.storage["parts"] >= AIRCRAFT_COST["parts"]
+            and self.storage["tools"] >= AIRCRAFT_COST["tools"]
+            and self.storage["elec_comp"] >= AIRCRAFT_COST["elec_comp"]
+            and self.state["aircraft"] == True
+            ):
+            self.storage["aluminum"] -= AIRCRAFT_COST["aluminum"]
+            self.storage["rubber"] -= AIRCRAFT_COST["rubber"]
+            self.storage["parts"] -= AIRCRAFT_COST["parts"]
+            self.storage["tools"] -= AIRCRAFT_COST["tools"]
+            self.storage["elec_comp"] -= AIRCRAFT_COST["elec_comp"]
+            self.orders.append(["aircraft", AIRCRAFT_COST["time"]])
+        
+        
+        if self.owner.electricity == True:
+            if len(self.orders) > 0:
+                self.orders[0][1] = (
+                    self.orders[0][1] - 2
+                )  # 2 temporaly, normaly would be number of civilian machines
+                if self.orders[0][1] <= 0:
+                    self.storage[self.orders[0][0]] += 1
+                    del self.orders[0]
+
 
         self.description[4] = (
-            self.game.language.RES1[9] + ": " + str(self.storage["aluminum"])
+            self.game.language.RES2[3] + ": " + str(self.storage["light_ammo"])
         )
         self.description[5] = (
-            self.game.language.RES1[20] + ": " + str(self.storage["rubber"])
-        )
-        self.description[6] = (
-            self.game.language.RES1[12] + ": " + str(self.storage["plastic"])
-        )
-        self.description[7] = (
-            self.game.language.RES1[8] + ": " + str(self.storage["parts"])
-        )
-        self.description[8] = (
-            self.game.language.RES1[24] + ": " + str(self.storage["electronics"])
-        )
-        self.description[9] = (
             self.game.language.RES2[5] + ": " + str(self.storage["rockets"])
         )
-        self.description[10] = (
+        self.description[6] = (
             self.game.language.RES2[11] + ": " + str(self.storage["helicopters"])
         )
-        self.description[11] = (
+        self.description[7] = (
             self.game.language.RES2[12] + ": " + str(self.storage["aircraft"])
         )
 
@@ -4753,8 +4664,6 @@ class Unit(pg.sprite.Sprite):
         self.state = {
             "mobilized": True,
             "training": False,
-            "refill_equipment": False,
-            "refill_crew": False,
             "building": False,
             "repeat": False,
             "engage": True,
@@ -4767,8 +4676,8 @@ class Unit(pg.sprite.Sprite):
 
         self.mobilized = True
         self.training = False
-        self.refill_equipment = False
-        self.refill_crew = False
+        #self.refill_equipment = False
+        #self.refill_crew = False
         self.building = False
 
         self.order_list = []
@@ -4788,9 +4697,9 @@ class Unit(pg.sprite.Sprite):
         self.men = men
         self.max_men = self.unit_typ.max_men
         self.supply = supply
-        self.max_supply = self.men * 5
+        self.max_supply = self.men * MEN_MAX_SUPPLY
         self.uniforms = uniforms
-        self.max_uniforms = self.max_men
+        self.max_uniforms = self.men
 
         self.fuel = fuel
         self.light_ammo = light_ammo
@@ -4826,14 +4735,14 @@ class Unit(pg.sprite.Sprite):
         self.transporting_calc()
         self.max_light_ammo = 0
         self.max_light_ammo += (
-            self.men * 5 + self.apc * 200 + self.heli * 50 + self.aircraft * 40
+            self.men * 5 + self.apc * 200 + self.tank * 100 + self.heli * 100
         )
         self.max_heavy_ammo = 0
         self.max_heavy_ammo += (
-            self.apc * 4 + self.tank * 40 + self.heli * 10 + self.aircraft * 10
+            self.tank * 30 + self.heli * 6 + self.aircraft * 12
         )
         self.max_rockets = 0
-        self.max_rockets += self.rocket_truck * 40 + self.heli * 8 + self.aircraft * 8
+        self.max_rockets += self.heli * 6 + self.aircraft * 12 + self.rocket_truck * 40 
 
         self.visible = True
         self.pos = [50, 50]
@@ -4861,12 +4770,6 @@ class Unit(pg.sprite.Sprite):
         self.button = ld.OU_Button(
             self,
             self.game,
-            pos=[WIDTH - MENU_RIGHT[0] + 130, 230],
-            size=(20, 20),
-            color=LIGHTGREY,
-            text="X",
-            textsize=10,
-            textcolor=BLACK,
         )
 
         self.col = x
@@ -4923,16 +4826,6 @@ class Unit(pg.sprite.Sprite):
         self.fuel_usage += TANK_FUEL_USAGE * self.tank
         self.fuel_usage += HELI_FUEL_USAGE * self.heli
         self.fuel_usage += AIRCRAFT_FUEL_USAGE * self.aircraft
-
-        self.max_fuel = 0
-        self.max_fuel = (
-            (self.truck * TRUCK_FUEL_CAP)
-            + (self.apc * APC_FUEL_CAP)
-            + (self.tank * TANK_FUEL_CAP)
-            + (self.heli * HELI_FUEL_CAP)
-            + (self.aircraft * AIRCRAFT_FUEL_CAP)
-            + (self.rocket_truck * ROCKET_TRUCK_FUEL_CAP)
-        )
 
     def transporting_calc(self):
         self.current_transport = 0
@@ -5118,6 +5011,12 @@ class Unit(pg.sprite.Sprite):
                     pass
                 elif self.to_do[0] == "leave":
                     pass
+                elif self.to_do[0] == "refill_eq":
+                    pass
+                elif self.to_do[0] == "refill_cr":
+                    pass
+                elif self.to_do[0] == "reorganize":
+                    pass
 
         if self.to_do != None:#doing selected task
             if self.to_do[0] == "go_to":
@@ -5132,6 +5031,18 @@ class Unit(pg.sprite.Sprite):
             elif self.to_do[0] == "leave":
                 self.leave_goods(self.to_do[1][0], self.to_do[1][1])
                 self.task = self.game.language.COMMANDS[6]
+            elif self.to_do[0] == "refill_eq":
+                self.refill_eq()
+                self.task = self.game.language.COMMANDS[7]
+            elif self.to_do[0] == "refill_cr":
+                self.refill_cr()
+                self.task = self.game.language.COMMANDS[8]
+            elif self.to_do[0] == "reorganize":
+                self.reorganize()
+                self.task = self.game.language.COMMANDS[9]
+
+
+
             self.doing += 1
         else:
             #if not going / just stand
@@ -5149,12 +5060,6 @@ class Unit(pg.sprite.Sprite):
                     self.combat_ability_max = 25
             else:
                 self.combat_ability_max = 5
-
-            if self.state["refill_equipment"] == True:
-                self.refill_eq()
-
-            if self.state["refill_crew"] == True:
-                self.refill_cr()
 
 
     def refill_eq(self):
@@ -5389,6 +5294,14 @@ class Unit(pg.sprite.Sprite):
                     self.fuel_usage_calc()
                     self.transporting_calc()
                     self.calculate_cost()
+            
+        if self.to_do[1][0] <= self.doing:
+            if self.state["repeat"] == True:
+                self.order_list.append(self.to_do)
+            self.stop()
+            self.to_do = None
+            del self.order_list[0]
+            self.doing = 0
                 
 
     def refill_cr(self):
@@ -5417,6 +5330,14 @@ class Unit(pg.sprite.Sprite):
                                 self.experience = round(self.experience, 2)
                     self.calculate_cost()
                     self.transporting_calc()
+
+        if self.to_do[1][0] <= self.doing:
+            if self.state["repeat"] == True:
+                self.order_list.append(self.to_do)
+            self.stop()
+            self.to_do = None
+            del self.order_list[0]
+            self.doing = 0
 
 
     def moving(self):
@@ -5479,12 +5400,6 @@ class Unit(pg.sprite.Sprite):
 
 
     def wait_time(self):
-        if self.state["refill_equipment"] == True:
-                self.refill_eq()
-
-        if self.state["refill_crew"] == True:
-            self.refill_cr()
-
         if self.to_do[1][0] <= self.doing:
             if self.state["repeat"] == True:
                 self.order_list.append(self.to_do)
@@ -5541,7 +5456,6 @@ class Unit(pg.sprite.Sprite):
                 self.game.event_list.show_new_info([self.game.language.INFO_TEXTS[22], "Pos: " + str(self.x) + "/" + str(self.y)])
 
                         
-
     def leave_goods(self, goods, quantity):
         a = quantity
         #if 0 or more then transporting, then leave all goods
@@ -5573,6 +5487,42 @@ class Unit(pg.sprite.Sprite):
         else:
             self.game.event_list.show_new_info([self.game.language.INFO_TEXTS[22], "Pos: " + str(self.x) + "/" + str(self.y)])
 
+
+    def reorganize(self):
+        #supply
+        if self.supply > self.max_supply:
+            a = self.supply - self.max_supply
+            self.supply -= a
+            if "supply" not in self.transporting:
+                self.transporting["supply"] = 0
+            self.transporting["supply"] += a
+        #uniforms
+        if self.uniforms > self.max_uniforms:
+            a = self.uniforms - self.max_uniforms
+            self.uniforms -= a
+            if "uniforms" not in self.transporting:
+                self.transporting["uniforms"] = 0
+            self.transporting["uniforms"] += a
+        #fuel
+        if self.fuel > self.max_fuel:
+            a = self.fuel - self.max_fuel
+            self.fuel -= a
+            if "fuel" not in self.transporting:
+                self.transporting["fuel"] = 0
+            self.transporting["fuel"] += a
+        #
+
+
+
+        #repeat and del order
+        if self.state["repeat"] == True:
+            self.order_list.append(self.to_do)
+        self.stop()
+        self.to_do = None
+        del self.order_list[0]
+        self.doing = 0
+
+
     def change_owner(self, new_owner):
         self.owner = self.game.players[new_owner]
 
@@ -5584,8 +5534,13 @@ class Unit(pg.sprite.Sprite):
         self.loyalty = 30
         self.window.hide()
 
+
     def hourly(self):
-        if self.state["mobilized"] == True and self.state["training"] == False and self.conditions["starving"] == False and self.conditions["run_away"] == False and self.go_to == None:
+        if (self.state["mobilized"] == True 
+            and self.state["training"] == False 
+            and self.conditions["starving"] == False 
+            and self.conditions["run_away"] == False 
+            and self.go_to == None):
             if self.combat_ability < self.combat_ability_max:
                 self.combat_ability += 1
             elif self.combat_ability > self.combat_ability_max:

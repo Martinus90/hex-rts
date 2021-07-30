@@ -227,7 +227,7 @@ class Game:
         :param nations: adding all nations / class from loading.py
         :param players: adding all players / class Contender from loading.py
         :param diplomacy: adding game diplomacy / class from loading.py
-        :param politics: adding game politics / class from loading.py
+        :param int_politics: adding game internal politics / class from loading.py
         :param event_list: adding game events / class from loading.py
         :param trade: adding game trade / class from loading.py
         
@@ -385,7 +385,7 @@ class Game:
 
         self.diplomacy = Diplomacy(self)
         self.diplomacy.window.show_relations()
-        self.politics = Politics(self)
+        self.int_politics = Int_Politics(self)
         self.event_list = Event_List(
             self,
             [
@@ -420,6 +420,14 @@ class Game:
                     max_heli=0,
                     max_aircraft=0,
                     max_rocket_truck=0,
+                    min_men=25,
+                    min_art=0,
+                    min_truck=0,
+                    min_apc=0,
+                    min_tank=0,
+                    min_heli=0,
+                    min_aircraft=0,
+                    min_rocket_truck=0,
                 )
             )
 
@@ -436,14 +444,22 @@ class Game:
                     s_river=12,
                     s_no_fuel=40,
                     money_usage=2,
-                    max_men=20,
+                    max_men=30,
                     max_art=0,
                     max_truck=0,
                     max_apc=0,
-                    max_tank=4,
+                    max_tank=6,
                     max_heli=0,
                     max_aircraft=0,
                     max_rocket_truck=0,
+                    min_men=15,
+                    min_art=0,
+                    min_truck=0,
+                    min_apc=0,
+                    min_tank=3,
+                    min_heli=0,
+                    min_aircraft=0,
+                    min_rocket_truck=0,
                 )
             )
 
@@ -460,14 +476,22 @@ class Game:
                     s_river=12,
                     s_no_fuel=20,
                     money_usage=2,
-                    max_men=25,
-                    max_art=4,
-                    max_truck=4,
+                    max_men=35,
+                    max_art=6,
+                    max_truck=7,
                     max_apc=0,
                     max_tank=0,
                     max_heli=0,
                     max_aircraft=0,
                     max_rocket_truck=0,
+                    min_men=20,
+                    min_art=3,
+                    min_truck=4,
+                    min_apc=0,
+                    min_tank=0,
+                    min_heli=0,
+                    min_aircraft=0,
+                    min_rocket_truck=0,
                 )
             )
 
@@ -492,6 +516,14 @@ class Game:
                     max_heli=0,
                     max_aircraft=0,
                     max_rocket_truck=0,
+                    min_men=55,
+                    min_art=0,
+                    min_truck=0,
+                    min_apc=5,
+                    min_tank=0,
+                    min_heli=0,
+                    min_aircraft=0,
+                    min_rocket_truck=0,
                 )
             )
 
@@ -516,6 +548,14 @@ class Game:
                     max_heli=0,
                     max_aircraft=0,
                     max_rocket_truck=0,
+                    min_men=55,
+                    min_art=0,
+                    min_truck=2,
+                    min_apc=2,
+                    min_tank=0,
+                    min_heli=0,
+                    min_aircraft=0,
+                    min_rocket_truck=0,
                 )
             )
 
@@ -540,6 +580,14 @@ class Game:
                     max_heli=0,
                     max_aircraft=0,
                     max_rocket_truck=0,
+                    min_men=55,
+                    min_art=0,
+                    min_truck=5,
+                    min_apc=0,
+                    min_tank=0,
+                    min_heli=0,
+                    min_aircraft=0,
+                    min_rocket_truck=0,
                 )
             )
 
@@ -564,6 +612,14 @@ class Game:
                     max_heli=0,
                     max_aircraft=0,
                     max_rocket_truck=0,
+                    min_men=25,
+                    min_art=0,
+                    min_truck=0,
+                    min_apc=0,
+                    min_tank=0,
+                    min_heli=0,
+                    min_aircraft=0,
+                    min_rocket_truck=0,
                 )
             )
 
@@ -588,6 +644,14 @@ class Game:
                     max_heli=0,
                     max_aircraft=0,
                     max_rocket_truck=0,
+                    min_men=15,
+                    min_art=0,
+                    min_truck=5,
+                    min_apc=0,
+                    min_tank=0,
+                    min_heli=0,
+                    min_aircraft=0,
+                    min_rocket_truck=0,
                 )
             )
 
@@ -612,6 +676,14 @@ class Game:
                     max_heli=0,
                     max_aircraft=0,
                     max_rocket_truck=0,
+                    min_men=24,
+                    min_art=0,
+                    min_truck=4,
+                    min_apc=0,
+                    min_tank=0,
+                    min_heli=0,
+                    min_aircraft=0,
+                    min_rocket_truck=0,
                 )
             )
 
@@ -628,7 +700,7 @@ class Game:
                     s_river=2,
                     s_no_fuel=40,
                     money_usage=10,
-                    max_men=6,
+                    max_men=9,
                     max_art=0,
                     max_truck=0,
                     max_apc=0,
@@ -636,6 +708,14 @@ class Game:
                     max_heli=3,
                     max_aircraft=0,
                     max_rocket_truck=0,
+                    min_men=3,
+                    min_art=0,
+                    min_truck=0,
+                    min_apc=0,
+                    min_tank=0,
+                    min_heli=1,
+                    min_aircraft=0,
+                    min_rocket_truck=0,
                 )
             )
 
@@ -652,7 +732,7 @@ class Game:
                     s_river=1,
                     s_no_fuel=40,
                     money_usage=20,
-                    max_men=6,
+                    max_men=9,
                     max_art=0,
                     max_truck=0,
                     max_apc=0,
@@ -660,6 +740,14 @@ class Game:
                     max_heli=0,
                     max_aircraft=3,
                     max_rocket_truck=0,
+                    min_men=3,
+                    min_art=0,
+                    min_truck=0,
+                    min_apc=0,
+                    min_tank=0,
+                    min_heli=0,
+                    min_aircraft=1,
+                    min_rocket_truck=0,
                 )
             )
 
@@ -677,14 +765,22 @@ class Game:
                     s_river=12,
                     s_no_fuel=40,
                     money_usage=2,
-                    max_men=25,
+                    max_men=30,
                     max_art=0,
-                    max_truck=5,
+                    max_truck=3,
                     max_apc=0,
                     max_tank=0,
                     max_heli=0,
                     max_aircraft=0,
-                    max_rocket_truck=0,
+                    max_rocket_truck=3,
+                    min_men=12,
+                    min_art=0,
+                    min_truck=1,
+                    min_apc=0,
+                    min_tank=0,
+                    min_heli=0,
+                    min_aircraft=0,
+                    min_rocket_truck=1,
                 )
             )
 
@@ -701,14 +797,22 @@ class Game:
                     s_river=12,
                     s_no_fuel=20,
                     money_usage=2,
-                    max_men=25,
-                    max_art=0,
-                    max_truck=5,
+                    max_men=35,
+                    max_art=6,
+                    max_truck=7,
                     max_apc=0,
                     max_tank=0,
                     max_heli=0,
                     max_aircraft=0,
                     max_rocket_truck=0,
+                    min_men=20,
+                    min_art=3,
+                    min_truck=4,
+                    min_apc=0,
+                    min_tank=0,
+                    min_heli=0,
+                    min_aircraft=0,
+                    min_rocket_truck=0,
                 )
             )
 
@@ -725,14 +829,22 @@ class Game:
                     s_river=12,
                     s_no_fuel=40,
                     money_usage=5,
-                    max_men=25,
+                    max_men=30,
                     max_art=0,
-                    max_truck=5,
+                    max_truck=4,
                     max_apc=0,
                     max_tank=0,
                     max_heli=0,
                     max_aircraft=0,
-                    max_rocket_truck=0,
+                    max_rocket_truck=6,
+                    min_men=16,
+                    min_art=0,
+                    min_truck=2,
+                    min_apc=0,
+                    min_tank=0,
+                    min_heli=0,
+                    min_aircraft=0,
+                    min_rocket_truck=2,
                 )
             )
 
@@ -749,14 +861,22 @@ class Game:
                     s_river=12,
                     s_no_fuel=40,
                     money_usage=3,
-                    max_men=25,
+                    max_men=40,
                     max_art=0,
-                    max_truck=5,
+                    max_truck=8,
                     max_apc=0,
                     max_tank=0,
                     max_heli=0,
                     max_aircraft=0,
                     max_rocket_truck=0,
+                    min_men=20,
+                    min_art=0,
+                    min_truck=4,
+                    min_apc=0,
+                    min_tank=0,
+                    min_heli=0,
+                    min_aircraft=0,
+                    min_rocket_truck=0,
                 )
             )
             # volunteers
@@ -772,7 +892,7 @@ class Game:
                     s_river=16,
                     s_no_fuel=20,
                     money_usage=1,
-                    max_men=25,
+                    max_men=35,
                     max_art=0,
                     max_truck=0,
                     max_apc=0,
@@ -780,6 +900,14 @@ class Game:
                     max_heli=0,
                     max_aircraft=0,
                     max_rocket_truck=0,
+                    min_men=15,
+                    min_art=0,
+                    min_truck=0,
+                    min_apc=0,
+                    min_tank=0,
+                    min_heli=0,
+                    min_aircraft=0,
+                    min_rocket_truck=0,
                 )
             )
 
@@ -1034,49 +1162,23 @@ class Game:
             elif b[2] == "OIL_WELL":
                 OIL_WELL(self, b[0], b[1], b[3], b[4])
             elif b[2] == "RAFINERY":
-                RAFINERY(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
+                RAFINERY(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9])
             elif b[2] == "POWER_PLANT":
                 POWER_PLANT(self, b[0], b[1], b[3], b[4], b[5])
             elif b[2] == "LIGHT_INDUSTRY_PLANT":
-                LIGHT_INDUSTRY_PLANT(self,b[0],b[1],b[3],b[4],b[5],b[6],b[7],b[8],b[9],b[10],b[11])
+                LIGHT_INDUSTRY_PLANT(self,b[0],b[1],b[3],b[4],b[5],b[6],b[7],b[8],b[9],b[10],b[11],b[12],b[13])
             elif b[2] == "HEAVY_INDUSTRY_PLANT":
-                HEAVY_INDUSTRY_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10])
+                HEAVY_INDUSTRY_PLANT(self,b[0],b[1],b[3],b[4],b[5],b[6],b[7],b[8],b[9],b[10],b[11],b[12],b[13],b[14])
             elif b[2] == "CHEMICAL_PLANT":
-                CHEMICAL_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8])
+                CHEMICAL_PLANT(self,b[0],b[1],b[3],b[4],b[5],b[6],b[7],b[8],b[9],b[10])
             elif b[2] == "HIGH_TECH_PLANT":
-                HIGH_TECH_PLANT(self, b[0], b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10])
+                HIGH_TECH_PLANT(self,b[0],b[1],b[3],b[4],b[5],b[6],b[7],b[8],b[9],b[10])
             elif b[2] == "MECHANICAL_PLANT":
-                MECHANICAL_PLANT(self,b[0],b[1],b[3],b[4],b[5],b[6],b[7],b[8],b[9],b[10],b[11])
+                MECHANICAL_PLANT(self,b[0],b[1],b[3],b[4],b[5],b[6],b[7],b[8],b[9],b[10],b[11],b[12])
             elif b[2] == "ARMAMENT_PLANT":
-                ARMAMENT_PLANT(
-                    self,
-                    b[0],
-                    b[1],
-                    b[3],
-                    b[4],
-                    b[5],
-                    b[6],
-                    b[7],
-                    b[8],
-                    b[9],
-                    b[10],
-                    b[11],
-                )
+                ARMAMENT_PLANT(self,b[0],b[1],b[3],b[4],b[5],b[6],b[7],b[8],b[9],b[10],b[11],b[12],b[13])
             elif b[2] == "AVIATION_PLANT":
-                AVIATION_PLANT(
-                    self,
-                    b[0],
-                    b[1],
-                    b[3],
-                    b[4],
-                    b[5],
-                    b[6],
-                    b[7],
-                    b[8],
-                    b[9],
-                    b[10],
-                    b[11],
-                )
+                AVIATION_PLANT(self,b[0],b[1],b[3],b[4],b[5],b[6],b[7],b[8],b[9],b[10],b[11],b[12],b[13],b[14],b[15],b[16])
 
         #creating units objects from list
         for u in self.map.units:
@@ -1108,8 +1210,9 @@ class Game:
             0,
         )
 
-    def adding_unit(self, x, y, loyalty, nationality, owner, typ, unit_name):
-        Unit(self, x, y, loyalty, nationality, owner, typ, unit_name)
+    def adding_unit(self, x, y, loyalty, nationality, owner, typ, unit_name, men):
+        Unit(self, x=x, y=y, loyalty=loyalty, nationality=nationality, 
+            owner=owner, typ=typ, unit_name=unit_name, men=men)
 
     #converting construction site to building if finished
     def build(self, construction):
@@ -1236,7 +1339,7 @@ class Game:
                 unit.daily()
             for cont in self.players:
                 cont.daily()
-            self.politics.dayli()
+            self.int_politics.dayli()
             self.diplomacy.dayli()
             self.trade.dayli()
             self.trade.window.dayli()
@@ -1250,7 +1353,7 @@ class Game:
                 unit.weekly()
             for player in self.players:
                 player.weekly()
-            self.politics.update_window_value()
+            self.int_politics.update_window_value()
             self.diplomacy.update_window_value()
         if self.week > 13:  # 13
             self.week -= 13
@@ -1286,7 +1389,7 @@ class Game:
 
         self.playing = True
         while self.playing:
-            self.dt = self.clock.tick(FPS) / 1000
+            self.dt = self.clock.tick(FPS) / 2000
             if self.pause == False:
                 self.timer += self.dt * self.speed
             self.update()
@@ -1832,15 +1935,13 @@ class Game:
                                 )
                             posy += 20
 
-
-
                     self.screen.blit(
                         window.thing.owner.image,
                         (window.pos[0] + 270, window.pos[1] + 30),
                     )
                     self.screen.blit(
                         pg.font.Font(FONT_NAME, FONT_SIZE).render(
-                            window.thing.owner.name, False, LIGHTGREY
+                            window.thing.owner.name + " / " + window.thing.nationality.name, False, LIGHTGREY
                         ),
                         (window.pos[0] + 300, window.pos[1] + 38),
                     )
@@ -1907,7 +2008,7 @@ class Game:
                         pg.font.Font(FONT_NAME, FONT_SIZE).render(
                             str(window.thing.fuel_usage), False, YELLOW
                         ),
-                        (window.pos[0] + 510, window.pos[1] + 40),
+                        (window.pos[0] + 510, window.pos[1] + 60),
                     )
                     self.screen.blit(
                         pg.font.Font(FONT_NAME, FONT_SIZE).render(
@@ -2018,7 +2119,7 @@ class Game:
                     pg.font.Font(FONT_NAME, FONT_SIZE).render(
                         self.language.GUI[10], False, LIGHTGREY
                     ),
-                    (window.pos[0] + 580, window.pos[1] + 10),
+                    (window.pos[0] + 560, window.pos[1] + 10),
                 )
 
                 if window.thing.owner.electricity == True:

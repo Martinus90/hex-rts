@@ -247,6 +247,7 @@
     <property name="fuel" type="int" value="200"/>
     <property name="oil" type="int" value="500"/>
     <property name="owner" type="int" value="1"/>
+    <property name="rubber" type="int" value="0"/>
     <property name="typ" value="RAFINERY"/>
    </properties>
   </object>
@@ -271,10 +272,12 @@
   </object>
   <object id="32" name="building" x="338.48" y="596.852" width="23.8659" height="23.8659">
    <properties>
+    <property name="chem_comp" type="int" value="100"/>
     <property name="cotton" type="int" value="1000"/>
     <property name="food" type="int" value="2000"/>
     <property name="furniture" type="int" value="500"/>
-    <property name="owner" type="int" value="0"/>
+    <property name="light_ammo" type="int" value="50"/>
+    <property name="owner" type="int" value="1"/>
     <property name="steel" type="int" value="6000"/>
     <property name="supply" type="int" value="2000"/>
     <property name="textiles" type="int" value="50"/>
@@ -287,9 +290,11 @@
    <properties>
     <property name="chem_comp" type="int" value="2000"/>
     <property name="fertilizer" type="int" value="6000"/>
+    <property name="light_ammo" type="int" value="400"/>
     <property name="oil" type="int" value="10000"/>
     <property name="owner" type="int" value="1"/>
     <property name="plastic" type="int" value="500"/>
+    <property name="steel" type="int" value="500"/>
     <property name="textiles" type="int" value="2000"/>
     <property name="typ" value="CHEMICAL_PLANT"/>
    </properties>
@@ -297,12 +302,16 @@
   <object id="34" name="building" x="431.48" y="453.852" width="23.8659" height="23.8659">
    <properties>
     <property name="aluminum" type="int" value="3000"/>
-    <property name="civ_mach" type="int" value="0"/>
+    <property name="chem_comp" type="int" value="1000"/>
+    <property name="civ_mach" type="int" value="2"/>
+    <property name="heavy_ammo" type="int" value="100"/>
+    <property name="light_ammo" type="int" value="500"/>
     <property name="owner" type="int" value="1"/>
     <property name="parts" type="int" value="2000"/>
     <property name="plastic" type="int" value="1000"/>
     <property name="rifle" type="int" value="20"/>
     <property name="steel" type="int" value="6000"/>
+    <property name="textiles" type="int" value="500"/>
     <property name="tools" type="int" value="500"/>
     <property name="typ" value="HEAVY_INDUSTRY_PLANT"/>
    </properties>
@@ -311,8 +320,8 @@
    <properties>
     <property name="aluminum" type="int" value="2000"/>
     <property name="chem_comp" type="int" value="1000"/>
-    <property name="elec_comp" type="int" value="0"/>
-    <property name="electronics" type="int" value="1"/>
+    <property name="elec_comp" type="int" value="1000"/>
+    <property name="electronics" type="int" value="500"/>
     <property name="owner" type="int" value="1"/>
     <property name="plastic" type="int" value="6000"/>
     <property name="silicon" type="int" value="4000"/>
@@ -326,6 +335,8 @@
     <property name="electronics" type="int" value="1000"/>
     <property name="owner" type="int" value="1"/>
     <property name="parts" type="int" value="4000"/>
+    <property name="plastic" type="int" value="500"/>
+    <property name="rifle" type="int" value="40"/>
     <property name="rubber" type="int" value="50000"/>
     <property name="steel" type="int" value="20000"/>
     <property name="textiles" type="int" value="6000"/>
@@ -345,6 +356,9 @@
     <property name="rubber" type="int" value="1000"/>
     <property name="steel" type="int" value="20000"/>
     <property name="tank" type="int" value="0"/>
+    <property name="textiles" type="int" value="400"/>
+    <property name="tools" type="int" value="50"/>
+    <property name="truck" type="int" value="5"/>
     <property name="typ" value="ARMAMENT_PLANT"/>
    </properties>
   </object>
@@ -352,13 +366,18 @@
    <properties>
     <property name="aircraft" type="int" value="0"/>
     <property name="aluminum" type="int" value="20000"/>
-    <property name="electronics" type="int" value="1200"/>
+    <property name="chem_comp" type="int" value="500"/>
+    <property name="elec_comp" type="int" value="1200"/>
     <property name="helicopters" type="int" value="2"/>
+    <property name="light_ammo" type="int" value="200"/>
     <property name="owner" type="int" value="1"/>
     <property name="parts" type="int" value="3000"/>
     <property name="plastic" type="int" value="2000"/>
     <property name="rockets" type="int" value="100"/>
     <property name="rubber" type="int" value="4000"/>
+    <property name="steel" type="int" value="200"/>
+    <property name="textiles" type="int" value="400"/>
+    <property name="tools" type="int" value="100"/>
     <property name="typ" value="AVIATION_PLANT"/>
    </properties>
   </object>
@@ -571,14 +590,14 @@
 0,0,0,0,322,322,322,322,322,322,322,0,0,0,0,0,0,0,0,0,
 0,0,0,0,322,322,322,322,322,322,322,322,322,322,0,0,0,0,0,0,
 0,0,0,0,322,322,322,322,322,322,322,322,322,322,322,0,0,0,0,0,
-0,0,0,322,322,322,322,322,322,321,321,322,322,322,322,322,0,0,0,0,
-0,0,321,322,322,322,322,322,321,321,321,322,322,322,322,0,0,0,0,0,
-0,0,322,322,322,322,322,322,321,321,321,321,322,321,0,0,0,0,0,0,
-0,0,322,322,322,322,322,321,321,321,321,322,322,321,0,0,0,0,0,0,
-0,0,0,322,322,332,332,321,321,321,321,321,321,321,0,0,0,0,0,0,
-0,0,0,0,321,332,321,321,321,321,321,321,321,321,0,0,0,0,0,0,
-0,0,0,0,0,321,321,321,321,323,323,323,323,323,323,0,0,0,0,0,
-0,0,0,321,321,321,0,321,323,323,323,323,323,323,0,0,0,0,0,0,
+0,0,0,322,322,322,322,322,322,0,0,322,322,322,322,322,0,0,0,0,
+0,0,321,322,322,322,322,322,0,0,0,322,322,322,322,0,0,0,0,0,
+0,0,322,322,322,322,322,0,0,0,0,0,322,321,0,0,0,0,0,0,
+0,0,322,322,322,322,0,0,0,0,0,322,322,321,0,0,0,0,0,0,
+0,0,0,322,322,332,332,0,0,0,0,0,321,321,0,0,0,0,0,0,
+0,0,0,0,321,332,0,0,0,0,0,321,321,321,0,0,0,0,0,0,
+0,0,0,0,0,321,321,0,0,323,323,323,323,323,323,0,0,0,0,0,
+0,0,0,321,321,321,0,0,323,323,323,323,323,323,0,0,0,0,0,0,
 0,0,0,321,321,321,0,0,0,323,323,323,323,323,0,0,0,0,0,0,
 0,0,0,321,321,0,0,0,0,323,323,323,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
